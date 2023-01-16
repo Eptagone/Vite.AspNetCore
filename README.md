@@ -23,7 +23,6 @@ The [common way](https://vitejs.dev/guide/backend-integration.html) to access Vi
     <script type="module" src="http://localhost:5173/@vite/client"></script>
     <script type="module" src="http://localhost:5173/main.js"></script>
 </environment>
-
 <!-- Public assets -->
 <environment include="Development">
     <img src="http://localhost:5173/assets/logo.svg" alt="Vite Logo" />
@@ -75,9 +74,11 @@ if (app.Environment.IsDevelopment())
 
 The Vite Manifest is a JSON file that contains the mapping between the original file names and the hashed names. This is useful to access the files in production environments.
 
-By using the Vite Manifest service, you can access the manifest in your application by injecting the `IViteManifest` interface. See the following example.
+By using the Vite Manifest service, you can access the manifest in your application by injecting the `ViteManifest` service. See the following example.
 
 ```HTML
+@inject ViteManifest Manifest
+
 <environment include="Development">
     <!-- Vite development server script -->
     <script type="module" src="~/@@vite/client"></script>
