@@ -1,0 +1,30 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>net6.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<Title>Vite abstractions for Vite.AspNetCore</Title>
+		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+		<Authors>Quetzal Rivera</Authors>
+		<Copyright>Quetzal Rivera 2023 ©</Copyright>
+		<Description>Abstractions for Vite.AspNetCore</Description>
+		<PackageIcon>vite.png</PackageIcon>
+		<RepositoryUrl>https://github.com/Eptagone/Vite.AspNetCore</RepositoryUrl>
+		<PackageTags>Vite;ASP.NET;ViteJS;Assets;Abstractions</PackageTags>
+		<PackageLicenseFile>LICENSE</PackageLicenseFile>
+		<PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
+	</PropertyGroup>
+
+	<ItemGroup>
+	  <None Include="..\..\docs\vite.png">
+	    <Pack>True</Pack>
+	    <PackagePath>\</PackagePath>
+	  </None>
+	  <None Include="..\..\LICENSE">
+	    <Pack>True</Pack>
+	    <PackagePath>\</PackagePath>
+	  </None>
+	</ItemGroup>
+
+</Project>

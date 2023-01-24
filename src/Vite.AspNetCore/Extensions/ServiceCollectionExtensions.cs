@@ -2,6 +2,7 @@
 // Licensed under the MIT License, See LICENCE in the project root for license information.
 
 using Microsoft.Extensions.DependencyInjection;
+using Vite.AspNetCore.Abstractions;
 using Vite.AspNetCore.Services;
 
 namespace Vite.AspNetCore.Extensions
@@ -20,6 +21,6 @@ namespace Vite.AspNetCore.Extensions
 		/// </summary>
 		/// <param name="services">The service collection.</param>
 		public static IServiceCollection AddViteManifest(this IServiceCollection services)
-			=> services.AddScoped<ViteManifest>();
+			=> services.AddScoped<IViteManifest, ViteManifest>();
 	}
 }

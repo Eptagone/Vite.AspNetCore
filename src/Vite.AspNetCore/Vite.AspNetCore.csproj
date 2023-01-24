@@ -13,9 +13,11 @@
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<PackageIcon>vite.png</PackageIcon>
 		<RepositoryUrl>https://github.com/Eptagone/Vite.AspNetCore</RepositoryUrl>
-		<PackageTags>vite;vitejs;middleware;assets</PackageTags>
+		<PackageTags>Vite;ASP.NET;ViteJS;ViteServer;Server;Middleware;Assets;</PackageTags>
 		<PackageLicenseFile>LICENSE</PackageLicenseFile>
 		<PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
+		<Version>1.1</Version>
+		<PackageReleaseNotes>- The abstractions were extracted and moved to another package.</PackageReleaseNotes>
 	</PropertyGroup>
 
 	<!-- Add ASP.NET Core references -->
@@ -31,10 +33,9 @@
 	    <Pack>True</Pack>
 	    <PackagePath>\</PackagePath>
 	  </None>
-	  <None Include="..\..\README.md">
-	    <Pack>True</Pack>
-	    <PackagePath>\</PackagePath>
-	  </None>
+	</ItemGroup>
+	<ItemGroup>
+	  <ProjectReference Include="..\Vite.AspNetCore.Abstractions\Vite.AspNetCore.Abstractions.csproj" />
 	</ItemGroup>
 	<ItemGroup>
 	  <None Update="README.md">

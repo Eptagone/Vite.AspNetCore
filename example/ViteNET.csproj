@@ -7,6 +7,11 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+	  <None Remove="Pages\Index.cshtml~RF730cb87.TMP" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\src\Vite.AspNetCore.Abstractions\Vite.AspNetCore.Abstractions.csproj" />
 		<ProjectReference Include="..\src\Vite.AspNetCore\Vite.AspNetCore.csproj" />
 	</ItemGroup>
 

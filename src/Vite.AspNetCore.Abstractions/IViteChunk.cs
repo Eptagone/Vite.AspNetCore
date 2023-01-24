@@ -11,34 +11,34 @@ namespace Vite.AspNetCore.Abstractions
 		/// <summary>
 		/// Gets the file name of the chunk.
 		/// </summary>
-		public string File { get; }
+		string File { get; }
 		/// <summary>
 		/// The relative src path from project root.
 		/// </summary>
-		public string? Src { get; }
+		string? Src { get; }
 		/// <summary>
 		/// True, if the current chunk file is an entrypoint.
 		/// </summary>
-		public bool? IsEntry { get; }
+		bool? IsEntry { get; }
 		/// <summary>
 		/// List of chunk paths that are imported by the current chunk.
 		/// </summary>
-		public IEnumerable<string>? DynamicImports { get; }
+		IEnumerable<string>? DynamicImports { get; }
 		/// <summary>
 		/// List of all CSS files imported by the current chunk.
 		/// </summary>
-		public IEnumerable<string>? Css { get; }
+		IEnumerable<string>? Css { get; }
 		/// <summary>
 		/// List of all assets imported by the current chunk.
 		/// </summary>
-		public IEnumerable<string>? Assets { get; }
+		IEnumerable<string>? Assets { get; }
 		/// <summary>
 		/// True, if the current chunk if a dynamic import entrypoint.
 		/// </summary>
-		public bool? IsDynamicEntry { get; }
+		bool? IsDynamicEntry { get; }
 		/// <summary>
 		/// List of all imports.
 		/// </summary>
-		public IEnumerable<string>? Imports { get; }
+		IEnumerable<string>? Imports { get; }
 	}
 }
