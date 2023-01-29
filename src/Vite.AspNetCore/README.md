@@ -1,10 +1,10 @@
 # Vite.AspNetCore
 
-This library offers some integration with the **Vite Dev Server** to be used in ASP.NET applications during development. It doesn't require a SPA and can be used with:
+This library offers some integration with the **Vite JS** to be used in ASP.NET applications during. It doesn't require a SPA and can be used with:
 
 - Razor Pages
 - MVC
-- Blazor (Server or WASM)
+- Blazor Server
 
 ## Features
 
@@ -15,7 +15,7 @@ This library has two simple but useful features:
 
 ### The Vite Middleware
 
-The [common way](https://vitejs.dev/guide/backend-integration.html) to access Vite Server assets in your application is by using the following template, specifying the local URL where Vite Server is running.
+The [common way](https://vitejs.dev/guide/backend-integration.html) to access **Vite Dev Server** assets in your application is by using the following template, specifying the local URL where Vite Server is running.
 
 ```HTML
 <!-- Entry point for development -->

@@ -1,0 +1,42 @@
+﻿@page "/"
+@inject IJSRuntime JS
+@inject IViteManifest Manifest
+@inject IHostEnvironment Environment
+
+<PageTitle>Index</PageTitle>
+
+<div>
+	<a href="https://vitejs.dev" target="_blank">
+		<img src="vite.svg" class="logo" alt="Vite logo" />
+	</a>
+	<a href="https://dotnet.microsoft.com/" target="_blank">
+		<img src="dotnet.svg" class="logo" alt="Dotnet logo" />
+	</a>
+	<a href="https://www.typescriptlang.org/" target="_blank">
+		<img src="typescript.svg" class="logo vanilla" alt="TypeScript logo" />
+	</a>
+	<h1>Vite + ASP.NET + TypeScript</h1>
+	<div class="card">
+		<button @ref="counterButton" id="counter" type="button"></button>
+	</div>
+	<p class="read-the-docs">
+		Click on the Vite, ASP.NET and TypeScript logos to learn more
+	</p>
+</div>
+
+
+@code {
+	private ElementReference counterButton;
+
+	protected override async Task OnAfterRenderAsync(bool firstRender)
+	{
+		if (firstRender)
+		{
+			var counterModulePath = Environment.IsDevelopment()
+				? "./counter.ts"
+				: $"./{Manifest["counter.ts"]!.File}";
+			var module = await JS.InvokeAsync<IJSObjectReference>("import", counterModulePath);
+			await module.InvokeVoidAsync("setupCounter", counterButton);
+		}
+	}
+}

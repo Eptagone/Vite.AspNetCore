@@ -1,0 +1,31 @@
+﻿@* The manifest can only be accessed after building the assets with 'npm run build'. *@
+@inject IViteManifest Manifest
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8" />
+	<link rel="icon" type="image/svg+xml" href="/vite.svg" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<title>@ViewData["Title"]</title>
+	<environment include="Production">
+		<link rel="stylesheet" href="~/@Manifest["main.css"]!.File" asp-append-version="true" />
+	</environment>
+</head>
+<body>
+	<main role="main" id="app">
+		@RenderBody()
+	</main>
+
+	<environment include="Development">
+		<!-- Vite development server script -->
+		<script type="module" src="~/@@vite/client"></script>
+		<script type="module" src="~/main.ts"></script>
+	</environment>
+	<environment include="Production">
+		<script type="module" src="~/@Manifest["main.ts"]!.File" asp-append-version="true"></script>
+	</environment>
+
+	@await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>
