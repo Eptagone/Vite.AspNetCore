@@ -16,14 +16,15 @@
 		<PackageTags>Vite;ASP.NET;ViteJS;ViteServer;Server;Middleware;Assets;</PackageTags>
 		<PackageLicenseFile>LICENSE</PackageLicenseFile>
 		<PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
-		<Version>1.1</Version>
-		<PackageReleaseNotes>- The abstractions were extracted and moved to another package.</PackageReleaseNotes>
+		<Version>1.2</Version>
+		<PackageReleaseNotes>- Added support for custom manifest services.</PackageReleaseNotes>
 	</PropertyGroup>
 
 	<!-- Add ASP.NET Core references -->
 	<ItemGroup>
 		<FrameworkReference Include="Microsoft.AspNetCore.App" />
 	</ItemGroup>
+	
 	<ItemGroup>
 	  <None Include="..\..\docs\vite.png">
 	    <Pack>True</Pack>

@@ -1,6 +1,6 @@
 # Vite.AspNetCore
 
-This library offers some integration with the **Vite JS** to be used in ASP.NET applications during. It doesn't require a SPA and can be used with:
+This library offers some integration with [ViteJS](https://vitejs.dev/) to be used in ASP.NET applications during. It doesn't require a SPA and can be used with:
 
 - Razor Pages
 - MVC

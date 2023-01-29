@@ -30,14 +30,15 @@ namespace Vite.AspNetCore.Services
 			if (!File.Exists(manifestPath))
 			{
 				this._chunks = new Dictionary<string, ViteChunk>();
-				return;
 			}
-
-			// Read the manifest.json file and deserialize it into a dictionary
-			this._chunks = JsonSerializer.Deserialize<IReadOnlyDictionary<string, ViteChunk>>(File.ReadAllBytes(manifestPath), new JsonSerializerOptions()
+			else
 			{
-				PropertyNameCaseInsensitive = true,
-			})!;
+				// Read the manifest.json file and deserialize it into a dictionary
+				this._chunks = JsonSerializer.Deserialize<IReadOnlyDictionary<string, ViteChunk>>(File.ReadAllBytes(manifestPath), new JsonSerializerOptions()
+				{
+					PropertyNameCaseInsensitive = true,
+				})!;
+			}
 		}
 
 		/// <summary>

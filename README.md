@@ -2,7 +2,7 @@
 
 [![NuGet version (Vite.AspNetCore)](https://img.shields.io/nuget/v/Vite.AspNetCore.svg?style=flat-square&color=rgba(189,52,254,1))](https://www.nuget.org/packages/Vite.AspNetCore/)
 
-This library offers some integration with the **Vite JS** to be used in ASP.NET applications during. It doesn't require a SPA and can be used with:
+This library offers some integration with [ViteJS](https://vitejs.dev/) to be used in ASP.NET applications during. It doesn't require a SPA and can be used with:
 
 - Razor Pages
 - MVC
