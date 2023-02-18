@@ -2,6 +2,7 @@
 // Licensed under the MIT License, See LICENCE in the project root for license information.
 
 using Microsoft.AspNetCore.Builder;
+using Vite.AspNetCore.Services;
 
 namespace Vite.AspNetCore.Extensions
 {

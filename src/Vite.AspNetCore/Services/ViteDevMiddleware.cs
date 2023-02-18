@@ -1,24 +1,28 @@
 ﻿// Copyright (c) 2023 Quetzal Rivera.
 // Licensed under the MIT License, See LICENCE in the project root for license information.
 
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
-using System.Text.RegularExpressions;
+using Microsoft.Extensions.Logging;
 
-namespace Vite.AspNetCore
+namespace Vite.AspNetCore.Services
 {
 	/// <summary>
 	/// Represents a middleware that proxies requests to the Vite Dev Server.
 	/// </summary>
-	public class ViteDevMiddleware : IMiddleware
+	public class ViteDevMiddleware : IMiddleware, IDisposable
 	{
+		private readonly NodeScriptRunner _scriptRunner;
 		private readonly string _viteServerBaseUrl;
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="ViteDevMiddleware"/> class.
 		/// </summary>
+		/// <param name="logger">The <see cref="ILogger{ViteDevMiddleware}"/> instance.</param>
 		/// <param name="configuration">The <see cref="IConfiguration"/> instance.</param>
-		public ViteDevMiddleware(IConfiguration configuration)
+		/// <param name="environment">The <see cref="IWebHostEnvironment"/> instance.</param>
+		public ViteDevMiddleware(ILogger<ViteDevMiddleware> logger, IConfiguration configuration, IWebHostEnvironment environment)
 		{
 			// Get the port from the configuration.
 			var port = configuration.GetValue("Vite:Server:Port", 5173);
@@ -26,6 +30,17 @@ namespace Vite.AspNetCore
 			var https = configuration.GetValue("Vite:Server:Https", false);
 			// Build the base url.
 			this._viteServerBaseUrl = $"{(https ? "https" : "http")}://localhost:{port}";
+
+			// Gets the package manager command.
+			var pkgManagerCommand = configuration.GetValue("Vite:PackageManager", "npm");
+			// Gets the working directory.
+			var workingDirectory = configuration.GetValue("Vite:WorkingDirectory", environment.ContentRootPath);
+			// Gets the script name.= to run the Vite Dev Server.
+			var scriptName = configuration.GetValue("Vite:Server:ScriptName", "dev");
+			// Create a new instance of the NodeScriptRunner class.
+			this._scriptRunner = new NodeScriptRunner(pkgManagerCommand, scriptName, workingDirectory);
+			// Attach the logger to the script runner.
+			this._scriptRunner.AttachToLogger(logger);
 		}
 
 		/// <inheritdoc />
@@ -78,6 +93,12 @@ namespace Vite.AspNetCore
 					await next(context);
 				}
 			}
+		}
+
+		void IDisposable.Dispose()
+		{
+			((IDisposable)this._scriptRunner).Dispose();
+			GC.SuppressFinalize(this);
 		}
 	}
 }

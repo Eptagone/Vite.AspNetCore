@@ -2,17 +2,18 @@
 
 [![NuGet version (Vite.AspNetCore)](https://img.shields.io/nuget/v/Vite.AspNetCore.svg?style=flat-square&color=rgba(189,52,254,1))](https://www.nuget.org/packages/Vite.AspNetCore/)
 
-This library offers some integration with [ViteJS](https://vitejs.dev/) to be used in ASP.NET applications during. It doesn't require a SPA and can be used with:
+This library offers integration with [ViteJS](https://vitejs.dev/) to be used in ASP.NET applications. It doesn't require a SPA and can be used with:
 
-- Razor Pages
-- MVC
 - Blazor Server
+- MVC
+- Razor Pages
 
 ## Features
 
 This library has two simple but useful features:
 
 - A Middleware to forward the requests to the Vite Dev Server
+  - The middleware will start the Vite Dev Server for you ❤️
 - A service to access the Vite manifest
 
 ### The Vite Middleware
@@ -22,7 +23,7 @@ The [common way](https://vitejs.dev/guide/backend-integration.html) to access **
 ```HTML
 <!-- Entry point for development -->
 <environment include="Development">
-    <script type="module" src="http://localhost:5173/@vite/client"></script>
+    <script type="module" src="http://localhost:5173/@@vite/client"></script>
     <script type="module" src="http://localhost:5173/main.js"></script>
 </environment>
 <!-- Public assets -->
@@ -34,14 +35,14 @@ The [common way](https://vitejs.dev/guide/backend-integration.html) to access **
 </environment>
 ```
 
-This can be a problem in some circumstances. Service workers, for example, cannot be properly tested in this way. Also, the developer would have to prepare two ways to access the public assets in the different environments.
+This can be a problem in some circumstances. Service workers, for example, cannot be properly tested in this way and if you're using preprocessors like SASS, you've probably noticed that your 'url()'s aren't resolved correctly during development. Also, the developer would have to prepare two ways to access the public assets in the different environments. But don't worry, this middleware will solve all of those problems for you.
 
-By using the middleware during development, you don't need to pass the full local URL. You can use aspnet paths as usual.
+By using the vite middleware during development, you don't need to pass the dev server URL. You can use aspnet paths as usual.
 
 ```HTML
 <!-- Entry point for development -->
 <environment include="Development">
-    <script type="module" src="~/@vite/client"></script>
+    <script type="module" src="~/@@vite/client"></script>
     <script type="module" src="~/main.js"></script>
 </environment>
 
@@ -49,7 +50,7 @@ By using the middleware during development, you don't need to pass the full loca
 <img src="~/assets/logo.svg" alt="Vite Logo" />
 ```
 
-The middleware will proxy all requests to the Vite Dev server. You won't need alternative paths for images or other resources from your public assets.
+The middleware will proxy all requests to the Vite Dev server. You won't need alternative paths for images or other resources from your public assets. 🙀🙀🙀
 
 Enable the middleware by adding these lines to your `Program.cs` or `Startup` class.
 
@@ -70,7 +71,7 @@ if (app.Environment.IsDevelopment())
 }
 ```
 
-> **Note:** Don't forget to start the Vite Dev Server before running your application.
+> **Note:** The middleware will start the Vite Dev Server for you. You don't need to run it manually. But remember, you need to have your package.json file in your project root folder.
 
 ### The Vite Manifest
 
@@ -91,7 +92,7 @@ By using the Vite Manifest service, you can access the manifest in your applicat
 </environment>
 ```
 
-Enable the service by adding these lines to your `Program.cs` or `Startup` class.
+Enable the service by adding these lines to your `Program.cs` or `Startup` class. 👍
 
 ```CSharp
 using Vite.AspNetCore.Extensions;
@@ -119,16 +120,32 @@ By default, the manifest name is `manifest.json` and it's expected to be in the 
 }
 ```
 
-By default, the middleware will forward all request to the port `5173` without https. If you need to change the port or the protocol, you can do it by setting the `Vite:Server:Port` and `Vite:Server:UseHttps` properties.
+You can change the configuration for the middleware by overriding the following properties. ⚙️
+
+| Property                 | Description                                                                                            |
+| ------------------------ | ------------------------------------------------------------------------------------------------------ |
+| `Vite:PackageManager`    | The name of the package manager to use. Default value is `npm`.                                        |
+| `Vite:WorkingDirectory`  | The working directory where your package.json file is located. Default value is the content root path. |
+| `Vite:Server:Port`       | The port where the Vite Dev Server will be running. Default value is `5173`.                           |
+| `Vite:Server:UseHttps`   | If true, the middleware will use HTTPS to connect to the Vite Dev Server. Default value is `false`.    |
+| `Vite:Server:ScriptName` | The script name to run the Vite Dev Server. Default value is `dev`.                                    |
+
+See the following example.
 
 ```JSON
 // appsettings.Development.json
 {
     "Vite": {
         "Server": {
+            // The port where the Vite Dev Server will be running. The default value is 5173.
             "Port": 5174,
-            "UseHttps": true
+            // If true, the middleware will use HTTPS to connect to the Vite Dev Server. The default value is false.
+            "UseHttps": false,
         }
     }
 }
 ```
+
+## Examples
+
+Do you want to see how to use this library in a real project? Take a look at [these examples](https://github.com/Eptagone/Vite.AspNetCore/tree/main/examples))

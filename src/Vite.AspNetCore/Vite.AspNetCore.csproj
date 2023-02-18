@@ -16,8 +16,8 @@
 		<PackageTags>Vite;ASP.NET;ViteJS;ViteServer;Server;Middleware;Assets;</PackageTags>
 		<PackageLicenseFile>LICENSE</PackageLicenseFile>
 		<PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
-		<Version>1.2</Version>
-		<PackageReleaseNotes>- Added support for custom manifest services.</PackageReleaseNotes>
+		<Version>1.3</Version>
+		<PackageReleaseNotes>- Now the Vite Dev Server starts automatically with the middleware. You no longer need to start it yourself!</PackageReleaseNotes>
 	</PropertyGroup>
 
 	<!-- Add ASP.NET Core references -->

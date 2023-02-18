@@ -26,15 +26,9 @@
 		<Exec Command="npm install" />
 	</Target>
 
-	<!-- Clean install packages and build the final assets -->
+	<!-- Build the final assets -->
 	<Target Name="PublishBuildAssets" BeforeTargets="Build" Condition=" '$(Configuration)' == 'Release' ">
-		<Exec Command="npm clean-install" />
 		<!-- Build the final assets -->
 		<Exec Command="npm run build" />
-	</Target>
-
-	<!-- Clean Node cache -->
-	<Target Name="CleanNodeCache" AfterTargets="Clean">
-		<Exec Command="npm cache clean --force" />
 	</Target>
 </Project>
