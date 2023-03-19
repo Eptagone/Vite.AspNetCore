@@ -11,7 +11,7 @@ This library offers integration with [ViteJS](https://vitejs.dev/) to be used in
 This library has two simple but useful features:
 
 - A Middleware to forward the requests to the Vite Dev Server
-  - The middleware will start the Vite Dev Server for you ❤️
+  - The middleware can start the Vite Dev Server for you ❤️.
 - A service to access the Vite manifest
 
 ### The Vite Middleware
@@ -69,7 +69,7 @@ if (app.Environment.IsDevelopment())
 }
 ```
 
-> **Note:** The middleware will start the Vite Dev Server for you. You don't need to run it manually. But remember, you need to have your package.json file in your project root folder.
+> **Note:** By default, the middleware will start the Vite Dev Server for you. But remember, you need to have your package.json file in your project root folder. Disable this feature by setting the `Vite:Server:AutoRun` property to `false`. You'll need to start the Vite Dev Server manually before running your application.
 
 ### The Vite Manifest
 
@@ -124,6 +124,7 @@ You can change the configuration for the middleware by overriding the following 
 | ------------------------ | ------------------------------------------------------------------------------------------------------ |
 | `Vite:PackageManager`    | The name of the package manager to use. Default value is `npm`.                                        |
 | `Vite:WorkingDirectory`  | The working directory where your package.json file is located. Default value is the content root path. |
+| `Vite:Server:AutoRun`    | Enable or disable the automatic start of the Vite Dev Server. Default value is `true`.                 |
 | `Vite:Server:Port`       | The port where the Vite Dev Server will be running. Default value is `5173`.                           |
 | `Vite:Server:UseHttps`   | If true, the middleware will use HTTPS to connect to the Vite Dev Server. Default value is `false`.    |
 | `Vite:Server:ScriptName` | The script name to run the Vite Dev Server. Default value is `dev`.                                    |

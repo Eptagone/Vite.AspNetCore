@@ -16,8 +16,10 @@
 		<PackageTags>Vite;ASP.NET;ViteJS;ViteServer;Server;Middleware;Assets;</PackageTags>
 		<PackageLicenseFile>LICENSE</PackageLicenseFile>
 		<PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
-		<Version>1.3</Version>
-		<PackageReleaseNotes>- Now the Vite Dev Server starts automatically with the middleware. You no longer need to start it yourself!</PackageReleaseNotes>
+		<Version>1.4</Version>
+		<PackageReleaseNotes>- Enable/disable the automatic execution of the development server by configuring the AutoRun option.
+- The application will no longer crash when the Vite Dev Server is stopped.
+- The Vite Dev Server log will now be forwarded the Middleware logger.</PackageReleaseNotes>
 	</PropertyGroup>
 
 	<!-- Add ASP.NET Core references -->
@@ -35,6 +37,7 @@
 	    <PackagePath>\</PackagePath>
 	  </None>
 	</ItemGroup>
+	
 	<ItemGroup>
 	  <ProjectReference Include="..\Vite.AspNetCore.Abstractions\Vite.AspNetCore.Abstractions.csproj" />
 	</ItemGroup>

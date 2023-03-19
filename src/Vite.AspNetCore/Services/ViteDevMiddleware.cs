@@ -13,8 +13,9 @@ namespace Vite.AspNetCore.Services
 	/// </summary>
 	public class ViteDevMiddleware : IMiddleware, IDisposable
 	{
-		private readonly NodeScriptRunner _scriptRunner;
+		private readonly ILogger<ViteDevMiddleware> _logger;
 		private readonly string _viteServerBaseUrl;
+		private readonly NodeScriptRunner? _scriptRunner;
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="ViteDevMiddleware"/> class.
@@ -24,6 +25,8 @@ namespace Vite.AspNetCore.Services
 		/// <param name="environment">The <see cref="IWebHostEnvironment"/> instance.</param>
 		public ViteDevMiddleware(ILogger<ViteDevMiddleware> logger, IConfiguration configuration, IWebHostEnvironment environment)
 		{
+			// Set the logger.
+			this._logger = logger;
 			// Get the port from the configuration.
 			var port = configuration.GetValue("Vite:Server:Port", 5173);
 			// Check if https is enabled.
@@ -31,16 +34,19 @@ namespace Vite.AspNetCore.Services
 			// Build the base url.
 			this._viteServerBaseUrl = $"{(https ? "https" : "http")}://localhost:{port}";
 
-			// Gets the package manager command.
-			var pkgManagerCommand = configuration.GetValue("Vite:PackageManager", "npm");
-			// Gets the working directory.
-			var workingDirectory = configuration.GetValue("Vite:WorkingDirectory", environment.ContentRootPath);
-			// Gets the script name.= to run the Vite Dev Server.
-			var scriptName = configuration.GetValue("Vite:Server:ScriptName", "dev");
-			// Create a new instance of the NodeScriptRunner class.
-			this._scriptRunner = new NodeScriptRunner(pkgManagerCommand, scriptName, workingDirectory);
-			// Attach the logger to the script runner.
-			this._scriptRunner.AttachToLogger(logger);
+			// Prepare and run the Vite Dev Server if AutoRun is true.
+			if (configuration.GetValue("Vite:Server:AutoRun", true))
+			{
+				// Gets the package manager command.
+				var pkgManagerCommand = configuration.GetValue("Vite:PackageManager", "npm");
+				// Gets the working directory.
+				var workingDirectory = configuration.GetValue("Vite:WorkingDirectory", environment.ContentRootPath);
+				// Gets the script name.= to run the Vite Dev Server.
+				var scriptName = configuration.GetValue("Vite:Server:ScriptName", "dev");
+				// Create a new instance of the NodeScriptRunner class.
+				this._scriptRunner = new NodeScriptRunner(logger, pkgManagerCommand, scriptName, workingDirectory);
+				logger.LogInformation("The middleware has called the dev script. It may take a few seconds before the Vite Dev Server becomes available.");
+			}
 		}
 
 		/// <inheritdoc />
@@ -69,7 +75,9 @@ namespace Vite.AspNetCore.Services
 		/// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
 		private async Task ProxyAsync(HttpContext context, RequestDelegate next, string path)
 		{
-			using (HttpClient client = new() { BaseAddress = new Uri(this._viteServerBaseUrl) })
+			using HttpClient client = new() { BaseAddress = new Uri(this._viteServerBaseUrl) };
+
+			try
 			{
 				// Get the requested path from the Vite Dev Server.
 				var response = await client.GetAsync(path);
@@ -93,11 +101,21 @@ namespace Vite.AspNetCore.Services
 					await next(context);
 				}
 			}
+			catch (HttpRequestException exp)
+			{
+				// Log the exception.
+				this._logger.LogWarning("{Message}. Make sure Vite Dev Server is running.", exp.Message);
+				await next(context);
+			}
 		}
 
 		void IDisposable.Dispose()
 		{
-			((IDisposable)this._scriptRunner).Dispose();
+			// If the script runner was defined, dipose it.
+			if (this._scriptRunner != null)
+			{
+				((IDisposable)this._scriptRunner).Dispose();
+			}
 			GC.SuppressFinalize(this);
 		}
 	}
