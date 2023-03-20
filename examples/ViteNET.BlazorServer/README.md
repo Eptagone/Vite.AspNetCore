@@ -4,23 +4,7 @@ This is an example project to show how to use Vite with Blazor Server.
 
 ## How to run
 
-First, install the npm packages:
-
-```PowerShell
-npm install
-```
-
-Then, run the Vite dev server:
-
-```PowerShell
-npm run dev
-```
-
-Finally, run the ASP.NET application by executing the following command or by pressing `F5` in Visual Studio:
-
-```PowerShell
-dotnet run
-```
+The project is already configured to install the npm dependencies and run vite. So, simply run the ASP.NET application by running `dotnet run` or pressing `F5` in Visual Studio.
 
 ## Considerations when using Blazor
 
