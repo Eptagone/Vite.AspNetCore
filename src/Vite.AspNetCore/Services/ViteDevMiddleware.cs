@@ -27,22 +27,24 @@ namespace Vite.AspNetCore.Services
 		{
 			// Set the logger.
 			this._logger = logger;
+			// Read the Vite options from the configuration.
+			var viteOptions = configuration.GetSection(ViteOptions.Vite).Get<ViteOptions>();
 			// Get the port from the configuration.
-			var port = configuration.GetValue("Vite:Server:Port", 5173);
+			var port = viteOptions.Server.Port;
 			// Check if https is enabled.
-			var https = configuration.GetValue("Vite:Server:Https", false);
+			var https = viteOptions.Server.Https;
 			// Build the base url.
 			this._viteServerBaseUrl = $"{(https ? "https" : "http")}://localhost:{port}";
 
 			// Prepare and run the Vite Dev Server if AutoRun is true.
-			if (configuration.GetValue("Vite:Server:AutoRun", true))
+			if (viteOptions.Server.AutoRun)
 			{
 				// Gets the package manager command.
-				var pkgManagerCommand = configuration.GetValue("Vite:PackageManager", "npm");
+				var pkgManagerCommand = viteOptions.PackageManager;
 				// Gets the working directory.
-				var workingDirectory = configuration.GetValue("Vite:WorkingDirectory", environment.ContentRootPath);
+				var workingDirectory = viteOptions.WorkingDirectory ?? environment.ContentRootPath;
 				// Gets the script name.= to run the Vite Dev Server.
-				var scriptName = configuration.GetValue("Vite:Server:ScriptName", "dev");
+				var scriptName = viteOptions.Server.ScriptName;
 				// Create a new instance of the NodeScriptRunner class.
 				this._scriptRunner = new NodeScriptRunner(logger, pkgManagerCommand, scriptName, workingDirectory);
 				logger.LogInformation("The middleware has called the dev script. It may take a few seconds before the Vite Dev Server becomes available.");
