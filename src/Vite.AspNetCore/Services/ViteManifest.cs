@@ -16,6 +16,7 @@ namespace Vite.AspNetCore.Services
 	{
 		private readonly ILogger<ViteManifest> _logger;
 		private readonly IReadOnlyDictionary<string, ViteChunk> _chunks;
+        private static bool _warnAboutManifestOnce = true;
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="ViteManifest"/> class.
@@ -43,8 +44,14 @@ namespace Vite.AspNetCore.Services
 			}
 			else
 			{
-				logger.LogWarning("The manifest file was not found. Did you forget 'npm run build'?. Ignore this message if you're using Vite Dev Server.");
-				// Create an empty dictionary.
+                if (_warnAboutManifestOnce)
+                {
+                    logger.LogWarning(
+                        "The manifest file was not found. Did you forget 'npm run build'?. Ignore this message if you're using Vite Dev Server.");
+                    _warnAboutManifestOnce = false;
+                }
+
+                // Create an empty dictionary.
 				this._chunks = new Dictionary<string, ViteChunk>();
 			}
 		}
