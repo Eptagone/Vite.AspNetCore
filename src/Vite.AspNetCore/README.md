@@ -90,6 +90,27 @@ By using the Vite Manifest service, you can access the manifest in your applicat
 </environment>
 ```
 
+You can also access the Vite manifest by using the tag helpers included in the package. Be sure to add the following in your `_ViewImports.cshtml`
+
+```
+@addTagHelper *, Vite.AspNetCore
+```
+
+Followed by using the `vite-manifest` attribute on `<script>` and `link` tags.
+
+```HTML
+<link rel="stylesheet" vite-manifest="main.css" asp-append-version="true" />
+<script type="module" vite-manifest="main.ts" asp-append-version="true"></script>
+```
+
+You even has access to a `vite-client` tag, which outputs the necessary client script tag.
+
+```html
+<vite-client />
+<!-- Is equivalent to -->
+<script type="module" src="~/@@vite/client"></script>
+```
+
 Enable the service by adding these lines to your `Program.cs` or `Startup` class. 👍
 
 ```CSharp
