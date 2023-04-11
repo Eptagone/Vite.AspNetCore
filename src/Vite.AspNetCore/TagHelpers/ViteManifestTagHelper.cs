@@ -67,7 +67,7 @@ public class ViteManifestTagHelper : TagHelper
             _ => throw new ArgumentOutOfRangeException(nameof(output.TagName), output.TagName)
         };
 
-        output.Attributes.Add(new TagHelperAttribute(
+        output.Attributes.SetAttribute(new TagHelperAttribute(
             attribute,
             $"~/{file}",
             HtmlAttributeValueStyle.DoubleQuotes)

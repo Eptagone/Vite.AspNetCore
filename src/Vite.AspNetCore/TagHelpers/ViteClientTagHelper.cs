@@ -19,10 +19,10 @@ public class ViteClientTagHelper : TagHelper
 
         // merge attributes
         foreach (var attribute in context.AllAttributes) {
-            output.Attributes.Add(attribute);
+            output.Attributes.SetAttribute(attribute);
         }
 
-        output.Attributes.Add("type", "module");
-        output.Attributes.Add("src", "~/@vite/client");
+        output.Attributes.SetAttribute("type", "module");
+        output.Attributes.SetAttribute("src", "~/@vite/client");
     }
 }
