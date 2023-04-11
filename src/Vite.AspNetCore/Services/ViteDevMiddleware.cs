@@ -117,7 +117,7 @@ namespace Vite.AspNetCore.Services
         public async Task InvokeAsync(HttpContext context, RequestDelegate next)
         {
             var initializationTask = this._initializationTask;
-            if (initializationTask is not null)
+            if (initializationTask != null)
             {
                 // Wait until initialization is complete before passing the request to next middleware
                 await initializationTask;
