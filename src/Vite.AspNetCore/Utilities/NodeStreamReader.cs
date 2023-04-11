@@ -15,6 +15,7 @@ namespace Vite.AspNetCore.Utilities
 		private readonly ILogger _logger;
 		private readonly StreamReader _streamReader;
 		private readonly StringBuilder _linesBuffer;
+        private readonly Action<string>? _onOutputBufferRead;
 
 		/// <summary>
 		/// Initialize a new instance of the <see cref="NodeStreamReader"/> class.
@@ -23,7 +24,7 @@ namespace Vite.AspNetCore.Utilities
 		/// <param name="streamReader">The stream reader.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="ArgumentNullException"></exception>
-		public NodeStreamReader(ILogger logger, StreamReader streamReader, CancellationToken cancellationToken = default)
+		public NodeStreamReader(ILogger logger, StreamReader streamReader, Action<string>? onOutputBufferRead = null, CancellationToken cancellationToken = default)
 		{
 			// Save the logger.
 			_logger = logger ?? throw new ArgumentNullException(nameof(logger));
@@ -31,6 +32,8 @@ namespace Vite.AspNetCore.Utilities
 			_streamReader = streamReader ?? throw new ArgumentNullException(nameof(streamReader));
 			// Initialize the lines buffer.
 			_linesBuffer = new StringBuilder();
+            // output buffer reader
+            _onOutputBufferRead = onOutputBufferRead;
 			Task.Factory.StartNew(Run, cancellationToken, TaskCreationOptions.DenyChildAttach, TaskScheduler.Default);
 		}
 
@@ -82,7 +85,8 @@ namespace Vite.AspNetCore.Utilities
 			if (!string.IsNullOrEmpty(line) && !string.IsNullOrWhiteSpace(line) && !line.StartsWith('>'))
 			{
 				this._logger.LogInformation("{Line}", line);
-			}
+                this._onOutputBufferRead?.Invoke(line);
+            }
 		}
 	}
 }
