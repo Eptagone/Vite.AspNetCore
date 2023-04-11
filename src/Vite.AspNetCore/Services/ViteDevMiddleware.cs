@@ -4,6 +4,7 @@
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
 namespace Vite.AspNetCore.Services
@@ -16,6 +17,12 @@ namespace Vite.AspNetCore.Services
         private readonly ILogger<ViteDevMiddleware> _logger;
         private readonly string _viteServerBaseUrl;
         private readonly NodeScriptRunner? _scriptRunner;
+        private readonly ViteOptions _viteOptions;
+
+        // Waiting for dev server logic
+        private bool _viteServerFound;
+        // the initialization task (which is null after it is executed once)
+        private Task? _initializationTask;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ViteDevMiddleware"/> class.
@@ -23,30 +30,30 @@ namespace Vite.AspNetCore.Services
         /// <param name="logger">The <see cref="ILogger{ViteDevMiddleware}"/> instance.</param>
         /// <param name="configuration">The <see cref="IConfiguration"/> instance.</param>
         /// <param name="environment">The <see cref="IWebHostEnvironment"/> instance.</param>
-		public ViteDevMiddleware(ILogger<ViteDevMiddleware> logger, IConfiguration configuration, IWebHostEnvironment environment)
+        /// <param name="lifetime">The <see cref="IHostApplicationLifetime"/> instance.</param>
+        public ViteDevMiddleware(ILogger<ViteDevMiddleware> logger, IConfiguration configuration, IWebHostEnvironment environment, IHostApplicationLifetime lifetime)
         {
             // Set the logger.
             this._logger = logger;
             // Read the Vite options from the configuration.
-            var viteOptions = configuration.GetSection(ViteOptions.Vite).Get<ViteOptions>();
+            this._viteOptions = configuration.GetSection(ViteOptions.Vite).Get<ViteOptions>();
             // Get the port from the configuration.
-            var port = viteOptions.Server.Port;
+            var port = _viteOptions.Server.Port;
             // Check if https is enabled.
-            var https = viteOptions.Server.Https;
+            var https = _viteOptions.Server.Https;
             // Build the base url.
             this._viteServerBaseUrl = $"{(https ? "https" : "http")}://localhost:{port}";
-
+            
             // Prepare and run the Vite Dev Server if AutoRun is true.
-            if (viteOptions.Server.AutoRun)
+            if (_viteOptions.Server.AutoRun)
             {
                 // Gets the package manager command.
-                var pkgManagerCommand = viteOptions.PackageManager;
+                var pkgManagerCommand = _viteOptions.PackageManager;
                 // Gets the working directory.
-                var workingDirectory = viteOptions.WorkingDirectory ?? environment.ContentRootPath;
+                var workingDirectory = _viteOptions.WorkingDirectory ?? environment.ContentRootPath;
                 // Gets the script name.= to run the Vite Dev Server.
-                var scriptName = viteOptions.Server.ScriptName;
+                var scriptName = _viteOptions.Server.ScriptName;
                 // Create a new instance of the NodeScriptRunner class.
-                var waiting = new TimeSpan(0);
                 this._scriptRunner = new NodeScriptRunner(logger, pkgManagerCommand, scriptName, workingDirectory,
                     line =>
                     {
@@ -55,27 +62,70 @@ namespace Vite.AspNetCore.Services
                             return;
                         }
                         logger.LogInformation("Found Vite Server: {ViteServerBaseUrl}.", this._viteServerBaseUrl);
-                        waiting = TimeSpan.MaxValue;
+                        this._viteServerFound = true;
                     });
 
                 logger.LogInformation(
                     "The middleware has called the dev script. It may take a few seconds before the Vite Dev Server becomes available.");
 
-                // wait for the server to start, based on seconds from options
-                // the default value is 3 seconds
-                // limit to between 0 and 60 seconds (don't hang forever)
-                var timeout = TimeSpan.FromSeconds(Math.Clamp(viteOptions.Server.TimeoutInSeconds, 0, 60));
-                var increment = TimeSpan.FromMilliseconds(250);
-                while (waiting < timeout) {
-                    waiting = waiting.Add(increment);
-                    Thread.Sleep(increment);
-                }
+                // register initialization task with the application's lifetime
+                var startRegistration = default(CancellationTokenRegistration);
+                lifetime.ApplicationStarted.Register(() =>
+                {
+                    this._initializationTask = this.InitializeAsync(lifetime.ApplicationStopping);
+                    startRegistration.Dispose();
+                });
             }
+        }
+
+        /// <summary>
+        /// Add any initialization steps here in the order they need to execute
+        /// </summary>
+        /// <param name="cancellationToken"></param>
+        private async Task InitializeAsync(CancellationToken cancellationToken)
+        {
+            // Add middleware initialization tasks here
+            await this.WaitForViteDevServer(cancellationToken);
+        }
+
+        /// <summary>
+        /// Waits for vite dev server using the timeout
+        /// </summary>
+        /// <param name="cancellationToken"></param>
+        private async Task WaitForViteDevServer(CancellationToken cancellationToken)
+        {
+            // wait for the server to start, based on seconds from options
+            // the default value is 3 seconds
+            // limit to between 0 and 60 seconds (don't hang forever)
+            var timeout = TimeSpan.FromSeconds(Math.Clamp(this._viteOptions.Server.TimeoutInSeconds, 0, 60));
+            // smaller increments mean faster discover
+            // but potentially more loops
+            var increment = TimeSpan.FromMilliseconds(25);
+            var waiting = new TimeSpan(0);
+
+            while (!this._viteServerFound && waiting < timeout)
+            {
+                waiting = waiting.Add(increment);
+                await Task.Delay(increment, cancellationToken);
+            }
+
+            this._logger.LogInformation("Waited for {TotalMilliSeconds} seconds for Vite dev server",
+                waiting.TotalMilliseconds);
         }
 
         /// <inheritdoc />
         public async Task InvokeAsync(HttpContext context, RequestDelegate next)
         {
+            var initializationTask = this._initializationTask;
+            if (initializationTask is not null)
+            {
+                // Wait until initialization is complete before passing the request to next middleware
+                await initializationTask;
+
+                // Clear the task so that we don't await it again later.
+                this._initializationTask = null;
+            }
+
             // If the request path is not null, process.
             if (context.Request.Path.HasValue)
             {
@@ -90,7 +140,7 @@ namespace Vite.AspNetCore.Services
                 await next(context);
             }
         }
-
+        
         /// <summary>
         /// Proxies the request to the Vite Dev Server.
         /// </summary>
@@ -139,6 +189,11 @@ namespace Vite.AspNetCore.Services
             if (this._scriptRunner != null)
             {
                 ((IDisposable)this._scriptRunner).Dispose();
+            }
+            // if we're disposing before the task has run, dispose it
+            if (this._initializationTask != null)
+            {
+                this._initializationTask.Dispose();
             }
             GC.SuppressFinalize(this);
         }
