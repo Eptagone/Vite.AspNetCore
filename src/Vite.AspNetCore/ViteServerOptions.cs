@@ -25,9 +25,5 @@ namespace Vite.AspNetCore
 		/// The script name to run the Vite Dev Server. Default value is "dev".
 		/// </summary>
 		public string ScriptName { get; set; } = "dev";
-        /// <summary>
-        /// Wait for Vite Server to load in seconds. Default value is "3".
-        /// </summary>
-        public int TimeoutInSeconds { get; set; } = 3;
 	}
 }

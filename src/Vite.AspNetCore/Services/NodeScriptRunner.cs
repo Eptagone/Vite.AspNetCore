@@ -21,7 +21,7 @@ namespace Vite.AspNetCore.Services
 		/// <summary>
 		/// Initializes a new instance of the <see cref="NodeScriptRunner"/> class.
 		/// </summary>
-		public NodeScriptRunner(ILogger logger, string pkgManagerCommand, string scriptName, string workingDirectory, Action<string>? onStandardOutputRead = null, CancellationToken cancellationToken = default)
+		public NodeScriptRunner(ILogger logger, string pkgManagerCommand, string scriptName, string workingDirectory, CancellationToken cancellationToken = default)
 		{
 			_logger = logger;
 			// If the package manager command is null or empty, throw an exception.
@@ -80,8 +80,8 @@ namespace Vite.AspNetCore.Services
 			}
 
 			// Create the stream readers.
-			this._stdOutReader = new NodeStreamReader(logger, this._npmProcess.StandardOutput, onStandardOutputRead, cancellationToken);
-            this._stdErrorReader = new NodeStreamReader(logger, this._npmProcess.StandardError, cancellationToken: cancellationToken);
+			this._stdOutReader = new NodeStreamReader(logger, this._npmProcess.StandardOutput, cancellationToken);
+			this._stdErrorReader = new NodeStreamReader(logger, this._npmProcess.StandardError, cancellationToken);
 
 			cancellationToken.Register(((IDisposable)this).Dispose);
 		}
