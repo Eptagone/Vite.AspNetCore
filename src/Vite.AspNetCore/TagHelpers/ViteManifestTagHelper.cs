@@ -57,7 +57,7 @@ public class ViteManifestTagHelper : TagHelper
         {
             "script" => (attribute: "src", value: Src ?? string.Empty),
             "link" => (attribute: "href", value: Href ?? string.Empty),
-            _ => throw new ArgumentOutOfRangeException(nameof(output.TagName), output.TagName)
+            _ => (attribute: string.Empty, value : string.Empty)
         };
         
         // always attempt to remove the vite attribute from the output
