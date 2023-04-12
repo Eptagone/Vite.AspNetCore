@@ -53,7 +53,8 @@ public class ViteManifestTagHelper : TagHelper
 
     public override void Process(TagHelperContext context, TagHelperOutput output)
     {
-        var tag = output.TagName switch
+        // because some people might shout their tag names like SCRIPT and LINK!
+        var tag = output.TagName.ToLowerInvariant() switch
         {
             "script" => (attribute: "src", value: Src ?? string.Empty),
             "link" => (attribute: "href", value: Href ?? string.Empty),
