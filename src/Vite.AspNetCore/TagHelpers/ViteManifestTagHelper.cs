@@ -15,13 +15,14 @@ namespace Vite.AspNetCore.TagHelpers;
 /// Use the vite-manifest attribute on link or script tags to
 /// find the matching file from the vite-generated "assets.manifest.json" file
 /// </summary>
-[HtmlTargetElement("script", Attributes = ViteManifestAttribute)]
-[HtmlTargetElement("link", Attributes = ViteManifestAttribute)]
+[HtmlTargetElement("script", Attributes = ViteManifestSrcAttribute)]
+[HtmlTargetElement("link", Attributes = ViteManifestHrefAttribute)]
 public class ViteManifestTagHelper : TagHelper
 {
     private readonly IViteManifest _manifest;
     private readonly ILogger<ViteManifestTagHelper> _logger;
-    private const string ViteManifestAttribute = "vite-manifest";
+    private const string ViteManifestHrefAttribute = "vite-href";
+    private const string ViteManifestSrcAttribute = "vite-src";
 
     public ViteManifestTagHelper(IViteManifest manifest, ILogger<ViteManifestTagHelper> logger)
     {
@@ -30,45 +31,58 @@ public class ViteManifestTagHelper : TagHelper
     }
 
     /// <summary>
-    /// The key of the entry in "assets.manifest.json"
+    /// The key of the entry in "assets.manifest.json" for script tags
     /// The manifest can only be accessed after building the assets with 'npm run build'.
     /// </summary>
-    [HtmlAttributeName(ViteManifestAttribute)]
-    public string? Key { get; set; }
+    [HtmlAttributeName(ViteManifestSrcAttribute)]
+    public string? Src { get; set; }
 
+    /// <summary>
+    /// The key of the entry in "assets.manifest.json" for script tags
+    /// The manifest can only be accessed after building the assets with 'npm run build'.
+    /// </summary>
+    [HtmlAttributeName(ViteManifestHrefAttribute)]
+    public string? Href { get; set; }
+
+    /// <summary>
+    /// The ViewContext is used to help users find the View with any potential issues
+    /// </summary>
     [ViewContext] [HtmlAttributeNotBound] public ViewContext ViewContext { get; set; } = default!;
 
     public override int Order => int.MinValue;
 
     public override void Process(TagHelperContext context, TagHelperOutput output)
     {
-        if (string.IsNullOrWhiteSpace(this.Key))
+        var tag = output.TagName switch
         {
-            this._logger.LogWarning("vite-manifest value missing on {View}", ViewContext.View.Path);
+            "script" => (attribute: "src", value: Src ?? string.Empty),
+            "link" => (attribute: "href", value: Href ?? string.Empty),
+            _ => throw new ArgumentOutOfRangeException(nameof(output.TagName), output.TagName)
+        };
+        
+        // always attempt to remove the vite attribute from the output
+        output.Attributes.RemoveAll($"vite-{tag.attribute}");
+
+        if (string.IsNullOrWhiteSpace(tag.value))
+        {
+            this._logger.LogWarning("vite-{Attribute} value missing (check {View})",
+                tag.attribute,
+                this.ViewContext.View.Path);
             return;
         }
 
-        var file = this._manifest[this.Key]?.File;
+        var file = this._manifest[tag.value]?.File;
 
         if (string.IsNullOrEmpty(file))
         {
-            this._logger.LogWarning("\"{Key}\" was not found in Vite manifest (check {View})", this.Key,
+            this._logger.LogWarning("\"{Key}\" was not found in Vite manifest file (check {View})",
+                tag.value,
                 ViewContext.View.Path);
             return;
         }
 
-        // remove the attribute from the output
-        output.Attributes.RemoveAll("vite-manifest");
-
-        var attribute = output.TagName switch
-        {
-            "script" => "src",
-            "link" => "href",
-            _ => throw new ArgumentOutOfRangeException(nameof(output.TagName), output.TagName)
-        };
-
         output.Attributes.SetAttribute(new TagHelperAttribute(
-            attribute,
+            tag.attribute,
             $"~/{file}",
             HtmlAttributeValueStyle.DoubleQuotes)
         );

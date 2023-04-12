@@ -1,6 +1,4 @@
 ﻿@using Microsoft.AspNetCore.Components.Web
-@using Vite.AspNetCore.Abstractions;
-@inject IViteManifest Manifest
 @namespace ViteNET.BlazorServer.Pages
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 @addTagHelper *, Vite.AspNetCore
@@ -13,7 +11,7 @@
 	<link rel="icon" type="image/svg+xml" href="/vite.svg" />
 	<base href="~/" />
 	<environment include="Production">
-		<link rel="stylesheet" vite-manifest="main.css" asp-append-version="true" />
+		<link rel="stylesheet" vite-href="main.css" asp-append-version="true" />
 	</environment>
 	<component type="typeof(HeadOutlet)" render-mode="ServerPrerendered" />
 </head>
@@ -38,7 +36,7 @@
 	<environment include="Development">
 		<!-- Vite development server script -->
 		<vite-client/>
-		<script type="module" src="main.ts"></script>
+		<script type="module" vite-src="main.ts"></script>
 	</environment>
 	@*<environment include="Production">
 		<script type="module" src="@Manifest["main.ts"]!.File" asp-append-version="true"></script>

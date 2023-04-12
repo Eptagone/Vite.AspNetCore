@@ -6,7 +6,7 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 	<title>@ViewData["Title"]</title>
 	<environment include="Production">
-		<link rel="stylesheet" vite-manifest="main.css" asp-append-version="true" />	
+		<link rel="stylesheet" vite-href="main.css" asp-append-version="true" />	
 	</environment>
 </head>
 <body>
@@ -20,7 +20,7 @@
 		<script type="module" src="~/main.ts"></script>
 	</environment>
 	<environment include="Production">
-		<script type="module" vite-manifest="main.ts" asp-append-version="true"></script>
+		<script type="module" vite-src="main.ts" asp-append-version="true"></script>
 	</environment>
 
 	@await RenderSectionAsync("Scripts", required: false)
