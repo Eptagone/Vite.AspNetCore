@@ -16,10 +16,8 @@
 		<PackageTags>Vite;ASP.NET;ViteJS;ViteServer;Server;Middleware;Assets;</PackageTags>
 		<PackageLicenseFile>LICENSE</PackageLicenseFile>
 		<PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
-		<Version>1.4</Version>
-		<PackageReleaseNotes>- Enable/disable the automatic execution of the development server by configuring the AutoRun option.
-- The application will no longer crash when the Vite Dev Server is stopped.
-- The Vite Dev Server log will now be forwarded the Middleware logger.</PackageReleaseNotes>
+		<Version>1.4.1</Version>
+		<PackageReleaseNotes>- When AutoRun is enabled, the middleware will wait for development server.</PackageReleaseNotes>
 	</PropertyGroup>
 
 	<!-- Add ASP.NET Core references -->

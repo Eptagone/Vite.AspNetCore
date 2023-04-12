@@ -3,6 +3,7 @@
 
 using Microsoft.Extensions.Logging;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace Vite.AspNetCore.Utilities
 {
@@ -12,10 +13,15 @@ namespace Vite.AspNetCore.Utilities
 	/// </summary>
 	internal class NodeStreamReader
 	{
+		public delegate void OnReceivedLineHandler(string line);
+
 		private readonly ILogger _logger;
 		private readonly StreamReader _streamReader;
 		private readonly StringBuilder _linesBuffer;
-        private readonly Action<string>? _onOutputBufferRead;
+
+		private static readonly Regex AnsiColorRegex = new(@"\x1B\[[0-?]*[ -/]*[@-~]", RegexOptions.Compiled);
+
+		public event OnReceivedLineHandler? OnReceivedLine;
 
 		/// <summary>
 		/// Initialize a new instance of the <see cref="NodeStreamReader"/> class.
@@ -24,7 +30,7 @@ namespace Vite.AspNetCore.Utilities
 		/// <param name="streamReader">The stream reader.</param>
 		/// <param name="cancellationToken">The cancellation token.</param>
 		/// <exception cref="ArgumentNullException"></exception>
-		public NodeStreamReader(ILogger logger, StreamReader streamReader, Action<string>? onOutputBufferRead = null, CancellationToken cancellationToken = default)
+		public NodeStreamReader(ILogger logger, StreamReader streamReader, CancellationToken cancellationToken = default)
 		{
 			// Save the logger.
 			_logger = logger ?? throw new ArgumentNullException(nameof(logger));
@@ -32,8 +38,7 @@ namespace Vite.AspNetCore.Utilities
 			_streamReader = streamReader ?? throw new ArgumentNullException(nameof(streamReader));
 			// Initialize the lines buffer.
 			_linesBuffer = new StringBuilder();
-            // output buffer reader
-            _onOutputBufferRead = onOutputBufferRead;
+			// Start the task.
 			Task.Factory.StartNew(Run, cancellationToken, TaskCreationOptions.DenyChildAttach, TaskScheduler.Default);
 		}
 
@@ -85,8 +90,10 @@ namespace Vite.AspNetCore.Utilities
 			if (!string.IsNullOrEmpty(line) && !string.IsNullOrWhiteSpace(line) && !line.StartsWith('>'))
 			{
 				this._logger.LogInformation("{Line}", line);
-                this._onOutputBufferRead?.Invoke(line);
-            }
+				// Remove the ANSI color codes.
+				var lineWithoutAnsi = AnsiColorRegex.Replace(line, string.Empty);
+				this.OnReceivedLine?.Invoke(lineWithoutAnsi);
+			}
 		}
 	}
 }

@@ -105,9 +105,6 @@ export default defineConfig(async () => {
 				clientPort: appsettingsDev.Vite.Server.Port
 			}
 		},
-		optimizeDeps: {
-			include: ['aspnet-client-validation'],
-		}
 	}
 
 	return config;

@@ -26,8 +26,8 @@ namespace Vite.AspNetCore
 		/// </summary>
 		public string ScriptName { get; set; } = "dev";
         /// <summary>
-        /// Wait for Vite Server to load in seconds. Default value is "3".
+        /// Wait for Vite Server to load in seconds. Default value is "5".
         /// </summary>
-        public int TimeoutInSeconds { get; set; } = 3;
+        public int TimeOut { get; set; } = 5;
 	}
 }

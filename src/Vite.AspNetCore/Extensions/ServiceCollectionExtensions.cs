@@ -32,13 +32,10 @@ namespace Vite.AspNetCore.Extensions
 		public static IServiceCollection AddViteManifest<TViteManifest>(this IServiceCollection services, ServiceLifetime optionsLifetime)
 			where TViteManifest : class, IViteManifest
 		{
-			return optionsLifetime switch
-			{
-				ServiceLifetime.Singleton => services.AddSingleton<IViteManifest, TViteManifest>(),
-				ServiceLifetime.Scoped => services.AddScoped<IViteManifest, TViteManifest>(),
-				ServiceLifetime.Transient => services.AddTransient<IViteManifest, TViteManifest>(),
-				_ => services.AddScoped<IViteManifest, TViteManifest>(),
-			};
+			ServiceDescriptor descriptor = new(typeof(IViteManifest), typeof(TViteManifest), optionsLifetime);
+			services.Add(descriptor);
+
+			return services;
 		}
 	}
 }

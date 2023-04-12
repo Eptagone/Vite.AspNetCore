@@ -120,16 +120,15 @@ By default, the manifest name is `manifest.json` and it's expected to be in the 
 
 You can change the configuration for the middleware by overriding the following properties. ⚙️
 
-| Property                       | Description                                                                                            |
-|--------------------------------|--------------------------------------------------------------------------------------------------------|
-| `Vite:PackageManager`          | The name of the package manager to use. Default value is `npm`.                                        |
-| `Vite:WorkingDirectory`        | The working directory where your package.json file is located. Default value is the content root path. |
-| `Vite:Server:AutoRun`          | Enable or disable the automatic start of the Vite Dev Server. Default value is `true`.                 |
-| `Vite:Server:Port`             | The port where the Vite Dev Server will be running. Default value is `5173`.                           |
-| `Vite:Server:UseHttps`         | If true, the middleware will use HTTPS to connect to the Vite Dev Server. Default value is `false`.    |
-| `Vite:Server:ScriptName`       | The script name to run the Vite Dev Server. Default value is `dev`.                                    |
-| `Vite:Server:TimeOutInSeconds` | The timeout in seconds spent waiting for the vite dev server (between 0 and 60). Default is `3`        |
-
+| Property                 | Description                                                                                            |
+| ------------------------ | ------------------------------------------------------------------------------------------------------ |
+| `Vite:PackageManager`    | The name of the package manager to use. Default value is `npm`.                                        |
+| `Vite:WorkingDirectory`  | The working directory where your package.json file is located. Default value is the content root path. |
+| `Vite:Server:AutoRun`    | Enable or disable the automatic start of the Vite Dev Server. Default value is `true`.                 |
+| `Vite:Server:TimeOut`    | The timeout in seconds spent waiting for the vite dev server. Default is `5`                           |
+| `Vite:Server:Port`       | The port where the Vite Dev Server will be running. Default value is `5173`.                           |
+| `Vite:Server:UseHttps`   | If true, the middleware will use HTTPS to connect to the Vite Dev Server. Default value is `false`.    |
+| `Vite:Server:ScriptName` | The script name to run the Vite Dev Server. Default value is `dev`.                                    |
 
 See the following example.
 
