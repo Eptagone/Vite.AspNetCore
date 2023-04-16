@@ -15,7 +15,7 @@ This library has three simple but very useful features:
 - A service to access the Vite manifest.
 - Tag Helpers for script and link tags.
 
-## Installation
+## Setup
 
 Install the package from NuGet.
 
@@ -23,7 +23,7 @@ Install the package from NuGet.
 dotnet add package Vite.AspNetCore
 ```
 
-Add the following line to your `Program.cs` or `Startup` class.
+Add the following lines to your `Program.cs` or `Startup` class.
 
 ```CSharp
 using Vite.AspNetCore.Extensions;
@@ -141,10 +141,10 @@ Now you can use the `vite-src` and `vite-href` attributes in your scripts and li
 
 This tag helpers will do the following magic:
 
-- If the middleware is enabled:
-  - If the link tag is a script (you wnat to include css from a script entrypoint), the link tag will just disappear. This is because Vite loads the styles automatically by including the script.
+- Middleware is enabled:
+  - If the link tag is a script (you want to include css from a script entrypoint), the link tag will just disappear. This is because Vite loads the styles automatically by including the script.
   - If the script of the vite client is not included, it will be added automatically.
-- If the middleware is disabled:
+- Middleware is disabled:
   - The link and script tags will be rendered using the original paths taken from the manifest. The value of the `vite-href` and `vite-src` attributes will be used as the entrypoint to access the manifest.
 
 The rendered HTML when the middleware is enabled will look like this.

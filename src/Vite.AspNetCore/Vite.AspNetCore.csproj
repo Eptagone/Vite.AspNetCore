@@ -17,7 +17,8 @@
 		<PackageLicenseFile>LICENSE</PackageLicenseFile>
 		<PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
 		<Version>1.5.0</Version>
-		<PackageReleaseNotes>Added new tag helpers</PackageReleaseNotes>
+		<PackageReleaseNotes>Added new tag helpers
+AutoRun is now disabled by default</PackageReleaseNotes>
 	</PropertyGroup>
 
 	<!-- Add ASP.NET Core references -->
