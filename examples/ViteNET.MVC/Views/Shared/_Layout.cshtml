@@ -5,23 +5,17 @@
 	<link rel="icon" type="image/svg+xml" href="/vite.svg" />
 	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 	<title>@ViewData["Title"]</title>
-	<environment include="Production">
-		<link rel="stylesheet" vite-href="main.css" asp-append-version="true" />	
-	</environment>
+
+	@* This line includes the style from the "main.ts" entrypoint *@
+	<link rel="stylesheet" vite-href="~/main.ts" asp-append-version="true" />
 </head>
 <body>
 	<main role="main" id="app">
 		@RenderBody()
 	</main>
 
-	<environment include="Development">
-		<!-- Vite development server script -->
-		<vite-client />
-		<script type="module" src="~/main.ts"></script>
-	</environment>
-	<environment include="Production">
-		<script type="module" vite-src="main.ts" asp-append-version="true"></script>
-	</environment>
+	<!-- This line includes your "main.ts" entrypoint -->
+	<script type="module" vite-src="~/main.ts" asp-append-version="true"></script>
 
 	@await RenderSectionAsync("Scripts", required: false)
 </body>

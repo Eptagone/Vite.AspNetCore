@@ -5,19 +5,10 @@ using Vite.AspNetCore.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add Vite service to the builder
-builder.Services.AddViteManifest();
-
 // Add services to the container.
 builder.Services.AddRazorPages();
-
-if (builder.Environment.IsDevelopment())
-{
-	// Add the Vite Middleware service.
-	builder.Services.AddViteDevMiddleware();
-}
-// Add the Vite Manifest Service.
-builder.Services.AddViteManifest();
+// Add the Vite services.
+builder.Services.AddViteServices();
 
 var app = builder.Build();
 

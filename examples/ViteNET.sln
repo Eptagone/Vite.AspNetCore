@@ -19,7 +19,12 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Vite.AspNetCore.Abstraction
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ViteNET.MVC", "ViteNET.MVC\ViteNET.MVC.csproj", "{E3779E61-F5BD-41E7-A045-5CC54C7EACAA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ViteNET.BlazorServer", "ViteNET.BlazorServer\ViteNET.BlazorServer.csproj", "{B4744B19-C9D3-4133-8EA9-68AA2BD95BA9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ViteNET.BlazorServer", "ViteNET.BlazorServer\ViteNET.BlazorServer.csproj", "{B4744B19-C9D3-4133-8EA9-68AA2BD95BA9}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{C8FAB824-AD1A-49D0-AF27-891801D6030A}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

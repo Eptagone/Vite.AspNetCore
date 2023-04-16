@@ -105,6 +105,9 @@ export default defineConfig(async () => {
 				clientPort: appsettingsDev.Vite.Server.Port
 			}
 		},
+		optimizeDeps: {
+			include: []
+		}
 	}
 
 	return config;

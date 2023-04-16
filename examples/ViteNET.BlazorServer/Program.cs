@@ -8,14 +8,8 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
-
-if (builder.Environment.IsDevelopment())
-{
-	// Add the Vite Middleware service.
-	builder.Services.AddViteDevMiddleware();
-}
-// Add the Vite Manifest Service.
-builder.Services.AddViteManifest();
+// Add the Vite services.
+builder.Services.AddViteServices();
 
 var app = builder.Build();
 

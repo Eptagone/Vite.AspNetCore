@@ -5,26 +5,25 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using System.Diagnostics;
 
-namespace ViteNET.RazorPages.Pages
+namespace ViteNET.RazorPages.Pages;
+
+[ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+[IgnoreAntiforgeryToken]
+public class ErrorModel : PageModel
 {
-	[ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-	[IgnoreAntiforgeryToken]
-	public class ErrorModel : PageModel
+	public string? RequestId { get; set; }
+
+	public bool ShowRequestId => !string.IsNullOrEmpty(this.RequestId);
+
+	private readonly ILogger<ErrorModel> _logger;
+
+	public ErrorModel(ILogger<ErrorModel> logger)
 	{
-		public string? RequestId { get; set; }
+		this._logger = logger;
+	}
 
-		public bool ShowRequestId => !string.IsNullOrEmpty(RequestId);
-
-		private readonly ILogger<ErrorModel> _logger;
-
-		public ErrorModel(ILogger<ErrorModel> logger)
-		{
-			_logger = logger;
-		}
-
-		public void OnGet()
-		{
-			RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier;
-		}
+	public void OnGet()
+	{
+		this.RequestId = Activity.Current?.Id ?? this.HttpContext.TraceIdentifier;
 	}
 }

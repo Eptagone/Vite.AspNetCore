@@ -10,9 +10,10 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 	<link rel="icon" type="image/svg+xml" href="/vite.svg" />
 	<base href="~/" />
-	<environment include="Production">
-		<link rel="stylesheet" vite-href="main.css" asp-append-version="true" />
-	</environment>
+
+	@* This line includes the style from the "main.ts" entrypoint *@
+	<link rel="stylesheet" vite-href="~/main.ts" asp-append-version="true" />
+
 	<component type="typeof(HeadOutlet)" render-mode="ServerPrerendered" />
 </head>
 <body>
@@ -33,13 +34,7 @@
 
 	<script src="_framework/blazor.server.js"></script>
 
-	<environment include="Development">
-		<!-- Vite development server script -->
-		<vite-client/>
-		<script type="module" vite-src="main.ts"></script>
-	</environment>
-	@*<environment include="Production">
-		<script type="module" src="@Manifest["main.ts"]!.File" asp-append-version="true"></script>
-	</environment>*@
+	<!-- This line includes your "main.ts" entrypoint -->
+	<script type="module" vite-src="~/main.ts" asp-append-version="true"></script>
 </body>
 </html>

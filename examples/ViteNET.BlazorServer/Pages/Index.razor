@@ -32,7 +32,7 @@
 	{
 		if (firstRender)
 		{
-			var counterModulePath = Environment.IsDevelopment()
+			var counterModulePath = ViteStatusService.IsDevServerRunning
 				? "./counter.ts"
 				: $"./{Manifest["counter.ts"]!.File}";
 			var module = await JS.InvokeAsync<IJSObjectReference>("import", counterModulePath);

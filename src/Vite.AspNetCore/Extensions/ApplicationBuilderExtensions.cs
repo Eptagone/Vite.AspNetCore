@@ -4,23 +4,27 @@
 using Microsoft.AspNetCore.Builder;
 using Vite.AspNetCore.Services;
 
-namespace Vite.AspNetCore.Extensions
+namespace Vite.AspNetCore.Extensions;
+
+/// <summary>
+/// Vite extension methods for <see cref="IApplicationBuilder"/>.
+/// </summary>
+public static class ApplicationBuilderExtensions
 {
 	/// <summary>
-	/// Vite extension methods for <see cref="IApplicationBuilder"/>.
+	/// Registers the <b>Vite Dev Server</b> as the Static File Middleware.
+	/// <para>
+	/// Note that <b>this method will not work</b> if the Vite Dev Server is not running.
+	/// </para>
 	/// </summary>
-	public static class ApplicationBuilderExtensions
+	/// <param name="app">The <see cref="IApplicationBuilder"/> instance this method extends.</param>
+	/// <returns>The <see cref="IApplicationBuilder"/> instance this method extends.</returns>
+	/// <exception cref="ArgumentNullException"></exception>
+	public static IApplicationBuilder UseViteDevMiddleware(this IApplicationBuilder app)
 	{
-		/// <summary>
-		/// Registers the <b>Vite Dev Server</b> as the Static File Middleware.
-		/// <para>
-		/// Note that <b>this method will not work</b> if the Vite Dev Server is not running.
-		/// </para>
-		/// </summary>
-		/// <param name="app">The <see cref="IApplicationBuilder"/> instance this method extends.</param>
-		/// <returns>The <see cref="IApplicationBuilder"/> instance this method extends.</returns>
-		/// <exception cref="ArgumentNullException"></exception>
-		public static IApplicationBuilder UseViteDevMiddleware(this IApplicationBuilder app)
-			=> app.UseMiddleware<ViteDevMiddleware>();
+		// Set the IsMiddlewareRegistered flag to true.
+		ViteStatusService.IsMiddlewareRegistered = true;
+		// Register the middleware and return the app.
+		return app.UseMiddleware<ViteDevMiddleware>();
 	}
 }

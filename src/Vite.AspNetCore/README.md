@@ -8,11 +8,40 @@ This library offers integration with [ViteJS](https://vitejs.dev/) to be used in
 
 ## Features
 
-This library has two simple but useful features:
+This library has three simple but very useful features:
 
 - A Middleware to forward the requests to the Vite Dev Server
-  - The middleware can start the Vite Dev Server for you ❤️.
-- A service to access the Vite manifest
+  - The middleware can be start the Vite Dev Server for you ❤️.
+- A service to access the Vite manifest.
+- Tag Helpers for script and link tags.
+
+## Installation
+
+Install the package from NuGet.
+
+```PowerShell
+dotnet add package Vite.AspNetCore
+```
+
+Add the following line to your `Program.cs` or `Startup` class.
+
+```CSharp
+using Vite.AspNetCore.Extensions;
+
+// ---- Service Configuration ----
+// Add Vite services.
+builder.Services.AddViteServices();
+
+// ---- App Configuration ----
+// Use Middleware in development environment.
+if (app.Environment.IsDevelopment())
+{
+    // Enable the Middleware to use the Vite Development Server.
+    app.UseViteDevMiddleware();
+}
+```
+
+## Usage
 
 ### The Vite Middleware
 
@@ -33,9 +62,9 @@ The [common way](https://vitejs.dev/guide/backend-integration.html) to access **
 </environment>
 ```
 
-This can be a problem in some circumstances. Service workers, for example, cannot be properly tested in this way and if you're using preprocessors like SASS, you've probably noticed that your 'url()'s aren't resolved correctly during development. Also, the developer would have to prepare two ways to access the public assets in the different environments. But don't worry, this middleware will solve all of those problems for you.
+Having to set up two ways to access public assets in different environments doesn't look very good. It can also be a problem in some circumstances. Service workers, for example, cannot be properly tested this way and if you are using preprocessors like SASS, you have probably noticed that your 'url()'s are not resolved correctly during development. But don't worry, this middleware will solve all those problems for you.
 
-By using the vite middleware during development, you don't need to pass the dev server URL. You can use aspnet paths as usual.
+By using the vite middleware during development, you don't need to pass the development server URL. You can use aspnet paths as usual.
 
 ```HTML
 <!-- Entry point for development -->
@@ -50,26 +79,7 @@ By using the vite middleware during development, you don't need to pass the dev 
 
 The middleware will proxy all requests to the Vite Dev server. You won't need alternative paths for images or other resources from your public assets. 🙀🙀🙀
 
-Enable the middleware by adding these lines to your `Program.cs` or `Startup` class.
-
-```CSharp
-using Vite.AspNetCore.Extensions;
-// ---- Service Configuration ----
-if (builder.Environment.IsDevelopment())
-{
-    // Add the Vite Middleware service.
-    builder.Services.AddViteDevMiddleware();
-}
-// ...
-// ---- App Configuration ----
-if (app.Environment.IsDevelopment())
-{
-    // Use Vite Dev Server as middleware.
-    app.UseViteDevMiddleware();
-}
-```
-
-> **Note:** By default, the middleware will start the Vite Dev Server for you. But remember, you need to have your package.json file in your project root folder. Disable this feature by setting the `Vite:Server:AutoRun` property to `false`. You'll need to start the Vite Dev Server manually before running your application.
+> **Note:** The middleware can start the Vite Development Server for you. Enable this feature by setting the `Vite:Server:AutoRun` property to `true`. But remember, you need to have your `package.json` file in your project root folder.
 
 ### The Vite Manifest
 
@@ -90,37 +100,76 @@ By using the Vite Manifest service, you can access the manifest in your applicat
 </environment>
 ```
 
-You can also access the Vite manifest by using the tag helpers included in the package. Be sure to add the following in your `_ViewImports.cshtml`
+You can also inject the manifest service in your controllers or services. See the following example.
 
+```CSharp
+public class HomeController : Controller
+{
+    private readonly IViteManifest _manifest;
+
+    public HomeController(IViteManifest manifest)
+    {
+        _manifest = manifest;
+    }
+
+    public IActionResult Index()
+    {
+        var mainFile = _manifest["main.ts"]?.File;
+        return View();
+    }
+}
 ```
+
+### Tag Helpers
+
+Do you want to render your entrypoint scripts and styles in the simplest way possible? You can use the special tag helpers provided by this library. First, add the following line to your `_ViewImports.cshtml` file.
+
+```CSHTML
 @addTagHelper *, Vite.AspNetCore
 ```
 
-Followed by using the `vite-manifest` attribute on `<script>` and `link` tags.
+Now you can use the `vite-src` and `vite-href` attributes in your scripts and links. See the following example.
 
 ```HTML
-<link rel="stylesheet" vite-manifest="main.css" asp-append-version="true" />
-<script type="module" vite-manifest="main.ts" asp-append-version="true"></script>
+<!-- This line includes your styles entrypoints -->
+<link rel="stylesheet" vite-href="~/main.ts" />
+
+<!-- This line includes your "main.ts" and "secondary.ts" entrypoints -->
+<script type="module" vite-src="~/main.ts" asp-append-version="true"></script>
+<script type="module" vite-src="~/secondary.ts"></script>
 ```
 
-You even has access to a `vite-client` tag, which outputs the necessary client script tag.
+This tag helpers will do the following magic:
 
-```html
-<vite-client />
-<!-- Is equivalent to -->
-<script type="module" src="~/@@vite/client"></script>
+- If the middleware is enabled:
+  - If the link tag is a script (you wnat to include css from a script entrypoint), the link tag will just disappear. This is because Vite loads the styles automatically by including the script.
+  - If the script of the vite client is not included, it will be added automatically.
+- If the middleware is disabled:
+  - The link and script tags will be rendered using the original paths taken from the manifest. The value of the `vite-href` and `vite-src` attributes will be used as the entrypoint to access the manifest.
+
+The rendered HTML when the middleware is enabled will look like this.
+
+```HTML
+<!-- This line includes your styles entrypoints -->
+
+<!-- This line includes your "main.ts" and "secondary.ts" entrypoints -->
+<script type="module" src="/@vite/client"></script>
+<script type="module" src="/main.ts"></script>
+<script type="module" src="/secondary.ts"></script>
 ```
 
-Enable the service by adding these lines to your `Program.cs` or `Startup` class. 👍
+And the rendered HTML when the middleware is disabled will look like this.
 
-```CSharp
-using Vite.AspNetCore.Extensions;
-// ---- Service Configuration ----
-// Add the Vite Manifest Service.
-builder.Services.AddViteManifest();
+```HTML
+<!-- This line includes your styles entrypoints -->
+<link rel="stylesheet" href="/css/main.css" />
+
+<!-- This line includes your "main.ts" and "secondary.ts" entrypoints -->
+<script type="module" src="/js/main.js?v=bosLkDB4bJV3qdsFksYZdubiZvMYj_vuJXBs3vz-nc0"></script>
+<script type="module" src="/js/secondary.js"></script>
 ```
 
-> **Note:** Don't forget to build your assets. Otherwise, the manifest file won't be available.
+> **Note:** The final paths and filenames depend on how you set it in your `vite.config.ts` file.
 
 ## Configuration
 
@@ -141,15 +190,14 @@ By default, the manifest name is `manifest.json` and it's expected to be in the 
 
 You can change the configuration for the middleware by overriding the following properties. ⚙️
 
-| Property                 | Description                                                                                            |
-| ------------------------ | ------------------------------------------------------------------------------------------------------ |
-| `Vite:PackageManager`    | The name of the package manager to use. Default value is `npm`.                                        |
-| `Vite:WorkingDirectory`  | The working directory where your package.json file is located. Default value is the content root path. |
-| `Vite:Server:AutoRun`    | Enable or disable the automatic start of the Vite Dev Server. Default value is `true`.                 |
-| `Vite:Server:TimeOut`    | The timeout in seconds spent waiting for the vite dev server. Default is `5`                           |
-| `Vite:Server:Port`       | The port where the Vite Dev Server will be running. Default value is `5173`.                           |
-| `Vite:Server:UseHttps`   | If true, the middleware will use HTTPS to connect to the Vite Dev Server. Default value is `false`.    |
-| `Vite:Server:ScriptName` | The script name to run the Vite Dev Server. Default value is `dev`.                                    |
+| Property                 | Description                                                                                         |
+| ------------------------ | --------------------------------------------------------------------------------------------------- |
+| `Vite:PackageManager`    | The name of the package manager to use. Default value is `npm`.                                     |
+| `Vite:Server:AutoRun`    | Enable or disable the automatic start of the Vite Dev Server. Default value is `false`.             |
+| `Vite:Server:TimeOut`    | The timeout in seconds spent waiting for the vite dev server. Default is `5`                        |
+| `Vite:Server:Port`       | The port where the Vite Dev Server will be running. Default value is `5173`.                        |
+| `Vite:Server:UseHttps`   | If true, the middleware will use HTTPS to connect to the Vite Dev Server. Default value is `false`. |
+| `Vite:Server:ScriptName` | The script name to run the Vite Dev Server. Default value is `dev`.                                 |
 
 See the following example.
 
@@ -158,6 +206,8 @@ See the following example.
 {
     "Vite": {
         "Server": {
+            // Enable the automatic start of the Vite Dev Server. The default value is false.
+            "AutoRun": true,
             // The port where the Vite Dev Server will be running. The default value is 5173.
             "Port": 5174,
             // If true, the middleware will use HTTPS to connect to the Vite Dev Server. The default value is false.

@@ -16,7 +16,7 @@ const baseFolder =
 	process.env.APPDATA !== undefined && process.env.APPDATA !== ''
 		? `${process.env.APPDATA}/ASP.NET/https`
 		: `${process.env.HOME}/.aspnet/https`;
-
+		
 // Generate the certificate name using the NPM package name
 const certificateName = process.env.npm_package_name;
 
@@ -105,6 +105,9 @@ export default defineConfig(async () => {
 				clientPort: appsettingsDev.Vite.Server.Port
 			}
 		},
+		optimizeDeps: {
+			include: []
+		}
 	}
 
 	return config;

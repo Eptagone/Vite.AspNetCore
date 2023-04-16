@@ -16,8 +16,8 @@
 		<PackageTags>Vite;ASP.NET;ViteJS;ViteServer;Server;Middleware;Assets;</PackageTags>
 		<PackageLicenseFile>LICENSE</PackageLicenseFile>
 		<PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
-		<Version>1.4.1</Version>
-		<PackageReleaseNotes>- When AutoRun is enabled, the middleware will wait for development server.</PackageReleaseNotes>
+		<Version>1.5.0</Version>
+		<PackageReleaseNotes>Added new tag helpers</PackageReleaseNotes>
 	</PropertyGroup>
 
 	<!-- Add ASP.NET Core references -->
