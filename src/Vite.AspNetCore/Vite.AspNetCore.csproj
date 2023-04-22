@@ -9,7 +9,6 @@
 		<Copyright>Quetzal Rivera 2023 ©</Copyright>
 		<Description>Small library to integrate ViteJs into ASP.NET projects</Description>
 		<EnforceCodeStyleInBuild>False</EnforceCodeStyleInBuild>
-		<PackageId>Vite.AspNetCore</PackageId>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<PackageIcon>vite.png</PackageIcon>
 		<RepositoryUrl>https://github.com/Eptagone/Vite.AspNetCore</RepositoryUrl>
@@ -20,7 +19,6 @@
 		<PackageReleaseNotes>
 			Fixed an issue with NodeScriptRunner Dispose
 		</PackageReleaseNotes>
-		<IsPackable>true</IsPackable>
 	</PropertyGroup>
 
 	<!-- Add ASP.NET Core references -->
@@ -30,10 +28,6 @@
 
 	<ItemGroup>
 		<PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1">
-			<PrivateAssets>all</PrivateAssets>
-			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-		</PackageReference>
-		<PackageReference Include="MinVer" Version="4.3.0">
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>

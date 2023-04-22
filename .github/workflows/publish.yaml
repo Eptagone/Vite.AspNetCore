@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: ./src/Vite.AspNetCore
+        working-directory: ./src
 
     steps:
       - uses: actions/checkout@v3
