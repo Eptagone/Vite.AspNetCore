@@ -16,10 +16,14 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
+
       - name: Setup .NET
         uses: actions/setup-dotnet@v1
         with:
           dotnet-version: 6.0.x
+          # Filepath of the project to be packaged, relative to root of repository
+          PROJECT_FILE_PATH: src/Vite.AspNetCore/Vite.AspNetCore.csproj
+          
       - name: Restore dependencies
         run: dotnet restore
       - name: Build

@@ -2,28 +2,35 @@ name: Publish
 
 on:
   push:
+    branches:
+      - main # Default release branch
     tags:
       - "**"
 
 jobs:
-  build:
+  publish:
+    name: build, pack & publish
     runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@v2
+
       - name: Setup .NET
         uses: actions/setup-dotnet@v1
         with:
           dotnet-version: 6.0.x
+          # Filepath of the project to be packaged, relative to root of repository
+          PROJECT_FILE_PATH: src/Vite.AspNetCore/Vite.AspNetCore.csproj
+      
       - name: Restore dependencies
         run: dotnet restore
       - name: Build
-        run: dotnet build --no-restore -c Release
+        run: dotnet build -c Release
       - name: Test
         run: dotnet test -c Release --no-build --verbosity normal
       - name: Pack
         run: dotnet pack -c Release -o ./nupkgs --no-build
       - name: Publish
         env:
-          NUGET_AUTH_TOKEN: ${{ secrets.NUGET_API_KEY }}
+          NUGET_AUTH_TOKEN: ${{ secrets.NUGET_AUTH_TOKEN }}
         run: dotnet nuget push ./nupkgs/*.nupkg --api-key ${{ env.NUGET_AUTH_TOKEN }}  --skip-duplicate -s https://api.nuget.org/v3/index.json
