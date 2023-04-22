@@ -16,10 +16,9 @@
 		<PackageTags>Vite;ASP.NET;ViteJS;ViteServer;Server;Middleware;Assets;</PackageTags>
 		<PackageLicenseFile>LICENSE</PackageLicenseFile>
 		<PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
-		<Version>1.5.0</Version>
+		<Version>1.5.1</Version>
 		<PackageReleaseNotes>
-			Added new tag helpers
-			AutoRun is now disabled by default
+			Fixed an issue with NodeScriptRunner Dispose
 		</PackageReleaseNotes>
 		<IsPackable>true</IsPackable>
 	</PropertyGroup>
