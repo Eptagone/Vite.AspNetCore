@@ -4,12 +4,12 @@
 		<TargetFramework>net6.0</TargetFramework>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
-		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
 		<Title>Vite for ASPNET</Title>
 		<Authors>Quetzal Rivera</Authors>
 		<Copyright>Quetzal Rivera 2023 ©</Copyright>
 		<Description>Small library to integrate ViteJs into ASP.NET projects</Description>
 		<EnforceCodeStyleInBuild>False</EnforceCodeStyleInBuild>
+		<PackageId>Vite.AspNetCore</PackageId>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<PackageIcon>vite.png</PackageIcon>
 		<RepositoryUrl>https://github.com/Eptagone/Vite.AspNetCore</RepositoryUrl>
@@ -17,34 +17,48 @@
 		<PackageLicenseFile>LICENSE</PackageLicenseFile>
 		<PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
 		<Version>1.5.0</Version>
-		<PackageReleaseNotes>Added new tag helpers
-AutoRun is now disabled by default</PackageReleaseNotes>
+		<PackageReleaseNotes>
+			Added new tag helpers
+			AutoRun is now disabled by default
+		</PackageReleaseNotes>
+		<IsPackable>true</IsPackable>
 	</PropertyGroup>
 
 	<!-- Add ASP.NET Core references -->
 	<ItemGroup>
 		<FrameworkReference Include="Microsoft.AspNetCore.App" />
 	</ItemGroup>
-	
+
 	<ItemGroup>
-	  <None Include="..\..\docs\vite.png">
-	    <Pack>True</Pack>
-	    <PackagePath>\</PackagePath>
-	  </None>
-	  <None Include="..\..\LICENSE">
-	    <Pack>True</Pack>
-	    <PackagePath>\</PackagePath>
-	  </None>
+		<PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+		<PackageReference Include="MinVer" Version="4.3.0">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
 	</ItemGroup>
-	
+
 	<ItemGroup>
-	  <ProjectReference Include="..\Vite.AspNetCore.Abstractions\Vite.AspNetCore.Abstractions.csproj" />
+		<None Include="..\..\docs\vite.png">
+			<Pack>True</Pack>
+			<PackagePath>\</PackagePath>
+		</None>
+		<None Include="..\..\LICENSE">
+			<Pack>True</Pack>
+			<PackagePath>\</PackagePath>
+		</None>
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\Vite.AspNetCore.Abstractions\Vite.AspNetCore.Abstractions.csproj" />
 	</ItemGroup>
 	<ItemGroup>
-	  <None Update="README.md">
-	    <Pack>True</Pack>
-	    <PackagePath>\</PackagePath>
-	  </None>
+		<None Update="README.md">
+			<Pack>True</Pack>
+			<PackagePath>\</PackagePath>
+		</None>
 	</ItemGroup>
 
 </Project>
