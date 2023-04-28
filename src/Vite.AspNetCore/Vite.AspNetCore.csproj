@@ -15,9 +15,9 @@
 		<PackageTags>Vite;ASP.NET;ViteJS;ViteServer;Server;Middleware;Assets;</PackageTags>
 		<PackageLicenseFile>LICENSE</PackageLicenseFile>
 		<PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
-		<Version>1.5.1</Version>
+		<Version>1.5.2</Version>
 		<PackageReleaseNotes>
-			Fixed an issue with NodeScriptRunner Dispose
+			Fixed an issue with Tag Helpers
 		</PackageReleaseNotes>
 	</PropertyGroup>
 

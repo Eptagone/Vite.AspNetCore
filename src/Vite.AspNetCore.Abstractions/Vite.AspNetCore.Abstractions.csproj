@@ -8,7 +8,6 @@
 		<Authors>Quetzal Rivera</Authors>
 		<Copyright>Quetzal Rivera 2023 ©</Copyright>
 		<Description>Abstractions for Vite.AspNetCore</Description>
-		<PackageId>Vite.AspNetCore.Abstractions</PackageId>
 		<PackageIcon>vite.png</PackageIcon>
 		<RepositoryUrl>https://github.com/Eptagone/Vite.AspNetCore</RepositoryUrl>
 		<PackageTags>Vite;ASP.NET;ViteJS;Assets;Abstractions</PackageTags>

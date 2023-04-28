@@ -151,7 +151,7 @@ public class ViteTagHelper : TagHelper
 				}
 
 				// Get the file path from the 'manifest.json' file
-				file = urlHelper.Content(cssFiles!.First());
+				file = urlHelper.Content("~/" + cssFiles!.First());
 
 				// TODO: Require revision
 				// If the entrypoint has more than one css file, render all styles.
@@ -175,7 +175,7 @@ public class ViteTagHelper : TagHelper
 			else
 			{
 				// Get the real file path from the 'manifest.json' file
-				file = urlHelper.Content(entry.File);
+				file = urlHelper.Content("~/" + entry.File);
 			}
 		}
 
