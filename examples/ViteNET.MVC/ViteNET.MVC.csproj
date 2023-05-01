@@ -7,11 +7,23 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+	  <Content Remove="package-lock.json" />
+	  <Content Remove="package.json" />
+	  <Content Remove="tsconfig.json" />
+	</ItemGroup>
+
+	<ItemGroup>
 		<ProjectReference Include="..\..\src\Vite.AspNetCore\Vite.AspNetCore.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>
 	  <Folder Include="wwwroot\" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <None Include="package-lock.json" />
+	  <None Include="package.json" />
+	  <None Include="tsconfig.json" />
 	</ItemGroup>
 
 	<!-- Ensure Node environment on Build -->
