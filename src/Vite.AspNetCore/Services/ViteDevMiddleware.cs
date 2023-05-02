@@ -92,6 +92,31 @@ public class ViteDevMiddleware : IMiddleware, IDisposable
 			return;
 		}
 
+		// If the request doesn't have an endpoint, the request path is not null and the request method is GET, proxy the request to the Vite Development Server.
+		if (context.GetEndpoint() == null && context.Request.Path.HasValue && context.Request.Method == HttpMethod.Get.Method)
+		{
+			// Get the request path
+			var path = context.Request.Path.Value;
+			// Proxy the request to the Vite Dev Server.
+			await this.ProxyAsync(context, next, path);
+		}
+		// If the request path is null, call the next middleware.
+		else
+		{
+			await next(context);
+		}
+	}
+
+	/// <summary>
+	/// Proxies the request to the Vite Dev Server.
+	/// </summary>
+	/// <param name="context">The <see cref="HttpContext"/> instance.</param>
+	/// <param name="path">The request path.</param>
+	/// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
+	private async Task ProxyAsync(HttpContext context, RequestDelegate next, string path)
+	{
+		using HttpClient client = new() { BaseAddress = new Uri(this._viteServerBaseUrl) };
+
 		// If the waitForDevServer flag is true, wait for the Vite development server to start.
 		if (this.waitForDevServer)
 		{
@@ -116,31 +141,6 @@ public class ViteDevMiddleware : IMiddleware, IDisposable
 				this.waitForDevServer = false;
 			}
 		}
-
-		// If the request path is not null, process.
-		if (context.Request.Path.HasValue)
-		{
-			// Get the request path
-			var path = context.Request.Path.Value;
-			// Proxy the request to the Vite Dev Server.
-			await this.ProxyAsync(context, next, path);
-		}
-		// If the request path is null, call the next middleware.
-		else
-		{
-			await next(context);
-		}
-	}
-
-	/// <summary>
-	/// Proxies the request to the Vite Dev Server.
-	/// </summary>
-	/// <param name="context">The <see cref="HttpContext"/> instance.</param>
-	/// <param name="path">The request path.</param>
-	/// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
-	private async Task ProxyAsync(HttpContext context, RequestDelegate next, string path)
-	{
-		using HttpClient client = new() { BaseAddress = new Uri(this._viteServerBaseUrl) };
 
 		try
 		{

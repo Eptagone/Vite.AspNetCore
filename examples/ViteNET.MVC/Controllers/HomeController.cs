@@ -26,4 +26,12 @@ public class HomeController : Controller
 	{
 		return this.View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? this.HttpContext.TraceIdentifier });
 	}
+
+	[HttpGet("/hello")]
+	[HttpPost("/hello")]
+	public IActionResult Hello()
+	{
+		string randomString = Guid.NewGuid().ToString();
+		return this.Ok($"Hello World! GUID: {randomString}");
+	}
 }

@@ -11,7 +11,13 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Folder Include="wwwroot\" />
+		<Content Remove="package-lock.json" />
+		<Content Remove="package.json" />
+		<Content Remove="tsconfig.json" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Folder Include="wwwroot\" />
 	</ItemGroup>
 
 	<!-- Ensure Node environment on Build -->

@@ -12,13 +12,9 @@ builder.Services.AddViteServices();
 
 var app = builder.Build();
 
-if (app.Environment.IsDevelopment())
-{
-	// Use Vite Dev Server as middleware.
-	app.UseViteDevMiddleware();
-}
 // Configure the HTTP request pipeline.
-else
+
+if (!app.Environment.IsDevelopment())
 {
 	app.UseExceptionHandler("/Home/Error");
 	// The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
@@ -29,11 +25,16 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
-
 app.UseAuthorization();
 
 app.MapControllerRoute(
 	name: "default",
 	pattern: "{controller=Home}/{action=Index}/{id?}");
+
+if (app.Environment.IsDevelopment())
+{
+	// Use Vite Dev Server as middleware.
+	app.UseViteDevMiddleware();
+}
 
 app.Run();
