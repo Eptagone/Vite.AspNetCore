@@ -2,6 +2,7 @@
 // Licensed under the MIT License, See LICENCE in the project root for license information.
 
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Vite.AspNetCore.Abstractions;
 using Vite.AspNetCore.Services;
 
@@ -33,11 +34,12 @@ public static class ServiceCollectionExtensions
 		ServiceLifetime optionsLifetime = ServiceLifetime.Singleton)
 		where T : class, IViteManifest
 	{
-		services.AddScoped<ViteStatusService>();
+		services.TryAddScoped<ViteStatusService>();
 		ServiceDescriptor descriptor = new(typeof(IViteManifest), typeof(T), optionsLifetime);
 		services.Add(descriptor);
-		return services.AddSingleton<ViteDevMiddleware>();
-	}
+		services.TryAddSingleton<ViteDevMiddleware>();
+		return services;
+    }
 
 	/// <summary>
 	/// Adds the Vite Middleware service to the service collection.
@@ -48,12 +50,13 @@ public static class ServiceCollectionExtensions
 	{
 		if (!IsStatusServiceAdded)
 		{
-			services.AddScoped<ViteStatusService>();
+			services.TryAddScoped<ViteStatusService>();
 			IsStatusServiceAdded = true;
 		}
 
-		return services.AddSingleton<ViteDevMiddleware>();
-	}
+		services.TryAddSingleton<ViteDevMiddleware>();
+		return services;
+    }
 
 	/// <summary>
 	/// Adds the Vite Manifest Service to the service collection.
@@ -75,7 +78,7 @@ public static class ServiceCollectionExtensions
 	{
 		if (!IsStatusServiceAdded)
 		{
-			services.AddScoped<ViteStatusService>();
+			services.TryAddScoped<ViteStatusService>();
 			IsStatusServiceAdded = true;
 		}
 
