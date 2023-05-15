@@ -1,6 +1,7 @@
 ﻿// Copyright (c) 2023 Quetzal Rivera.
 // Licensed under the MIT License, See LICENCE in the project root for license information.
 
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
@@ -31,7 +32,7 @@ public sealed class ViteManifest : IViteManifest
 		{
 			if (_warnAboutManifestOnce)
 			{
-				logger.LogInformation("The manifest file won't be read because the middleware is enabled. The service will always return null chunks.");
+				logger.LogInformation("The manifest file won't be read because the middleware is enabled. The service will always return null chunks");
 				_warnAboutManifestOnce = false;
 			}
 
@@ -54,8 +55,8 @@ public sealed class ViteManifest : IViteManifest
 			// Read the manifest.json file and deserialize it into a dictionary
 			this._chunks = JsonSerializer.Deserialize<IReadOnlyDictionary<string, ViteChunk>>(File.ReadAllBytes(manifestPath), new JsonSerializerOptions()
 			{
-				PropertyNameCaseInsensitive = true,
-			})!;
+				PropertyNameCaseInsensitive = true
+            })!;
 		}
 		else
 		{
@@ -83,13 +84,13 @@ public sealed class ViteManifest : IViteManifest
 		{
 			if (ViteStatusService.IsMiddlewareRegistered)
 			{
-				this._logger.LogWarning("Attempted to get a record from the manifest file while the Vite development server is activated. Null was returned.");
+				this._logger.LogWarning("Attempted to get a record from the manifest file while the Vite development server is activated. Null was returned");
 				return null;
 			}
 
 			if (!this._chunks.TryGetValue(key, out var chunk))
 			{
-				this._logger.LogWarning("The chunk '{Key}' was not found.", key);
+				this._logger.LogWarning("The chunk '{Key}' was not found", key);
 				return chunk;
 			}
 
