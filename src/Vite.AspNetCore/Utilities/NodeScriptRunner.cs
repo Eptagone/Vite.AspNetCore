@@ -14,15 +14,12 @@ internal sealed class NodeScriptRunner : IDisposable
 {
     private readonly ILogger _logger;
     private readonly Process? _npmProcess;
-    private readonly NodeStreamReader _stdOutReader;
-    private readonly NodeStreamReader _stdErrorReader;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="NodeScriptRunner"/> class.
     /// </summary>
 	public NodeScriptRunner(ILogger logger, string pkgManagerCommand, string scriptName, string workingDirectory, CancellationToken cancellationToken = default)
     {
-        this._logger = logger;
         // If the package manager command is null or empty, throw an exception.
         if (string.IsNullOrEmpty(pkgManagerCommand))
         {
@@ -38,6 +35,8 @@ internal sealed class NodeScriptRunner : IDisposable
         {
             throw new ArgumentNullException(nameof(workingDirectory), "The working directory cannot be null or empty.");
         }
+        
+        this._logger = logger;
 
         // Set the command to run.
         var exeToRun = pkgManagerCommand;
@@ -70,6 +69,7 @@ internal sealed class NodeScriptRunner : IDisposable
             process.EnableRaisingEvents = true;
             // Save the process.
             this._npmProcess = process;
+            this._logger.LogDebug("NPM Process Id: {ProcessId}", process.Id);
         }
         // If an exception is thrown, throw a new exception.
         catch (Exception ex)
@@ -79,8 +79,9 @@ internal sealed class NodeScriptRunner : IDisposable
         }
 
         // Create the stream readers.
-        this._stdOutReader = new NodeStreamReader(logger, this._npmProcess.StandardOutput, cancellationToken);
-		this._stdErrorReader = new NodeStreamReader(logger, this._npmProcess.StandardError, cancellationToken: cancellationToken);
+        this.StdOutReader = new NodeStreamReader(_logger, this._npmProcess.StandardOutput, cancellationToken: cancellationToken);
+        // disabling logging from the offset, and allow caller to enable it when they are ready
+		this.StdErrorReader = new NodeStreamReader(_logger, this._npmProcess.StandardError, LogLevel.Error, cancellationToken: cancellationToken) { IsLoggingEnabled = false };
 
         cancellationToken.Register(((IDisposable)this).Dispose);
     }
@@ -88,7 +89,9 @@ internal sealed class NodeScriptRunner : IDisposable
     /// <summary>
     /// The standard output reader.
     /// </summary>
-    public NodeStreamReader StdOutReader => this._stdOutReader;
+    public NodeStreamReader StdOutReader { get; }
+
+    public NodeStreamReader StdErrorReader { get; }
 
     /// <summary>
     /// The standard error reader.
@@ -97,9 +100,11 @@ internal sealed class NodeScriptRunner : IDisposable
     void IDisposable.Dispose()
     {
         // If the process is not null, kill it (which disposes as well)
-        if (this._npmProcess != null && !this._npmProcess.HasExited)
+        if (this._npmProcess is { HasExited: false })
         {
+            var processId = this._npmProcess.Id;
             this._npmProcess.Kill(entireProcessTree: true);
+            this._logger.LogDebug("NPM: killed {Pid}", processId);
         }
     }
 }
