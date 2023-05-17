@@ -6,27 +6,37 @@ namespace Vite.AspNetCore;
 /// <summary>
 /// Options for the Vite Dev Server.
 /// </summary>
-public class ViteServerOptions
+public record ViteServerOptions
 {
 	public const string Server = "Server";
+
 	/// <summary>
 	/// The port where the Vite Dev Server will be running. Default value is "5173".
 	/// </summary>
-	public ushort Port { get; set; } = 5173;
+	public ushort Port { get; init; } = 5173;
+
+	/// <summary>
+	/// Use with AutoRun to kill the port before starting the Vite Development Server. Default value is "false".
+	/// </summary>
+	public bool KillPort { get; init; } = false;
+
 	/// <summary>
 	/// If true, the middleware will use HTTPS to connect to the Vite Dev Server. Default value is "false".
 	/// </summary>
-	public bool Https { get; set; } = false;
+	public bool Https { get; init; }
+
 	/// <summary>
 	/// Enable or disable the automatic start of the Vite Dev Server. Default value is "false".
 	/// </summary>
-	public bool AutoRun { get; set; } = false;
+	public bool AutoRun { get; init; } = false;
+
 	/// <summary>
 	/// The script name to run the Vite Dev Server. Default value is "dev".
 	/// </summary>
-	public string ScriptName { get; set; } = "dev";
+	public string ScriptName { get; init; } = "dev";
+
 	/// <summary>
 	/// Wait for Vite Server to load in seconds. Default value is "5".
 	/// </summary>
-	public int TimeOut { get; set; } = 5;
+	public int TimeOut { get; init; } = 5;
 }

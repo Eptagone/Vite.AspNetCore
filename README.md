@@ -82,6 +82,8 @@ By using the vite middleware during development, you don't need to pass the deve
 The middleware will proxy all requests to the Vite Dev server. You won't need alternative paths for images or other resources from your public assets. 🙀🙀🙀
 
 > **Note:** The middleware can start the Vite Development Server for you. Enable this feature by setting the `Vite:Server:AutoRun` property to `true`. But remember, you need to have your `package.json` file in your project root folder.
+>
+> It's possible that while using the `AutoRun` option, the Vite Development Server keeps running after you stop the application. If this happens, try to enable the `Vite:Server:KillPort` option to kill the port before a new process starts.
 
 ### The Vite Manifest
 
@@ -192,14 +194,15 @@ By default, the manifest name is `manifest.json` and it's expected to be in the 
 
 You can change the configuration for the middleware by overriding the following properties. ⚙️
 
-| Property                 | Description                                                                                         |
-| ------------------------ | --------------------------------------------------------------------------------------------------- |
-| `Vite:PackageManager`    | The name of the package manager to use. Default value is `npm`.                                     |
-| `Vite:Server:AutoRun`    | Enable or disable the automatic start of the Vite Dev Server. Default value is `false`.             |
-| `Vite:Server:TimeOut`    | The timeout in seconds spent waiting for the vite dev server. Default is `5`                        |
-| `Vite:Server:Port`       | The port where the Vite Dev Server will be running. Default value is `5173`.                        |
-| `Vite:Server:UseHttps`   | If true, the middleware will use HTTPS to connect to the Vite Dev Server. Default value is `false`. |
-| `Vite:Server:ScriptName` | The script name to run the Vite Dev Server. Default value is `dev`.                                 |
+| Property                 | Description                                                                                                            |
+| ------------------------ | ---------------------------------------------------------------------------------------------------------------------- |
+| `Vite:PackageManager`    | The name of the package manager to use. Default value is `npm`.                                                        |
+| `Vite:Server:AutoRun`    | Enable or disable the automatic start of the Vite Dev Server. Default value is `false`.                                |
+| `Vite:Server:KillPort`   | Use with `Vite:Server:AutoRun` to kill the port before starting the Vite Development Server. Default value is `false`. |
+| `Vite:Server:TimeOut`    | The timeout in seconds spent waiting for the vite dev server. Default is `5`                                           |
+| `Vite:Server:Port`       | The port where the Vite Dev Server will be running. Default value is `5173`.                                           |
+| `Vite:Server:UseHttps`   | If true, the middleware will use HTTPS to connect to the Vite Dev Server. Default value is `false`.                    |
+| `Vite:Server:ScriptName` | The script name to run the Vite Dev Server. Default value is `dev`.                                                    |
 
 See the following example.
 
