@@ -69,7 +69,7 @@ public class ViteDevMiddleware : IMiddleware, IDisposable
 			if (this._viteOptions.Server.KillPort)
 			{
 				// pre-emptively try to clear the port
-				PidUtils.KillPort(port, true);
+				PidUtils.KillPort(port);
 			}
 
 			// Create a new instance of the NodeScriptRunner class.
@@ -109,7 +109,7 @@ public class ViteDevMiddleware : IMiddleware, IDisposable
 
 					var portNumber = ushort.Parse(portInUse.Groups["port"].Value);
 					logger.LogInformation("The vite development server is already running, attempting to kill previous process at {Port}", portNumber);
-					PidUtils.KillPort(portNumber, true);
+					PidUtils.KillPort(portNumber);
 
 					// attempt to start a new _scriptRunner
 					var nodeScriptRunner = this._scriptRunner;

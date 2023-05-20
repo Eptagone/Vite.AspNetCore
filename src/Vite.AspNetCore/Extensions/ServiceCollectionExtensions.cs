@@ -39,7 +39,7 @@ public static class ServiceCollectionExtensions
 		services.Add(descriptor);
 		services.TryAddSingleton<ViteDevMiddleware>();
 		return services;
-    }
+	}
 
 	/// <summary>
 	/// Adds the Vite Middleware service to the service collection.
@@ -56,7 +56,7 @@ public static class ServiceCollectionExtensions
 
 		services.TryAddSingleton<ViteDevMiddleware>();
 		return services;
-    }
+	}
 
 	/// <summary>
 	/// Adds the Vite Manifest Service to the service collection.

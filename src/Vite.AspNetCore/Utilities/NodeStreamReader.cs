@@ -20,21 +20,21 @@ internal class NodeStreamReader
 	private readonly StringBuilder _linesBuffer;
 
 	private static readonly Regex AnsiColorRegex = new(@"\x1B\[[0-?]*[ -/]*[@-~]", RegexOptions.Compiled);
-    private readonly LogLevel _logLevel;
+	private readonly LogLevel _logLevel;
 
-    public bool IsLoggingEnabled { get; set; } = true;
+	public bool IsLoggingEnabled { get; set; } = true;
 
-    public event OnReceivedLineHandler? OnReceivedLine;
+	public event OnReceivedLineHandler? OnReceivedLine;
 
-    /// <summary>
-    /// Initialize a new instance of the <see cref="NodeStreamReader"/> class.
-    /// </summary>
-    /// <param name="logger">The logger.</param>
-    /// <param name="streamReader">The stream reader.</param>
-    /// <param name="logLevel">The log level of the stream</param>
-    /// <param name="cancellationToken">The cancellation token.</param>
-    /// <exception cref="ArgumentNullException"></exception>
-    public NodeStreamReader(ILogger logger, StreamReader streamReader, LogLevel logLevel = LogLevel.Information, CancellationToken cancellationToken = default)
+	/// <summary>
+	/// Initialize a new instance of the <see cref="NodeStreamReader"/> class.
+	/// </summary>
+	/// <param name="logger">The logger.</param>
+	/// <param name="streamReader">The stream reader.</param>
+	/// <param name="logLevel">The log level of the stream</param>
+	/// <param name="cancellationToken">The cancellation token.</param>
+	/// <exception cref="ArgumentNullException"></exception>
+	public NodeStreamReader(ILogger logger, StreamReader streamReader, LogLevel logLevel = LogLevel.Information, CancellationToken cancellationToken = default)
 	{
 		// Save the logger.
 		this._logger = logger ?? throw new ArgumentNullException(nameof(logger));
@@ -42,8 +42,8 @@ internal class NodeStreamReader
 		this._streamReader = streamReader ?? throw new ArgumentNullException(nameof(streamReader));
 		// Initialize the lines buffer.
 		this._linesBuffer = new StringBuilder();
-        // Log Level
-        this._logLevel = logLevel;
+		// Log Level
+		this._logLevel = logLevel;
 		// Start the task.
 		Task.Factory.StartNew(this.Run, cancellationToken, TaskCreationOptions.DenyChildAttach, TaskScheduler.Default);
 	}
@@ -95,12 +95,12 @@ internal class NodeStreamReader
 	{
 		if (!string.IsNullOrEmpty(line) && !string.IsNullOrWhiteSpace(line) && !line.StartsWith('>'))
 		{
-            if (IsLoggingEnabled)
-            {
-                this._logger.Log(this._logLevel, "{Line}", line);
-            }
-            
-            // Remove the ANSI color codes.
+			if (this.IsLoggingEnabled)
+			{
+				this._logger.Log(this._logLevel, "{Line}", line);
+			}
+
+			// Remove the ANSI color codes.
 			var lineWithoutAnsi = AnsiColorRegex.Replace(line, string.Empty);
 			this.OnReceivedLine?.Invoke(lineWithoutAnsi);
 		}

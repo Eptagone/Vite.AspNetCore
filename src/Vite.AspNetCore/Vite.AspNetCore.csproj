@@ -7,18 +7,16 @@
 		<Title>Vite for ASPNET</Title>
 		<Authors>Quetzal Rivera</Authors>
 		<Copyright>Quetzal Rivera 2023 ©</Copyright>
-		<Description>Small library to integrate ViteJs into ASP.NET projects</Description>
+		<Description>A lightweight library for integrating ViteJs into ASP.NET MPA projects.</Description>
 		<EnforceCodeStyleInBuild>False</EnforceCodeStyleInBuild>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<PackageIcon>vite.png</PackageIcon>
 		<RepositoryUrl>https://github.com/Eptagone/Vite.AspNetCore</RepositoryUrl>
-		<PackageTags>Vite;ASP.NET;ViteJS;ViteServer;Server;Middleware;Assets;</PackageTags>
+		<PackageTags>Vite;ViteJS;AspNet;MPA;Middleware;Server;Assets;Mvc;WebPages</PackageTags>
 		<PackageLicenseFile>LICENSE</PackageLicenseFile>
 		<PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
 		<Version>1.6.0</Version>
-		<PackageReleaseNotes>
-			The vite middleware will no longer call the proxy when an endpoint is present
-		</PackageReleaseNotes>
+		<PackageReleaseNotes>The middleware now has the option to kill the port before starting a new instance of the vite development server.	</PackageReleaseNotes>
 	</PropertyGroup>
 
 	<!-- Add ASP.NET Core references -->

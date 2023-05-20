@@ -10,7 +10,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		.editorconfig = .editorconfig
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Vite.AspNetCore.Abstractions", "Vite.AspNetCore.Abstractions\Vite.AspNetCore.Abstractions.csproj", "{D355474E-1922-48EA-B07F-E0FCDC771A26}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Vite.AspNetCore.Abstractions", "Vite.AspNetCore.Abstractions\Vite.AspNetCore.Abstractions.csproj", "{D355474E-1922-48EA-B07F-E0FCDC771A26}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Lib", "Lib", "{5197DD7A-B360-46BC-B27B-282852D7ECB4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -29,6 +31,10 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{D725263E-8A8C-41C9-9EF9-5790BE463F40} = {5197DD7A-B360-46BC-B27B-282852D7ECB4}
+		{D355474E-1922-48EA-B07F-E0FCDC771A26} = {5197DD7A-B360-46BC-B27B-282852D7ECB4}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {9898E7A5-84C0-4564-8DF9-8122742A1100}

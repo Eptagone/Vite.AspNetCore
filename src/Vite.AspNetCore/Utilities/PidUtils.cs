@@ -8,113 +8,116 @@ using System.Text.RegularExpressions;
 namespace Vite.AspNetCore.Utilities;
 
 /// <summary>
-/// Ported from the VueCliMiddleware package
-/// https://github.com/EEParker/aspnetcore-vueclimiddleware/blob/3ddb5cac717bbf39642b34f9b04b1828616fc5e5/src/VueCliMiddleware/Util/KillPort.cs#L203
+/// Provides utility methods for working with process IDs and ports.
+/// This class is based on the <a href="https://github.com/EEParker/aspnetcore-vueclimiddleware/blob/3ddb5cac717bbf39642b34f9b04b1828616fc5e5/src/VueCliMiddleware/Util/KillPort.cs#L203">PidUtils class from the VueCliMiddleware package</a>.
 /// </summary>
 internal static class PidUtils
 {
 	const string ssPidRegex = @"(?:^|"",|"",pid=)(\d+)";
 
+	/// <summary>
+	/// Gets the process ID associated with a port.
+	/// </summary>
+	/// <param name="port">The port number.</param>
+	/// <returns>The process ID associated with the port, or -1 if no process was found.</returns>
 	internal static int GetPortPid(ushort port)
 	{
-		var pidOut = -1;
-
+		var processId = -1;
 		var portColumn = 1; // windows
-		var pidColumn = 4; // windows
-		string? pidRegex = null;
+		var processIdColumn = 4; // windows
+		string? processIdRegex = null;
 
-		List<string[]> results;
+		var results = RuntimeInformation.IsOSPlatform(OSPlatform.OSX) switch
+		{
+			true => RunProcessReturnOutputSplit("netstat", "-anv -p tcp")
+				.Concat(RunProcessReturnOutputSplit("netstat", "-anv -p udp"))
+				.ToList(),
+			_ => RuntimeInformation.IsOSPlatform(OSPlatform.Linux) switch
+			{
+				true => RunProcessReturnOutputSplit("ss", "-tunlp"),
+				_ => RunProcessReturnOutputSplit("netstat", "-ano")
+			}
+		};
+
 		if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
 		{
-			results = RunProcessReturnOutputSplit("netstat", "-anv -p tcp");
-			results.AddRange(RunProcessReturnOutputSplit("netstat", "-anv -p udp"));
 			portColumn = 3;
-			pidColumn = 8;
+			processIdColumn = 8;
 		}
 		else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
 		{
-			results = RunProcessReturnOutputSplit("ss", "-tunlp");
 			portColumn = 4;
-			pidColumn = 6;
-			pidRegex = ssPidRegex;
+			processIdColumn = 6;
+			processIdRegex = ssPidRegex;
 		}
-		else
-		{
-			results = RunProcessReturnOutputSplit("netstat", "-ano");
-		}
-
 
 		foreach (var line in results)
 		{
-			if (line.Length <= portColumn || line.Length <= pidColumn) continue;
-			try
-			{
-				// split lines to words
-				var portMatch = Regex.Match(line[portColumn], $"[.:]({port})");
-				if (portMatch.Success)
-				{
-					var portValue = int.Parse(portMatch.Groups[1].Value);
+			if (line.Length <= portColumn || line.Length <= processIdColumn) continue;
+			var portMatch = Regex.Match(line[portColumn], $"[.:]({port})");
+			if (!portMatch.Success) continue;
 
-					if (pidRegex == null)
-					{
-						pidOut = int.Parse(line[pidColumn]);
-						return pidOut;
-					}
-					else
-					{
-						var pidMatch = Regex.Match(line[pidColumn], pidRegex);
-						if (pidMatch.Success)
-						{
-							pidOut = int.Parse(pidMatch.Groups[1].Value);
-						}
-					}
+			if (int.TryParse(portMatch.Groups[1].Value, out var portValue))
+			{
+				if (processIdRegex == null)
+				{
+					if (int.TryParse(line[processIdColumn], out processId)) return processId;
+				}
+				else
+				{
+					var pidMatch = Regex.Match(line[processIdColumn], processIdRegex);
+					if (pidMatch.Success && int.TryParse(pidMatch.Groups[1].Value, out processId)) return processId;
 				}
 			}
-			catch (Exception)
-			{
-				// ignore line error
-			}
 		}
 
-		return pidOut;
+		return processId;
 	}
 
+	/// <summary>
+	/// Runs a process with the specified arguments and returns its output as a list of string arrays,
+	/// where each string array represents the words in a line of the output.
+	/// </summary>
+	/// <param name="fileName">The name of the process to run.</param>
+	/// <param name="arguments">The arguments to pass to the process.</param>
+	/// <returns>A list of string arrays representing the words in each line of the process output.</returns>
 	private static List<string[]> RunProcessReturnOutputSplit(string fileName, string arguments)
 	{
-		var result = RunProcessReturnOutput(fileName, arguments);
-		if (result == null) return new List<string[]>();
-
-		string[] lines = result.Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
-		var lineWords = new List<string[]>();
-		foreach (var line in lines)
-		{
-			lineWords.Add(line.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries));
-		}
-
-		return lineWords;
+		var result = RunProcessReturnOutput(fileName, arguments) ?? string.Empty;
+		var lines = result.Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
+		return lines.Select(line => line.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries)).ToList();
 	}
 
+	/// <summary>
+	/// Runs a process with the specified arguments and returns its output as a string.
+	/// </summary>
+	/// <param name="fileName">The name of the process to run.</param>
+	/// <param name="arguments">The arguments to pass to the process.</param>
+	/// <returns>The output of the process as a string, or null if an error occurred.</returns>
 	private static string? RunProcessReturnOutput(string fileName, string arguments)
 	{
-		Process? process = null;
 		try
 		{
-			var si = new ProcessStartInfo(fileName, arguments)
+			using var process = new Process
 			{
-				UseShellExecute = false,
-				RedirectStandardOutput = true,
-				RedirectStandardError = true,
-				CreateNoWindow = true
+				StartInfo = new ProcessStartInfo(fileName, arguments)
+				{
+					UseShellExecute = false,
+					RedirectStandardOutput = true,
+					RedirectStandardError = true,
+					CreateNoWindow = true
+				}
 			};
 
-			process = Process.Start(si)!;
-			var stdOutT = process.StandardOutput.ReadToEndAsync();
-			var stdErrorT = process.StandardError.ReadToEndAsync();
+			process.Start();
+			var standardOutputTask = process.StandardOutput.ReadToEndAsync();
+			var standardErrorTask = process.StandardError.ReadToEndAsync();
+
 			if (!process.WaitForExit(10000))
 			{
 				try
 				{
-					process?.Kill();
+					process.Kill();
 				}
 				catch
 				{
@@ -122,10 +125,9 @@ internal static class PidUtils
 				}
 			}
 
-			if (Task.WaitAll(new Task[] { stdOutT, stdErrorT }, 10000))
+			if (Task.WaitAll(new[] { standardOutputTask, standardErrorTask }, 10000))
 			{
-				// if success, return data
-				return $"{stdOutT.Result}{Environment.NewLine}{stdErrorT}".Trim();
+				return $"{standardOutputTask.Result}{Environment.NewLine}{standardErrorTask}".Trim();
 			}
 
 			return null;
@@ -134,62 +136,35 @@ internal static class PidUtils
 		{
 			return null;
 		}
-		finally
-		{
-			process?.Close();
-		}
 	}
 
-	internal static bool Kill(string process, bool ignoreCase = true, bool force = false, bool tree = true)
+	/// <summary>
+	/// Kills the process associated with a port.
+	/// </summary>
+	/// <param name="port">The port number.</param>
+	/// <returns>True if the process was killed successfully, false otherwise.</returns>
+	internal static bool KillPort(ushort port)
 	{
-		var args = new List<string>();
+		// The process ID of the process to kill.
+		var pid = GetPortPid(port);
+		if (pid == -1) return false;
+
+		var arguments = new List<string>();
 		try
 		{
-			if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+			if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX) || RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
 			{
-				if (force)
-				{
-					args.Add("-9");
-				}
-
-				if (ignoreCase)
-				{
-					args.Add("-i");
-				}
-
-				args.Add(process);
-				RunProcessReturnOutput("pkill", string.Join(" ", args));
-			}
-			else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
-			{
-				if (force)
-				{
-					args.Add("-9");
-				}
-
-				if (ignoreCase)
-				{
-					args.Add("-I");
-				}
-
-				args.Add(process);
-				RunProcessReturnOutput("killall", string.Join(" ", args));
+				arguments.Add("-9");
+				arguments.Add(pid.ToString());
+				RunProcessReturnOutput("kill", string.Join(" ", arguments));
 			}
 			else
 			{
-				if (force)
-				{
-					args.Add("/f");
-				}
-
-				if (tree)
-				{
-					args.Add("/T");
-				}
-
-				args.Add("/im");
-				args.Add(process);
-				return RunProcessReturnOutput("taskkill", string.Join(" ", args))?.StartsWith("SUCCESS") ?? false;
+				arguments.Add("/f");
+				arguments.Add("/T");
+				arguments.Add("/PID");
+				arguments.Add(pid.ToString());
+				return RunProcessReturnOutput("taskkill", string.Join(" ", arguments))?.StartsWith("SUCCESS") ?? false;
 			}
 
 			return true;
@@ -201,64 +176,4 @@ internal static class PidUtils
 
 		return false;
 	}
-
-	internal static bool Kill(int pid, bool force = false, bool tree = true)
-	{
-		if (pid == -1)
-		{
-			return false;
-		}
-
-		var args = new List<string>();
-		try
-		{
-			if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
-			{
-				if (force)
-				{
-					args.Add("-9");
-				}
-
-				args.Add(pid.ToString());
-				RunProcessReturnOutput("kill", string.Join(" ", args));
-			}
-			else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
-			{
-				if (force)
-				{
-					args.Add("-9");
-				}
-
-				args.Add(pid.ToString());
-				RunProcessReturnOutput("kill", string.Join(" ", args));
-			}
-			else
-			{
-				if (force)
-				{
-					args.Add("/f");
-				}
-
-				if (tree)
-				{
-					args.Add("/T");
-				}
-
-				args.Add("/PID");
-				args.Add(pid.ToString());
-				return RunProcessReturnOutput("taskkill", string.Join(" ", args))?.StartsWith("SUCCESS") ?? false;
-			}
-
-			return true;
-		}
-		catch (Exception)
-		{
-			// ignored
-		}
-
-		return false;
-	}
-
-	internal static bool KillPort(ushort port, bool force = false, bool tree = true) =>
-		Kill(GetPortPid(port), force: force, tree: tree);
 }

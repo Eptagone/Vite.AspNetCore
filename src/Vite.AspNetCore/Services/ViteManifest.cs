@@ -1,7 +1,6 @@
 ﻿// Copyright (c) 2023 Quetzal Rivera.
 // Licensed under the MIT License, See LICENCE in the project root for license information.
 
-using System.Diagnostics.CodeAnalysis;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
@@ -56,7 +55,7 @@ public sealed class ViteManifest : IViteManifest
 			this._chunks = JsonSerializer.Deserialize<IReadOnlyDictionary<string, ViteChunk>>(File.ReadAllBytes(manifestPath), new JsonSerializerOptions()
 			{
 				PropertyNameCaseInsensitive = true
-            })!;
+			})!;
 		}
 		else
 		{
