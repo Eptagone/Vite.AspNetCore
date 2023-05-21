@@ -15,8 +15,9 @@
 		<PackageTags>Vite;ViteJS;AspNet;MPA;Middleware;Server;Assets;Mvc;WebPages</PackageTags>
 		<PackageLicenseFile>LICENSE</PackageLicenseFile>
 		<PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
-		<Version>1.6.0</Version>
-		<PackageReleaseNotes>The middleware now has the option to kill the port before starting a new instance of the vite development server.	</PackageReleaseNotes>
+		<Version>1.6.1</Version>
+		<PackageReleaseNotes>The middleware now has the option to kill the port before starting a new instance of the vite development server.
+All the options are optional</PackageReleaseNotes>
 	</PropertyGroup>
 
 	<!-- Add ASP.NET Core references -->
