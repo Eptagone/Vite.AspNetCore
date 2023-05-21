@@ -10,8 +10,8 @@ This library offers integration with [ViteJS](https://vitejs.dev/) to be used in
 
 This library has three simple but very useful features:
 
-- A Middleware to forward the requests to the Vite Dev Server
-  - The middleware can be start the Vite Dev Server for you ❤️.
+- A Middleware to forward the requests to the Vite Development Server
+  - The middleware can be start the Vite Development Server for you ❤️.
 - A service to access the Vite manifest.
 - Tag Helpers for script and link tags.
 
@@ -45,7 +45,7 @@ if (app.Environment.IsDevelopment())
 
 ### The Vite Middleware
 
-The [common way](https://vitejs.dev/guide/backend-integration.html) to access **Vite Dev Server** assets in your application is by using the following template, specifying the local URL where Vite Server is running.
+The [common way](https://vitejs.dev/guide/backend-integration.html) to access **Vite Development Server** assets in your application is by using the following template, specifying the local URL where Vite Server is running.
 
 ```HTML
 <!-- Entry point for development -->
@@ -77,7 +77,7 @@ By using the vite middleware during development, you don't need to pass the deve
 <img src="~/assets/logo.svg" alt="Vite Logo" />
 ```
 
-The middleware will proxy all requests to the Vite Dev server. You won't need alternative paths for images or other resources from your public assets. 🙀🙀🙀
+The middleware will proxy all requests to the Vite Development Server. You won't need alternative paths for images or other resources from your public assets. 🙀🙀🙀
 
 > **Note:** The middleware can start the Vite Development Server for you. Enable this feature by setting the `Vite:Server:AutoRun` property to `true`. But remember, you need to have your `package.json` file in your project root folder.
 >
@@ -198,9 +198,9 @@ You can change the configuration for the middleware by overriding the following 
 | `Vite:Server:AutoRun`    | Enable or disable the automatic start of the Vite Dev Server. Default value is `false`.                                |
 | `Vite:Server:KillPort`   | Use with `Vite:Server:AutoRun` to kill the port before starting the Vite Development Server. Default value is `false`. |
 | `Vite:Server:TimeOut`    | The timeout in seconds spent waiting for the vite dev server. Default is `5`                                           |
-| `Vite:Server:Port`       | The port where the Vite Dev Server will be running. Default value is `5173`.                                           |
-| `Vite:Server:UseHttps`   | If true, the middleware will use HTTPS to connect to the Vite Dev Server. Default value is `false`.                    |
-| `Vite:Server:ScriptName` | The script name to run the Vite Dev Server. Default value is `dev`.                                                    |
+| `Vite:Server:Port`       | The port where the Vite Development Server will be running. Default value is `5173`.                                   |
+| `Vite:Server:UseHttps`   | If true, the middleware will use HTTPS to connect to the Vite Development Server. Default value is `false`.            |
+| `Vite:Server:ScriptName` | The script name to run the Vite Development Server. Default value is `dev`.                                            |
 
 See the following example.
 
@@ -209,11 +209,11 @@ See the following example.
 {
     "Vite": {
         "Server": {
-            // Enable the automatic start of the Vite Dev Server. The default value is false.
+            // Enable the automatic start of the Vite Development Server. The default value is false.
             "AutoRun": true,
-            // The port where the Vite Dev Server will be running. The default value is 5173.
+            // The port where the Vite Development Server will be running. The default value is 5173.
             "Port": 5174,
-            // If true, the middleware will use HTTPS to connect to the Vite Dev Server. The default value is false.
+            // If true, the middleware will use HTTPS to connect to the Vite Development Server. The default value is false.
             "UseHttps": false,
         }
     }

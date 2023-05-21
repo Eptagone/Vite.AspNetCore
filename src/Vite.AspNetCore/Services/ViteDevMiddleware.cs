@@ -46,7 +46,9 @@ public class ViteDevMiddleware : IMiddleware, IDisposable
 		// Set the logger.
 		this._logger = logger;
 		// Read the Vite options from the configuration.
-		this._viteOptions = configuration.GetSection(ViteOptions.Vite).Get<ViteOptions>();
+		this._viteOptions = configuration
+			.GetSection(ViteOptions.Vite)
+			.Get<ViteOptions>() ?? new ViteOptions();
 		// Get the port from the configuration.
 		var port = this._viteOptions.Server.Port;
 		// Check if https is enabled.
