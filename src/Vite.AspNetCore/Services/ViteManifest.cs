@@ -40,7 +40,9 @@ public sealed class ViteManifest : IViteManifest
 		}
 
 		// Read the Vite options from the configuration.
-		var viteOptions = configuration.GetSection(ViteOptions.Vite).Get<ViteOptions>();
+		var viteOptions = configuration
+			.GetSection(ViteOptions.Vite)
+			.Get<ViteOptions>() ?? new ViteOptions();
 
 		// Read tha name of the manifest file from the configuration.
 		var manifest = viteOptions.Manifest;
