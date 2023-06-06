@@ -49,12 +49,13 @@ public class ViteDevMiddleware : IMiddleware, IDisposable
 		this._viteOptions = configuration
 			.GetSection(ViteOptions.Vite)
 			.Get<ViteOptions>() ?? new ViteOptions();
-		// Get the port from the configuration.
+		// Get the port and host from the configuration.
 		var port = this._viteOptions.Server.Port;
-		// Check if https is enabled.
-		var https = this._viteOptions.Server.Https;
+        var host = this._viteOptions.Server.Host;
+        // Check if https is enabled.
+        var https = this._viteOptions.Server.Https;
 		// Build the base url.
-		this._viteServerBaseUrl = $"{(https ? "https" : "http")}://localhost:{port}";
+		this._viteServerBaseUrl = $"{(https ? "https" : "http")}://{host}:{port}";
 
 		// Prepare and run the Vite Dev Server if AutoRun is true and the middleware is enabled.
 		if (this._viteOptions.Server.AutoRun && ViteStatusService.IsMiddlewareRegistered)

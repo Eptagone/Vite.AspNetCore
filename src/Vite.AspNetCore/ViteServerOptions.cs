@@ -15,10 +15,15 @@ public record ViteServerOptions
 	/// </summary>
 	public ushort Port { get; init; } = 5173;
 
-	/// <summary>
-	/// Use with AutoRun to kill the port before starting the Vite Development Server. Default value is "false".
-	/// </summary>
-	public bool KillPort { get; init; } = false;
+    /// <summary>
+    /// The host where the Vite Dev Server will be running. Default value is "localhost".
+    /// </summary>
+    public string Host { get; init; } = "localhost";
+
+    /// <summary>
+    /// Use with AutoRun to kill the port before starting the Vite Development Server. Default value is "false".
+    /// </summary>
+    public bool KillPort { get; init; } = false;
 
 	/// <summary>
 	/// If true, the middleware will use HTTPS to connect to the Vite Dev Server. Default value is "false".
