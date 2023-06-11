@@ -183,7 +183,7 @@ I suggest using `appsettings.json` and/or `appsettings.Development.json` files. 
 
 By default, the manifest name is `manifest.json` and it's expected to be in the web root folder. If your manifest file has a different name, you can change it by setting the `Vite:Manifest` property.
 
-```JSON
+```JSONC
 // appsettings.json
 {
     "Vite": {
@@ -194,7 +194,7 @@ By default, the manifest name is `manifest.json` and it's expected to be in the 
 
 You can also change the configuration for the middleware as follows.
 
-```JSON
+```JSONC
 // appsettings.Development.json
 {
     "Vite": {
