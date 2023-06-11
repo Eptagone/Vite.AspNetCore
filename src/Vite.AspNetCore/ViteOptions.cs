@@ -17,7 +17,7 @@ public record ViteOptions
 
 	/// <summary>
 	/// The subfolder where your assets will be located, including the manifest file.
-	/// This value is relative to the content root path.
+	/// This value is relative to the web root path.
 	/// </summary>
 	public string? Base { get; init; }
 

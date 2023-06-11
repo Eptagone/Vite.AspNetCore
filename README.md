@@ -215,7 +215,7 @@ And there are more options that you can change. All the available options are li
 | Property                 | Description                                                                                                            |
 | ------------------------ | ---------------------------------------------------------------------------------------------------------------------- |
 | `Vite:Manifest`          | The manifest file name. Default is `manifest.json`.                                                                    |
-| `Vite:Base`              | The subfolder where your assets will be located, including the manifest file, relative to the content root path.       |
+| `Vite:Base`              | The subfolder where your assets will be located, including the manifest file, relative to the web root path.           |
 | `Vite:PackageManager`    | The name of the package manager to use. Default value is `npm`.                                                        |
 | `Vite:Server:AutoRun`    | Enable or disable the automatic start of the Vite Dev Server. Default value is `false`.                                |
 | `Vite:Server:Port`       | The port where the Vite Development Server will be running. Default value is `5173`.                                   |
