@@ -14,8 +14,12 @@ namespace Vite.AspNetCore.Services;
 /// </summary>
 public sealed class ViteManifest : IViteManifest
 {
+	// The logger is used to log messages.
 	private readonly ILogger<ViteManifest> _logger;
+	// The chunks dictionary is used to store the chunks read from the manifest.json file.
 	private readonly IReadOnlyDictionary<string, ViteChunk> _chunks;
+	// The base path is used to resolve the chunks paths.
+	private readonly string? _base;
 
 	private static bool _warnAboutManifestOnce = true;
 
@@ -40,15 +44,18 @@ public sealed class ViteManifest : IViteManifest
 		}
 
 		// Read the Vite options from the configuration.
-		var viteOptions = configuration
+		ViteOptions viteOptions = ViteStatusService.Options ?? configuration
 			.GetSection(ViteOptions.Vite)
 			.Get<ViteOptions>() ?? new ViteOptions();
 
 		// Read tha name of the manifest file from the configuration.
 		var manifest = viteOptions.Manifest;
 
+		// If the manifest file is in a subfolder, get the subfolder path.
+		this._base = viteOptions.Base?.TrimStart('/');
+
 		// Get the manifest.json file path
-		var manifestPath = Path.Combine(environment.WebRootPath, manifest);
+		var manifestPath = Path.Combine(environment.WebRootPath, this._base ?? "", manifest);
 
 		// If the manifest.json file exists, deserialize it into a dictionary.
 		if (File.Exists(manifestPath))
@@ -58,6 +65,39 @@ public sealed class ViteManifest : IViteManifest
 			{
 				PropertyNameCaseInsensitive = true
 			})!;
+
+			// If the base path is not null, add it to the chunks keys and values.
+			if (!string.IsNullOrEmpty(this._base))
+			{
+				// Create a new dictionary.
+				var chunks = new Dictionary<string, ViteChunk>();
+
+				// Iterate through the chunks.
+				foreach (var chunk in this._chunks)
+				{
+					// Add the base path to the key.
+					var key = Path.Combine(this._base, chunk.Key);
+
+					// Add the base path to the value.
+					var value = chunk.Value with
+					{
+						Css = chunk.Value.Css?.Select(css => Path.Combine(this._base, css)),
+						File = Path.Combine(this._base, chunk.Value.File),
+						Imports = chunk.Value.Imports?.Select(imports => Path.Combine(this._base, imports)),
+						Src = string.IsNullOrEmpty(chunk.Value.Src) ? null : Path.Combine(this._base, chunk.Value.Src),
+						Assets = chunk.Value.Assets?.Select(assets => Path.Combine(this._base, assets)),
+						DynamicImports = chunk.Value.DynamicImports?.Select(dynamicImports => Path.Combine(this._base, dynamicImports)),
+						IsDynamicEntry = chunk.Value.IsDynamicEntry,
+						IsEntry = chunk.Value.IsEntry,
+					};
+
+					// Add the chunk to the dictionary.
+					chunks.Add(key, value);
+				}
+
+				// Replace the chunks dictionary.
+				this._chunks = chunks;
+			}
 		}
 		else
 		{
@@ -89,10 +129,10 @@ public sealed class ViteManifest : IViteManifest
 				return null;
 			}
 
+			// Try to get the chunk from the dictionary.
 			if (!this._chunks.TryGetValue(key, out var chunk))
 			{
 				this._logger.LogWarning("The chunk '{Key}' was not found", key);
-				return chunk;
 			}
 
 			return chunk;

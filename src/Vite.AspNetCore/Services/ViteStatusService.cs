@@ -12,6 +12,12 @@ public sealed class ViteStatusService
 	/// This property is used to determine if the Vite Development Server is expected to be running.
 	/// </summary>
 	public static bool IsDevServerRunning { get; internal set; } = false;
+
+	/// <summary>
+	/// Vite configuration options.
+	/// </summary>
+	internal static ViteOptions? Options { get; set; }
+
 	internal static bool IsMiddlewareRegistered { get; set; } = false;
 	internal bool IsDevScriptInserted { get; set; }
 

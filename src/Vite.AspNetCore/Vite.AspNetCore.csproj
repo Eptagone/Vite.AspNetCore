@@ -15,8 +15,9 @@
 		<PackageTags>Vite;ViteJS;AspNet;MPA;Middleware;Server;Assets;Mvc;WebPages</PackageTags>
 		<PackageLicenseFile>LICENSE</PackageLicenseFile>
 		<PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
-		<Version>1.6.2</Version>
-		<PackageReleaseNotes>Default options for ViteManifest fixed</PackageReleaseNotes>
+		<Version>1.7.0</Version>
+		<PackageReleaseNotes>Support for custom host and custom output directories.
+Configuration options can now be specified from the code.</PackageReleaseNotes>
 	</PropertyGroup>
 
 	<!-- Add ASP.NET Core references -->

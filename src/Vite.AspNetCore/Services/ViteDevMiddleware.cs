@@ -46,14 +46,14 @@ public class ViteDevMiddleware : IMiddleware, IDisposable
 		// Set the logger.
 		this._logger = logger;
 		// Read the Vite options from the configuration.
-		this._viteOptions = configuration
+		this._viteOptions = ViteStatusService.Options ?? configuration
 			.GetSection(ViteOptions.Vite)
 			.Get<ViteOptions>() ?? new ViteOptions();
 		// Get the port and host from the configuration.
 		var port = this._viteOptions.Server.Port;
-        var host = this._viteOptions.Server.Host;
-        // Check if https is enabled.
-        var https = this._viteOptions.Server.Https;
+		var host = this._viteOptions.Server.Host;
+		// Check if https is enabled.
+		var https = this._viteOptions.Server.Https;
 		// Build the base url.
 		this._viteServerBaseUrl = $"{(https ? "https" : "http")}://{host}:{port}";
 
@@ -65,7 +65,7 @@ public class ViteDevMiddleware : IMiddleware, IDisposable
 			// Gets the package manager command.
 			var pkgManagerCommand = this._viteOptions.PackageManager;
 			// Gets the working directory.
-			var workingDirectory = this._viteOptions.WorkingDirectory ?? environment.ContentRootPath;
+			var workingDirectory = environment.ContentRootPath;
 			// Gets the script name.= to run the Vite Dev Server.
 			var scriptName = this._viteOptions.Server.ScriptName;
 

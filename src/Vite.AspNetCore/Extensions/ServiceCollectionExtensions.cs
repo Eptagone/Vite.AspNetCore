@@ -10,17 +10,55 @@ namespace Vite.AspNetCore.Extensions;
 
 public static class ServiceCollectionExtensions
 {
-	// This line is temporary, it will be removed when obsolete methods are removed.
-	private static bool IsStatusServiceAdded = false;
+	/// <summary>
+	/// Adds all Vite services to the service collection. This includes the Vite Manifest Service and the Vite Dev Middleware Service.
+	/// </summary>
+	/// <param name="services">The service collection.</param>
+	/// <param name="options">The Vite configuration options. If null, the default options will be used.</param>
+	/// <param name="optionsLifetime">The lifetime with which to register the Vite Manifest service in the container.</param>
+	public static IServiceCollection AddViteServices(
+		this IServiceCollection services,
+		ViteOptions? options = null,
+		ServiceLifetime optionsLifetime = ServiceLifetime.Singleton)
+	{
+		return services.AddViteServices<ViteManifest>(options, optionsLifetime);
+	}
+
+	/// <summary>
+	/// Adds all Vite services to the service collection. This includes the Vite Manifest Service and the Vite Dev Middleware Service.
+	/// </summary>
+	/// <param name="services">The service collection.</param>
+	/// <param name="options">The Vite configuration options. If null, the default options will be used.</param>
+	/// <param name="optionsLifetime">The lifetime with which to register the Vite Manifest service in the container.</param>
+	public static IServiceCollection AddViteServices<T>(this IServiceCollection services, ViteOptions? options = null, ServiceLifetime optionsLifetime = ServiceLifetime.Singleton)
+		where T : class, IViteManifest
+	{
+		if (options is not null)
+		{
+			ViteStatusService.Options = options;
+		}
+
+		// Add the status service
+		services.TryAddScoped<ViteStatusService>();
+
+		// Add the manifest service
+		ServiceDescriptor descriptor = new(typeof(IViteManifest), typeof(T), optionsLifetime);
+		services.Add(descriptor);
+
+		// Add the middleware for the Vite development server
+		services.TryAddSingleton<ViteDevMiddleware>();
+
+		return services;
+	}
 
 	/// <summary>
 	/// Adds all Vite services to the service collection. This includes the Vite Manifest Service and the Vite Dev Middleware Service.
 	/// </summary>
 	/// <param name="services">The service collection.</param>
 	/// <param name="optionsLifetime">The lifetime with which to register the Vite Manifest service in the container.</param>
-	public static IServiceCollection AddViteServices(this IServiceCollection services, ServiceLifetime optionsLifetime = ServiceLifetime.Singleton)
+	public static IServiceCollection AddViteServices(this IServiceCollection services, ServiceLifetime optionsLifetime)
 	{
-		return services.AddViteServices<ViteManifest>(optionsLifetime);
+		return services.AddViteServices<ViteManifest>(null, optionsLifetime);
 	}
 
 	/// <summary>
@@ -31,60 +69,9 @@ public static class ServiceCollectionExtensions
 	/// <param name="optionsLifetime">The lifetime with which to register the Vite Manifest service in the container.</param>
 	public static IServiceCollection AddViteServices<T>(
 		this IServiceCollection services,
-		ServiceLifetime optionsLifetime = ServiceLifetime.Singleton)
+		ServiceLifetime optionsLifetime)
 		where T : class, IViteManifest
 	{
-		services.TryAddScoped<ViteStatusService>();
-		ServiceDescriptor descriptor = new(typeof(IViteManifest), typeof(T), optionsLifetime);
-		services.Add(descriptor);
-		services.TryAddSingleton<ViteDevMiddleware>();
-		return services;
-	}
-
-	/// <summary>
-	/// Adds the Vite Middleware service to the service collection.
-	/// </summary>
-	/// <param name="services">The service collection.</param>
-	[Obsolete("Use AddViteDevServices instead.")]
-	public static IServiceCollection AddViteDevMiddleware(this IServiceCollection services)
-	{
-		if (!IsStatusServiceAdded)
-		{
-			services.TryAddScoped<ViteStatusService>();
-			IsStatusServiceAdded = true;
-		}
-
-		services.TryAddSingleton<ViteDevMiddleware>();
-		return services;
-	}
-
-	/// <summary>
-	/// Adds the Vite Manifest Service to the service collection.
-	/// </summary>
-	/// <param name="services">The service collection.</param>
-	/// <param name="optionsLifetime">The lifetime with which to register the Vite Manifest service in the container.</param>
-	[Obsolete("Use AddViteDevServices instead.")]
-	public static IServiceCollection AddViteManifest(this IServiceCollection services, ServiceLifetime optionsLifetime = ServiceLifetime.Scoped)
-		=> services.AddViteManifest<ViteManifest>(optionsLifetime);
-
-	/// <summary>
-	/// Adds a custom Vite Manifest Service to the service collection.
-	/// </summary>
-	/// <param name="services">The service collection.</param>
-	/// <param name="optionsLifetime">The lifetime with which to register the Vite Manifest service in the container.</param>
-	[Obsolete("Use AddViteDevServices instead.")]
-	public static IServiceCollection AddViteManifest<TViteManifest>(this IServiceCollection services, ServiceLifetime optionsLifetime)
-		where TViteManifest : class, IViteManifest
-	{
-		if (!IsStatusServiceAdded)
-		{
-			services.TryAddScoped<ViteStatusService>();
-			IsStatusServiceAdded = true;
-		}
-
-		ServiceDescriptor descriptor = new(typeof(IViteManifest), typeof(TViteManifest), optionsLifetime);
-		services.Add(descriptor);
-
-		return services;
+		return services.AddViteServices<T>(null, optionsLifetime);
 	}
 }

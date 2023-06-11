@@ -8,25 +8,26 @@ namespace Vite.AspNetCore;
 /// </summary>
 public record ViteOptions
 {
-    public const string Vite = "Vite";
+	public const string Vite = "Vite";
 
-    /// <summary>
-    /// The manifest file name. Default is "manifest.json".
-    /// </summary>
-    public string Manifest { get; init; } = "manifest.json";
+	/// <summary>
+	/// The manifest file name. Default is "manifest.json".
+	/// </summary>
+	public string Manifest { get; init; } = "manifest.json";
 
-    /// <summary>
-    /// The name of the package manager to use. Default value is "npm".
-    /// </summary>
-    public string PackageManager { get; init; } = "npm";
+	/// <summary>
+	/// The subfolder where your assets will be located, including the manifest file.
+	/// This value is relative to the content root path.
+	/// </summary>
+	public string? Base { get; init; }
 
-    /// <summary>
-    /// The working directory where your package.json file is located. Default value is the content root path.
-    /// </summary>
-    public string? WorkingDirectory { get; init; }
+	/// <summary>
+	/// The name of the package manager to use. Default value is "npm".
+	/// </summary>
+	public string PackageManager { get; init; } = "npm";
 
-    /// <summary>
-    /// Options for the Vite Dev Server.
-    /// </summary>
-    public ViteServerOptions Server { get; init; } = new ViteServerOptions();
+	/// <summary>
+	/// Options for the Vite Dev Server.
+	/// </summary>
+	public ViteServerOptions Server { get; init; } = new ViteServerOptions();
 }

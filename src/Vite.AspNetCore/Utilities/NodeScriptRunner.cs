@@ -30,11 +30,6 @@ internal sealed class NodeScriptRunner : IDisposable
 		{
 			throw new ArgumentNullException(nameof(scriptName), "The script name cannot be null or empty.");
 		}
-		// If the working directory is null or empty, throw an exception.
-		if (string.IsNullOrEmpty(workingDirectory))
-		{
-			throw new ArgumentNullException(nameof(workingDirectory), "The working directory cannot be null or empty.");
-		}
 
 		this._logger = logger;
 
