@@ -15,7 +15,7 @@
 		<PackageTags>Vite;ViteJS;AspNet;MPA;Middleware;Server;Assets;Mvc;WebPages</PackageTags>
 		<PackageLicenseFile>LICENSE</PackageLicenseFile>
 		<PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
-		<Version>1.7.0</Version>
+		<Version>1.7.1</Version>
 		<PackageReleaseNotes>Support for custom host and custom output directories.
 Configuration options can now be specified from the code.</PackageReleaseNotes>
 	</PropertyGroup>
