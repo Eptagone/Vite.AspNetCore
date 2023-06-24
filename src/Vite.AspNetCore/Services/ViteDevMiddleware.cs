@@ -178,6 +178,8 @@ public class ViteDevMiddleware : IMiddleware, IDisposable
 	{
 		using HttpClient client = new() { BaseAddress = new Uri(this._viteServerBaseUrl) };
 
+        PassAcceptHeader(client, context);
+
 		// If the waitForDevServer flag is true, wait for the Vite development server to start.
 		if (this._waitForDevServer)
 		{
@@ -236,7 +238,7 @@ public class ViteDevMiddleware : IMiddleware, IDisposable
 		}
 	}
 
-	void IDisposable.Dispose()
+    void IDisposable.Dispose()
 	{
 		// If the script runner was defined, dispose it.
 		if (this._scriptRunner != null)
@@ -244,4 +246,15 @@ public class ViteDevMiddleware : IMiddleware, IDisposable
 			((IDisposable)this._scriptRunner).Dispose();
 		}
 	}
+    
+    /// <summary>
+    /// Passes "Accept" header from the original request.
+    /// </summary>
+    /// <param name="client">HttpClient to have the default header applied to</param>
+    /// <param name="context">The <see cref="HttpContext"/> instance</param>
+    private static void PassAcceptHeader(HttpClient client, HttpContext context)
+    {
+        if (context.Request.Headers.ContainsKey("Accept"))
+            client.DefaultRequestHeaders.Add("Accept", context.Request.Headers.Accept.ToList());
+    }
 }
