@@ -176,9 +176,17 @@ public class ViteDevMiddleware : IMiddleware, IDisposable
 	/// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
 	private async Task ProxyAsync(HttpContext context, RequestDelegate next, string path)
 	{
-		using HttpClient client = new() { BaseAddress = new Uri(this._viteServerBaseUrl) };
+		// Initialize a new instance of the HttpClient class.
+		using HttpClient client = new()
+		{
+			BaseAddress = new Uri(this._viteServerBaseUrl),
+		};
 
-        PassAcceptHeader(client, context);
+		// Pass "Accept" header from the original request.
+		if (context.Request.Headers.ContainsKey("Accept"))
+		{
+			client.DefaultRequestHeaders.Add("Accept", context.Request.Headers.Accept.ToList());
+		}
 
 		// If the waitForDevServer flag is true, wait for the Vite development server to start.
 		if (this._waitForDevServer)
@@ -238,7 +246,7 @@ public class ViteDevMiddleware : IMiddleware, IDisposable
 		}
 	}
 
-    void IDisposable.Dispose()
+	void IDisposable.Dispose()
 	{
 		// If the script runner was defined, dispose it.
 		if (this._scriptRunner != null)
@@ -246,15 +254,4 @@ public class ViteDevMiddleware : IMiddleware, IDisposable
 			((IDisposable)this._scriptRunner).Dispose();
 		}
 	}
-    
-    /// <summary>
-    /// Passes "Accept" header from the original request.
-    /// </summary>
-    /// <param name="client">HttpClient to have the default header applied to</param>
-    /// <param name="context">The <see cref="HttpContext"/> instance</param>
-    private static void PassAcceptHeader(HttpClient client, HttpContext context)
-    {
-        if (context.Request.Headers.ContainsKey("Accept"))
-            client.DefaultRequestHeaders.Add("Accept", context.Request.Headers.Accept.ToList());
-    }
 }
