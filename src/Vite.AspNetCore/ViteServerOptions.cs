@@ -44,4 +44,10 @@ public record ViteServerOptions
 	/// The script name to run the Vite Dev Server. Default value is "dev".
 	/// </summary>
 	public string ScriptName { get; init; } = "dev";
+    
+    /// <summary>
+    /// The working directory for script execution.
+    /// Default value is the .NET project working directory.
+    /// </summary>
+    public string? ScriptsDirectory { get; init; }
 }
