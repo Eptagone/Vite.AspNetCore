@@ -25,6 +25,12 @@ public record ViteOptions
 	/// The name of the package manager to use. Default value is "npm".
 	/// </summary>
 	public string PackageManager { get; init; } = "npm";
+    
+    /// <summary>
+    /// The directory where the package.json file is located.
+    /// Default value is the .NET project working directory.
+    /// </summary>
+    public string? PackageDirectory { get; init; }
 
 	/// <summary>
 	/// Options for the Vite Dev Server.

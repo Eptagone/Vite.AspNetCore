@@ -65,7 +65,7 @@ public class ViteDevMiddleware : IMiddleware, IDisposable
 			// Gets the package manager command.
 			var pkgManagerCommand = this._viteOptions.PackageManager;
 			// Gets the working directory.
-			var workingDirectory = environment.ContentRootPath;
+			var workingDirectory = this._viteOptions.PackageDirectory ?? environment.ContentRootPath;
 			// Gets the script name.= to run the Vite Dev Server.
 			var scriptName = this._viteOptions.Server.ScriptName;
 
