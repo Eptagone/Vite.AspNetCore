@@ -37,7 +37,11 @@ public static class ServiceCollectionExtensions
 		{
 			ViteStatusService.Options = options;
 		}
-
+		// Add http client factory if not already added 
+		if (services.All(x => x.ServiceType != typeof(IHttpClientFactory)))
+		{
+            services.AddHttpClient();
+        }
 		// Add the status service
 		services.TryAddScoped<ViteStatusService>();
 
