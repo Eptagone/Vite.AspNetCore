@@ -17,6 +17,7 @@ namespace Vite.AspNetCore.Services;
 public class ViteDevMiddleware : IMiddleware, IDisposable
 {
 	private readonly ILogger<ViteDevMiddleware> _logger;
+    private readonly IHttpClientFactory _clientFactory;
 	private readonly string _viteServerBaseUrl;
 	private NodeScriptRunner? _scriptRunner;
 	private readonly ViteOptions _viteOptions;
@@ -40,11 +41,14 @@ public class ViteDevMiddleware : IMiddleware, IDisposable
 	/// <param name="environment">The <see cref="IWebHostEnvironment"/> instance.</param>
 	/// <param name="lifetime">The <see cref="IHostApplicationLifetime"/> instance.</param>
 	public ViteDevMiddleware(ILogger<ViteDevMiddleware> logger, IConfiguration configuration,
-		IWebHostEnvironment environment, IHostApplicationLifetime lifetime)
+		IWebHostEnvironment environment, IHostApplicationLifetime lifetime, IHttpClientFactory clientFactory)
 	{
 		ViteStatusService.IsDevServerRunning = true;
 		// Set the logger.
 		this._logger = logger;
+		// Set the http client factory
+        this._clientFactory = clientFactory;
+
 		// Read the Vite options from the configuration.
 		this._viteOptions = ViteStatusService.Options ?? configuration
 			.GetSection(ViteOptions.Vite)
@@ -176,11 +180,9 @@ public class ViteDevMiddleware : IMiddleware, IDisposable
 	/// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
 	private async Task ProxyAsync(HttpContext context, RequestDelegate next, string path)
 	{
-		// Initialize a new instance of the HttpClient class.
-		using HttpClient client = new()
-		{
-			BaseAddress = new Uri(this._viteServerBaseUrl),
-		};
+		// Initialize a "new" instance of the HttpClient class via the HttpClientFactory.
+		var client = _clientFactory.CreateClient();
+		client.BaseAddress = new Uri(this._viteServerBaseUrl);
 
 		// Pass "Accept" header from the original request.
 		if (context.Request.Headers.ContainsKey("Accept"))
