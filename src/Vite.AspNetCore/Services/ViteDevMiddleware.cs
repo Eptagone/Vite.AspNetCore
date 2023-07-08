@@ -7,6 +7,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using System.Text.RegularExpressions;
+using Microsoft.AspNetCore.Http.Extensions;
 using Vite.AspNetCore.Utilities;
 
 namespace Vite.AspNetCore.Services;
@@ -160,7 +161,7 @@ public class ViteDevMiddleware : IMiddleware, IDisposable
 			context.Request.Method == HttpMethod.Get.Method)
 		{
 			// Get the request path
-			var path = context.Request.Path.Value;
+			var path = context.Request.GetEncodedPathAndQuery();
 			// Proxy the request to the Vite Dev Server.
 			await this.ProxyAsync(context, next, path);
 		}
