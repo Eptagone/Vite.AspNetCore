@@ -211,7 +211,7 @@ You can also change the configuration for the middleware as follows.
 And there are more options that you can change. All the available options are listed below. ⚙️
 
 | Property                 | Description                                                                                                            |
-|--------------------------|------------------------------------------------------------------------------------------------------------------------|
+| ------------------------ | ---------------------------------------------------------------------------------------------------------------------- |
 | `Vite:Manifest`          | The manifest file name. Default is `manifest.json`.                                                                    |
 | `Vite:Base`              | The subfolder where your assets will be located, including the manifest file, relative to the web root path.           |
 | `Vite:PackageManager`    | The name of the package manager to use. Default value is `npm`.                                                        |
