@@ -182,7 +182,7 @@ public class ViteDevMiddleware : IMiddleware, IDisposable
 	private async Task ProxyAsync(HttpContext context, RequestDelegate next, string path)
 	{
 		// Initialize a "new" instance of the HttpClient class via the HttpClientFactory.
-		var client = _clientFactory.CreateClient();
+		using var client = _clientFactory.CreateClient();
 		client.BaseAddress = new Uri(this._viteServerBaseUrl);
 
 		// Pass "Accept" header from the original request.
