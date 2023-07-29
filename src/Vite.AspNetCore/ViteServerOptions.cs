@@ -26,11 +26,6 @@ public record ViteServerOptions
 	public string Host { get; init; } = "localhost";
 
 	/// <summary>
-	/// Use with AutoRun to kill the port before starting the Vite Development Server. Default value is "false".
-	/// </summary>
-	public bool KillPort { get; init; } = false;
-
-	/// <summary>
 	/// Wait for Vite Server to load in seconds. Default value is "5".
 	/// </summary>
 	public int TimeOut { get; init; } = 5;

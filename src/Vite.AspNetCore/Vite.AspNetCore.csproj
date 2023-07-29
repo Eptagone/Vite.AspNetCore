@@ -15,8 +15,8 @@
 		<PackageTags>Vite;ViteJS;AspNet;MPA;Middleware;Server;Assets;Mvc;WebPages</PackageTags>
 		<PackageLicenseFile>LICENSE</PackageLicenseFile>
 		<PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
-		<Version>1.8.1</Version>
-		<PackageReleaseNotes>Support for auto-running the vite development server from a subdirectory.</PackageReleaseNotes>
+		<Version>1.9.0</Version>
+		<PackageReleaseNotes>New execution process for the AutoRun option.</PackageReleaseNotes>
 	</PropertyGroup>
 
 	<!-- Add ASP.NET Core references -->

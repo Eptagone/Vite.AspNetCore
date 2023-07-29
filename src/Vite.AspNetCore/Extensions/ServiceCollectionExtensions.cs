@@ -63,6 +63,9 @@ public static class ServiceCollectionExtensions
 		ServiceDescriptor descriptor = new(typeof(IViteManifest), typeof(T), optionsLifetime);
 		services.Add(descriptor);
 
+		// Add the launch manager
+		services.TryAddSingleton<ViteServerLaunchManager>();
+
 		// Add the middleware for the Vite development server
 		services.TryAddSingleton<ViteDevMiddleware>();
 
