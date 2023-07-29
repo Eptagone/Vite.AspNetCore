@@ -13,11 +13,6 @@ public sealed class ViteStatusService
 	/// </summary>
 	public static bool IsDevServerRunning { get; internal set; } = false;
 
-	/// <summary>
-	/// Vite configuration options.
-	/// </summary>
-	internal static ViteOptions? Options { get; set; }
-
 	internal static bool IsMiddlewareRegistered { get; set; } = false;
 	internal bool IsDevScriptInserted { get; set; }
 

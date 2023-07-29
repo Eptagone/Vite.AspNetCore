@@ -2,8 +2,8 @@
 // Licensed under the MIT License, See LICENCE in the project root for license information.
 
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using System.Text.Json;
 using Vite.AspNetCore.Abstractions;
 
@@ -26,7 +26,10 @@ public sealed class ViteManifest : IViteManifest
 	/// <summary>
 	/// Initializes a new instance of the <see cref="ViteManifest"/> class.
 	/// </summary>
-	public ViteManifest(ILogger<ViteManifest> logger, IConfiguration configuration, IWebHostEnvironment environment)
+	/// <param name="logger">The service used to log messages.</param>
+	/// <param name="options">The vite configuration options.</param>
+	/// <param name="environment">Information about the web hosting environment.</param>
+	public ViteManifest(ILogger<ViteManifest> logger, IOptions<ViteOptions> options, IWebHostEnvironment environment)
 	{
 		this._logger = logger;
 
@@ -43,10 +46,8 @@ public sealed class ViteManifest : IViteManifest
 			return;
 		}
 
-		// Read the Vite options from the configuration.
-		ViteOptions viteOptions = ViteStatusService.Options ?? configuration
-			.GetSection(ViteOptions.Vite)
-			.Get<ViteOptions>() ?? new ViteOptions();
+		// Get vite options.
+		var viteOptions = options.Value;
 
 		// Read tha name of the manifest file from the configuration.
 		var manifest = viteOptions.Manifest;

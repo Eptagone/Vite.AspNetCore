@@ -3,11 +3,11 @@
 
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Configuration;
+using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using System.Text.RegularExpressions;
-using Microsoft.AspNetCore.Http.Extensions;
 using Vite.AspNetCore.Utilities;
 
 namespace Vite.AspNetCore.Services;
@@ -15,10 +15,10 @@ namespace Vite.AspNetCore.Services;
 /// <summary>
 /// Represents a middleware that proxies requests to the Vite Dev Server.
 /// </summary>
-public class ViteDevMiddleware : IMiddleware, IDisposable
+internal class ViteDevMiddleware : IMiddleware, IDisposable
 {
 	private readonly ILogger<ViteDevMiddleware> _logger;
-    private readonly IHttpClientFactory _clientFactory;
+	private readonly IHttpClientFactory _clientFactory;
 	private readonly string _viteServerBaseUrl;
 	private NodeScriptRunner? _scriptRunner;
 	private readonly ViteOptions _viteOptions;
@@ -38,43 +38,40 @@ public class ViteDevMiddleware : IMiddleware, IDisposable
 	/// Initializes a new instance of the <see cref="ViteDevMiddleware"/> class.
 	/// </summary>
 	/// <param name="logger">The <see cref="ILogger{ViteDevMiddleware}"/> instance.</param>
-	/// <param name="configuration">The <see cref="IConfiguration"/> instance.</param>
 	/// <param name="environment">The <see cref="IWebHostEnvironment"/> instance.</param>
 	/// <param name="lifetime">The <see cref="IHostApplicationLifetime"/> instance.</param>
-	public ViteDevMiddleware(ILogger<ViteDevMiddleware> logger, IConfiguration configuration,
+	public ViteDevMiddleware(ILogger<ViteDevMiddleware> logger, IOptions<ViteOptions> options,
 		IWebHostEnvironment environment, IHostApplicationLifetime lifetime, IHttpClientFactory clientFactory)
 	{
 		ViteStatusService.IsDevServerRunning = true;
 		// Set the logger.
 		this._logger = logger;
 		// Set the http client factory
-        this._clientFactory = clientFactory;
+		this._clientFactory = clientFactory;
 
 		// Read the Vite options from the configuration.
-		this._viteOptions = ViteStatusService.Options ?? configuration
-			.GetSection(ViteOptions.Vite)
-			.Get<ViteOptions>() ?? new ViteOptions();
+		this._viteOptions = options.Value;
 		// Get the port and host from the configuration.
-		var port = this._viteOptions.Server.Port;
-		var host = this._viteOptions.Server.Host;
+		var host = options.Value.Server.Host;
+		var port = options.Value.Server.Port;
 		// Check if https is enabled.
-		var https = this._viteOptions.Server.Https;
+		var https = options.Value.Server.Https;
 		// Build the base url.
 		this._viteServerBaseUrl = $"{(https ? "https" : "http")}://{host}:{port}";
 
 		// Prepare and run the Vite Dev Server if AutoRun is true and the middleware is enabled.
-		if (this._viteOptions.Server.AutoRun && ViteStatusService.IsMiddlewareRegistered)
+		if (options.Value.Server.AutoRun && ViteStatusService.IsMiddlewareRegistered)
 		{
 			// Set the waitForDevServer flag to true.
 			this._waitForDevServer = true;
 			// Gets the package manager command.
-			var pkgManagerCommand = this._viteOptions.PackageManager;
+			var pkgManagerCommand = options.Value.PackageManager;
 			// Gets the working directory.
-			var workingDirectory = this._viteOptions.PackageDirectory ?? environment.ContentRootPath;
+			var workingDirectory = options.Value.PackageDirectory ?? environment.ContentRootPath;
 			// Gets the script name.= to run the Vite Dev Server.
-			var scriptName = this._viteOptions.Server.ScriptName;
+			var scriptName = options.Value.Server.ScriptName;
 
-			if (this._viteOptions.Server.KillPort)
+			if (options.Value.Server.KillPort)
 			{
 				// pre-emptively try to clear the port
 				PidUtils.KillPort(port);
@@ -107,7 +104,7 @@ public class ViteDevMiddleware : IMiddleware, IDisposable
 			void OnError(string line)
 			{
 				// If the port is used by another process, kill it and start a new _scriptRunner.
-				if (this._viteOptions.Server.KillPort)
+				if (options.Value.Server.KillPort)
 				{
 					var portInUse = VitePortInUse.Match(line);
 					if (!portInUse.Success)
@@ -182,7 +179,7 @@ public class ViteDevMiddleware : IMiddleware, IDisposable
 	private async Task ProxyAsync(HttpContext context, RequestDelegate next, string path)
 	{
 		// Initialize a "new" instance of the HttpClient class via the HttpClientFactory.
-		using var client = _clientFactory.CreateClient();
+		using var client = this._clientFactory.CreateClient();
 		client.BaseAddress = new Uri(this._viteServerBaseUrl);
 
 		// Pass "Accept" header from the original request.

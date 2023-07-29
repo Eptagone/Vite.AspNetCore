@@ -1,8 +1,10 @@
 ﻿// Copyright (c) 2023 Quetzal Rivera.
 // Licensed under the MIT License, See LICENCE in the project root for license information.
 
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.Options;
 using Vite.AspNetCore.Abstractions;
 using Vite.AspNetCore.Services;
 
@@ -33,15 +35,27 @@ public static class ServiceCollectionExtensions
 	public static IServiceCollection AddViteServices<T>(this IServiceCollection services, ViteOptions? options = null, ServiceLifetime optionsLifetime = ServiceLifetime.Singleton)
 		where T : class, IViteManifest
 	{
-		if (options is not null)
-		{
-			ViteStatusService.Options = options;
-		}
 		// Add http client factory if not already added 
 		if (services.All(x => x.ServiceType != typeof(IHttpClientFactory)))
 		{
-            services.AddHttpClient();
-        }
+			services.AddHttpClient();
+		}
+
+		// Configure the Vite options
+		if (options is null)
+		{
+			// Add the Vite options from the configuration
+			IServiceProvider serviceProvider = services.BuildServiceProvider();
+			IConfiguration configuration = serviceProvider.GetRequiredService<IConfiguration>();
+			services.Configure<ViteOptions>(configuration.GetSection(ViteOptions.Vite));
+		}
+		else
+		{
+			// Add the Vite options from the options parameter
+			services.AddSingleton(Options.Create(options));
+		}
+
+
 		// Add the status service
 		services.TryAddScoped<ViteStatusService>();
 

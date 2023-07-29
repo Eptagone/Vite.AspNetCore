@@ -1,10 +1,12 @@
 # Vite.AspNetCore
 
-This library offers integration with [ViteJS](https://vitejs.dev/) to be used in ASP.NET applications. It's made to work mainly with MPA (Multi-Page Application) apps, compatible with:
+This library offers integration with [ViteJS](https://vitejs.dev/) to be used in ASP.NET applications. It's made to work mainly with MPA (Multi-Page Application).
 
-- Blazor Server
+The library is compatible with:
+
 - MVC
 - Razor Pages
+- Blazor Server
 
 ## Features
 
@@ -79,9 +81,7 @@ By using the vite middleware during development, you don't need to pass the deve
 
 The middleware will proxy all requests to the Vite Development Server. You won't need alternative paths for images or other resources from your public assets. 🙀🙀🙀
 
-> **Note:** The middleware can start the Vite Development Server for you. Enable this feature by setting the `Vite:Server:AutoRun` property to `true`. But remember, you need to have your `package.json` file in your project root folder.
->
-> It's possible that while using the `AutoRun` option, the Vite Development Server keeps running after you stop the application. If this happens, try to enable the `Vite:Server:KillPort` option to kill the port before a new process starts.
+> **Note:** The order of the middlewares is important! Put the `UseViteDevMiddleware()` call in a position according to your needs. Otherwise, your assets will not be served as expected.
 
 ### The Vite Manifest
 
@@ -175,11 +175,27 @@ And the rendered HTML when the middleware is disabled will look like this.
 
 ## Configuration
 
-The middleware and the manifest service can be configured by using environment variables, user secrets or `appsettings.json`.
+The middleware and the manifest service can be configured by passing options to the `AddViteServices()` function, using environment variables, user secrets, or your `appsettings.json` file.
 
-I suggest using `appsettings.json` and/or `appsettings.Development.json` files. This way, you can share the configuration with other developers. This information is not sensitive, so it's safe to share it.
+Passing the options to the `AddViteServices()` function is as simple as you can see in the following example:
 
-By default, the manifest name is `manifest.json` and it's expected to be in the web root folder. If your manifest file has a different name, you can change it by setting the `Vite:Manifest` property.
+```CSharp
+// Program.cs
+using Vite.AspNetCore.Extensions;
+using Vite.AspNetCore;
+
+// ...
+// Add the Vite services.
+builder.Services.AddViteServices(new ViteOptions()
+{
+    // By default, the manifest file name is "manifest.json". If your manifest file has a different name, you can change it here.
+    Manifest = "my-manifest.json",
+    // More options...
+});
+/// ...
+```
+
+If you prefer not to hardcode the options, you can use environment variables or user secrets. I suggest using `appsettings.json` and/or `appsettings.Development.json` files to share the default configuration with other developers. This information is not sensitive, so it's safe to share it.
 
 ```JSONC
 // appsettings.json
@@ -189,8 +205,6 @@ By default, the manifest name is `manifest.json` and it's expected to be in the 
     }
 }
 ```
-
-You can also change the configuration for the middleware as follows.
 
 ```JSONC
 // appsettings.Development.json
@@ -208,21 +222,27 @@ You can also change the configuration for the middleware as follows.
 }
 ```
 
-And there are more options that you can change. All the available options are listed below. ⚙️
+> In the previous example, i used the `appsettings.json` and `appsettings.Development.json` files to keep the cofigurations for each environment separated. But you can use only one file if you prefer.
 
-| Property                 | Description                                                                                                            |
-| ------------------------ | ---------------------------------------------------------------------------------------------------------------------- |
-| `Vite:Manifest`          | The manifest file name. Default is `manifest.json`.                                                                    |
-| `Vite:Base`              | The subfolder where your assets will be located, including the manifest file, relative to the web root path.           |
-| `Vite:PackageManager`    | The name of the package manager to use. Default value is `npm`.                                                        |
-| `Vite:PackageDirectory`  | The directory where the package.json file is located. Default value is the .NET project working directory.             |
-| `Vite:Server:AutoRun`    | Enable or disable the automatic start of the Vite Dev Server. Default value is `false`.                                |
-| `Vite:Server:Port`       | The port where the Vite Development Server will be running. Default value is `5173`.                                   |
-| `Vite:Server:Host`       | The host where the Vite Dev Server will be running. Default value is `localhost`.                                      |
-| `Vite:Server:KillPort`   | Use with `Vite:Server:AutoRun` to kill the port before starting the Vite Development Server. Default value is `false`. |
-| `Vite:Server:TimeOut`    | The timeout in seconds spent waiting for the vite dev server. Default is `5`                                           |
-| `Vite:Server:Https`      | If true, the middleware will use HTTPS to connect to the Vite Development Server. Default value is `false`.            |
-| `Vite:Server:ScriptName` | The script name to run the Vite Development Server. Default value is `dev`.                                            |
+### Available Options
+
+There are more options that you can change. All the available options are listed below. ⚙️
+
+| Property            | Description                                                                                                            |
+| ------------------- | ---------------------------------------------------------------------------------------------------------------------- |
+| `Manifest`          | The manifest file name. Default is `manifest.json`.                                                                    |
+| `Base`              | The subfolder where your assets will be located, including the manifest file, relative to the web root path.           |
+| `PackageManager`    | The name of the package manager to use. Default value is `npm`.                                                        |
+| `PackageDirectory`  | The directory where the package.json file is located. Default value is the .NET project working directory.             |
+| `Server:AutoRun`    | Enable or disable the automatic start of the Vite Dev Server. Default value is `false`.                                |
+| `Server:Port`       | The port where the Vite Development Server will be running. Default value is `5173`.                                   |
+| `Server:Host`       | The host where the Vite Dev Server will be running. Default value is `localhost`.                                      |
+| `Server:KillPort`   | Use with `Vite:Server:AutoRun` to kill the port before starting the Vite Development Server. Default value is `false`. |
+| `Server:TimeOut`    | The timeout in seconds spent waiting for the vite dev server. Default is `5`                                           |
+| `Server:Https`      | If true, the middleware will use HTTPS to connect to the Vite Development Server. Default value is `false`.            |
+| `Server:ScriptName` | The script name to run the Vite Development Server. Default value is `dev`.                                            |
+
+> If you are using the `appsettings.json` and/or `appsettings.Development.json` files, all the options must be under the `Vite` property.
 
 ## Examples
 
