@@ -10,6 +10,7 @@ using System.ComponentModel;
 using System.Text.RegularExpressions;
 using Vite.AspNetCore.Abstractions;
 using Vite.AspNetCore.Services;
+using Vite.AspNetCore.Utilities;
 
 namespace Vite.AspNetCore.TagHelpers;
 
@@ -121,6 +122,9 @@ public class ViteTagHelper : TagHelper
 		{
 			// Removes the leading '~/' from the value. This is needed because the manifest file doesn't contain the leading '~/' or '/'.
 			value = value.TrimStart('~', '/');
+            
+            // Ensure consistent path separators
+            value = PathUtils.PathCombine(value);
 
 			// Get the entry chunk from the 'manifest.json' file.
 			var entry = this._manifest[value];
