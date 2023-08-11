@@ -68,7 +68,7 @@ export default defineConfig(async () => {
 				input: 'Assets/main.ts',
 				output: {
 					// Save entry files to the appropriate folder
-					entryFileNames: 'js/[name].js',
+					entryFileNames: 'js/[name].[hash].js',
 					// Save chunk files to the js folder
 					chunkFileNames: 'js/[name]-chunk.js',
 					// Save asset files to the appropriate folder

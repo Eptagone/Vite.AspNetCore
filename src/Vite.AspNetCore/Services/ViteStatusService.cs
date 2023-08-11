@@ -14,10 +14,5 @@ public sealed class ViteStatusService
 	public static bool IsDevServerRunning { get; internal set; } = false;
 
 	internal static bool IsMiddlewareRegistered { get; set; } = false;
-	internal bool IsDevScriptInserted { get; set; }
-
-	public ViteStatusService()
-	{
-		this.IsDevScriptInserted = false;
-	}
+	internal bool IsDevScriptInserted { get; set; } = false;
 }

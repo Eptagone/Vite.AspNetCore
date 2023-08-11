@@ -15,7 +15,7 @@ The library is compatible with:
 This library has three simple but very useful features:
 
 - A Middleware to forward the requests to the Vite Development Server
-  - The middleware can be start the Vite Development Server for you ❤️.
+  - The middleware can start the Vite Development Server for you ❤️.
 - A service to access the Vite manifest.
 - Tag Helpers for script and link tags.
 
@@ -89,7 +89,7 @@ The middleware will proxy all requests to the Vite Development Server. You won't
 
 The Vite Manifest is a JSON file that contains the mapping between the original file names and the hashed names. This is useful to access the files in production environments.
 
-By using the Vite Manifest service, you can access the manifest in your application by injecting the `IViteManifest` interface. See the following example.
+By using the Vite Manifest service, you can access the manifest in your application by injecting the `IViteManifest` service. See the following example.
 
 ```HTML
 @inject IViteManifest Manifest
@@ -147,7 +147,7 @@ This tag helpers will do the following magic:
 
 - Middleware is enabled:
   - If the link tag is a script (you want to include css from a script entrypoint), the link tag will just disappear. This is because Vite loads the styles automatically by including the script.
-  - If the script of the vite client is not included, it will be added automatically.
+  - If the script of the Vite client is not included, it will be added automatically.
 - Middleware is disabled:
   - The link and script tags will be rendered using the original paths taken from the manifest. The value of the `vite-href` and `vite-src` attributes will be used as the entrypoint to access the manifest.
 
@@ -224,7 +224,7 @@ If you prefer not to hardcode the options, you can use environment variables or 
 }
 ```
 
-> In the previous example, i used the `appsettings.json` and `appsettings.Development.json` files to keep the cofigurations for each environment separated. But you can use only one file if you prefer.
+> In the previous example, i used the `appsettings.json` and `appsettings.Development.json` files to keep the configurations for each environment separated. But you can use only one file if you prefer.
 
 ### Available Options
 
