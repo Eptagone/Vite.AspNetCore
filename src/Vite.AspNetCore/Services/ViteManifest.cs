@@ -77,7 +77,7 @@ public sealed class ViteManifest : IViteManifest
 				foreach (var chunk in this._chunks)
 				{
 					// Add the base path to the key.
-					var key = Path.Combine(this._base, chunk.Key);
+					var key = CombineUri(this._base, chunk.Key);
 
 					// Add the base path to the value.
 					var value = chunk.Value with
