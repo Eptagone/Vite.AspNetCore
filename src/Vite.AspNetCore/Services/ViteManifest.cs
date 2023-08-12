@@ -6,7 +6,6 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System.Text.Json;
 using Vite.AspNetCore.Abstractions;
-using Vite.AspNetCore.Utilities;
 
 namespace Vite.AspNetCore.Services;
 
@@ -57,7 +56,7 @@ public sealed class ViteManifest : IViteManifest
 		this._base = viteOptions.Base?.TrimStart('/');
 
 		// Get the manifest.json file path
-		var manifestPath = PathUtils.PathCombine(environment.WebRootPath, this._base ?? "", manifest);
+		var manifestPath = Path.Combine(environment.WebRootPath, this._base ?? string.Empty, manifest);
 
 		// If the manifest.json file exists, deserialize it into a dictionary.
 		if (File.Exists(manifestPath))
@@ -78,17 +77,17 @@ public sealed class ViteManifest : IViteManifest
 				foreach (var chunk in this._chunks)
 				{
 					// Add the base path to the key.
-					var key = PathUtils.PathCombine(this._base, chunk.Key);
+					var key = Path.Combine(this._base, chunk.Key);
 
 					// Add the base path to the value.
 					var value = chunk.Value with
 					{
-						Css = chunk.Value.Css?.Select(css => PathUtils.PathCombine(this._base, css)),
-						File = PathUtils.PathCombine(this._base, chunk.Value.File),
-						Imports = chunk.Value.Imports?.Select(imports => PathUtils.PathCombine(this._base, imports)),
-						Src = string.IsNullOrEmpty(chunk.Value.Src) ? null : PathUtils.PathCombine(this._base, chunk.Value.Src),
-						Assets = chunk.Value.Assets?.Select(assets => PathUtils.PathCombine(this._base, assets)),
-						DynamicImports = chunk.Value.DynamicImports?.Select(dynamicImports => PathUtils.PathCombine(this._base, dynamicImports)),
+						Css = chunk.Value.Css?.Select(css => CombineUri(this._base, css)),
+						File = CombineUri(this._base, chunk.Value.File),
+						Imports = chunk.Value.Imports?.Select(imports => CombineUri(this._base, imports)),
+						Src = string.IsNullOrEmpty(chunk.Value.Src) ? null : CombineUri(this._base, chunk.Value.Src),
+						Assets = chunk.Value.Assets?.Select(assets => CombineUri(this._base, assets)),
+						DynamicImports = chunk.Value.DynamicImports?.Select(dynamicImports => CombineUri(this._base, dynamicImports)),
 						IsDynamicEntry = chunk.Value.IsDynamicEntry,
 						IsEntry = chunk.Value.IsEntry,
 					};
@@ -139,5 +138,21 @@ public sealed class ViteManifest : IViteManifest
 
 			return chunk;
 		}
+	}
+
+	/// <summary>
+	/// Combines the specified URI and paths.
+	/// </summary>
+	/// <param name="uri">The base URI.</param>
+	/// <param name="path">The path to combine.</param>
+	/// <returns>A new URI.</returns>
+	private static string CombineUri(string uri, string path)
+	{
+		if (string.IsNullOrEmpty(uri))
+		{
+			return path;
+		}
+
+		return uri.EndsWith('/') ? uri + path : uri + "/" + path;
 	}
 }

@@ -9,9 +9,9 @@
 		"preview": "vite preview"
 	},
 	"devDependencies": {
-		"@types/node": "^20.4.5",
-		"sass": "^1.64.1",
+		"@types/node": "^20.4.10",
+		"sass": "^1.65.1",
 		"typescript": "^5.1.6",
-		"vite": "^4.4.7"
+		"vite": "^4.4.9"
 	}
 }
