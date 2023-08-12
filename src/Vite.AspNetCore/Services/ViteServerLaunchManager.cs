@@ -54,10 +54,10 @@ namespace Vite.AspNetCore.Services
 			// Set the working directory.
 			var workingDirectory = this._options.PackageDirectory ?? this._environment.ContentRootPath;
 
-			// If the working directory is relative, combine it with the app's base directory.
+			// If the working directory is relative, combine it with the app's content root directory.
 			if (!Path.IsPathRooted(workingDirectory))
 			{
-				workingDirectory = Path.Combine(AppContext.BaseDirectory, workingDirectory);
+				workingDirectory = Path.Combine(this._environment.ContentRootPath, workingDirectory);
 			}
 
 			// Create the process start info.
