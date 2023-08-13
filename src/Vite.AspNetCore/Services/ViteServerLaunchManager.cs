@@ -57,7 +57,7 @@ internal sealed class ViteServerLaunchManager : IDisposable
 		// If the working directory is relative, combine it with the app's base directory.
 		if (!Path.IsPathRooted(workingDirectory))
 		{
-			workingDirectory = Path.GetFullPath(workingDirectory, AppContext.BaseDirectory);
+			workingDirectory = Path.GetFullPath(workingDirectory, this._environment.ContentRootPath);
 		}
 
 		// Create the process start info.
