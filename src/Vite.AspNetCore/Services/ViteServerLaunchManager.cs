@@ -6,6 +6,8 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System.Diagnostics;
+using System.Net;
+using System.Net.Http.Headers;
 
 namespace Vite.AspNetCore.Services;
 
@@ -18,9 +20,11 @@ internal sealed class ViteServerLaunchManager : IDisposable
 	private readonly ILogger _logger;
 	private readonly IWebHostEnvironment _environment;
 	private readonly ViteOptions _options;
+	private readonly IHostApplicationLifetime _appLifetime;
 
 	private bool disposedValue;
 	private Process? _process;
+	private Task? _launchTask;
 
 	/// <summary>
 	/// Initialize a new instance of <see cref="ViteServerLaunchManager"/>.
@@ -37,6 +41,7 @@ internal sealed class ViteServerLaunchManager : IDisposable
 		this._logger = logger;
 		this._options = options.Value;
 		this._environment = environment;
+		this._appLifetime = appLifetime;
 
 		// Ensure the Vite server is stopped when the app shuts down.
 		appLifetime.ApplicationStopping.Register(() => this.Dispose(true));
@@ -47,6 +52,22 @@ internal sealed class ViteServerLaunchManager : IDisposable
 	/// </summary>
 	public void LaunchDevelopmentServer()
 	{
+		this._launchTask = this.StartViteDevServerIfNotRunningAsync();
+	}
+
+	/// <summary>
+	/// Start the Vite development server if it is not already running.
+	/// </summary>
+	/// <param name="cancellationToken">Cancellation token.</param>
+	/// <returns></returns>
+	private async Task StartViteDevServerIfNotRunningAsync()
+	{
+		// If the Vite development server is already running, return.
+		if (await this.IsViteDevelopmentServerRunning())
+		{
+			return;
+		}
+
 		// Set the command to run.
 		var command = this._options.PackageManager;
 		// Set the arguments to run.
@@ -68,7 +89,7 @@ internal sealed class ViteServerLaunchManager : IDisposable
 			WindowStyle = ProcessWindowStyle.Normal,
 			WorkingDirectory = Path.GetFullPath(workingDirectory)
 		};
-		
+
 		try
 		{
 			this._logger.LogInformation("Starting the vite development server...");
@@ -101,6 +122,52 @@ internal sealed class ViteServerLaunchManager : IDisposable
 		catch (Exception exp)
 		{
 			this._logger.LogError(exp, "Failed to launch Vite development server.");
+		}
+	}
+
+	/// <summary>
+	/// Check if the Vite development server is already running.
+	/// </summary>
+	/// <param name="url">The Vite development server url.</param>
+	/// <param name="cancellationToken">The cancellation token.</param>
+	private async Task<bool> IsViteDevelopmentServerRunning()
+	{
+		using var timeout = new CancellationTokenSource(
+			TimeSpan.FromMinutes(this._options.Server.TimeOut)
+		);
+		using var cancellationTokenSource = CancellationTokenSource.CreateLinkedTokenSource(
+			timeout.Token,
+			this._appLifetime.ApplicationStopping
+		);
+
+		try
+		{
+			// Create the HttpClient.
+			var httpClient = new HttpClient(new HttpClientHandler
+			{
+				ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator
+			});
+			httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("*/*", 0.1));
+			// Build the Vite development server url.
+			var url = $"{(this._options.Server.Https ? "https" : "http")}://{this._options.Server.Host}:{this._options.Server.Port}";
+			// Test the connection to the Vite development server.
+			var response = await httpClient.GetAsync(url, cancellationTokenSource.Token);
+			// Check if the Vite development server is running. It could be running if the response is successful or if the status code is 404 (Not Found).
+			var running = response.IsSuccessStatusCode || response.StatusCode == HttpStatusCode.NotFound;
+			// If the Vite development server is running, log the url.
+			if (running)
+			{
+				this._logger.LogInformation("Looks like the Vite development server is already running at {Url}.", url);
+			}
+			// Return true if the Vite development server is running, otherwise false.
+			return running;
+		}
+		catch (Exception exception) when (exception is HttpRequestException ||
+			  exception is TaskCanceledException ||
+			  exception is OperationCanceledException)
+		{
+			this._logger.LogDebug(exception, "The Vite development server is not running yet.");
+			return false;
 		}
 	}
 
@@ -210,6 +277,8 @@ rm {scriptPath};
 				{
 					this._process.Kill(true);
 					this._process = null;
+					this._launchTask?.Dispose();
+					this._launchTask = null;
 				}
 			}
 			catch (Exception)
@@ -219,7 +288,6 @@ rm {scriptPath};
 					throw;
 				}
 			}
-
 
 			// TODO: free unmanaged resources (unmanaged objects) and override finalizer
 			// TODO: set large fields to null

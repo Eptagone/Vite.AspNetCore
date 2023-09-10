@@ -15,8 +15,8 @@
 		<PackageTags>Vite;ViteJS;AspNet;MPA;Middleware;Server;Assets;Mvc;WebPages</PackageTags>
 		<PackageLicenseFile>LICENSE</PackageLicenseFile>
 		<PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
-		<Version>1.9.3</Version>
-		<PackageReleaseNotes>New execution process for the AutoRun option.</PackageReleaseNotes>
+		<Version>1.10.0</Version>
+		<PackageReleaseNotes>The launch manager will check if the server is already running before start a new process.</PackageReleaseNotes>
 	</PropertyGroup>
 
 	<!-- Add ASP.NET Core references -->

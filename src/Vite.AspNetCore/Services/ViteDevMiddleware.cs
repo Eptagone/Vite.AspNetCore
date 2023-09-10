@@ -66,15 +66,6 @@ internal class ViteDevMiddleware : IMiddleware
 	/// <inheritdoc />
 	public async Task InvokeAsync(HttpContext context, RequestDelegate next)
 	{
-		// If the middleware is not registered, call the next middleware.
-		if (!ViteStatusService.IsMiddlewareRegistered)
-		{
-			this._logger.LogWarning(
-				"Oops, did you forgot to register the middleware? Use app.UseViteDevMiddleware() in your Startup.cs or Program.cs file");
-			await next(context);
-			return;
-		}
-
 		// If the request doesn't have an endpoint, the request path is not null and the request method is GET, proxy the request to the Vite Development Server.
 		if (context.GetEndpoint() == null && context.Request.Path.HasValue &&
 			context.Request.Method == HttpMethod.Get.Method)
