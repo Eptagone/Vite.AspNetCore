@@ -4,6 +4,7 @@
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using System.Collections;
 using System.Text.Json;
 using Vite.AspNetCore.Abstractions;
 
@@ -18,8 +19,6 @@ public sealed class ViteManifest : IViteManifest
 	private readonly ILogger<ViteManifest> _logger;
 	// The chunks dictionary is used to store the chunks read from the manifest.json file.
 	private readonly IReadOnlyDictionary<string, ViteChunk> _chunks;
-	// The base path is used to resolve the chunks paths.
-	private readonly string? _base;
 
 	private static bool _warnAboutManifestOnce = true;
 
@@ -53,10 +52,10 @@ public sealed class ViteManifest : IViteManifest
 		var manifest = viteOptions.Manifest;
 
 		// If the manifest file is in a subfolder, get the subfolder path.
-		this._base = viteOptions.Base?.TrimStart('/');
+		var basePath = viteOptions.Base?.TrimStart('/');
 
 		// Get the manifest.json file path
-		var manifestPath = Path.Combine(environment.WebRootPath, this._base ?? string.Empty, manifest);
+		var manifestPath = Path.Combine(environment.WebRootPath, basePath ?? string.Empty, manifest);
 
 		// If the manifest.json file exists, deserialize it into a dictionary.
 		if (File.Exists(manifestPath))
@@ -68,7 +67,7 @@ public sealed class ViteManifest : IViteManifest
 			})!;
 
 			// If the base path is not null, add it to the chunks keys and values.
-			if (!string.IsNullOrEmpty(this._base))
+			if (!string.IsNullOrEmpty(basePath))
 			{
 				// Create a new dictionary.
 				var chunks = new Dictionary<string, ViteChunk>();
@@ -77,17 +76,17 @@ public sealed class ViteManifest : IViteManifest
 				foreach (var chunk in this._chunks)
 				{
 					// Add the base path to the key.
-					var key = CombineUri(this._base, chunk.Key);
+					var key = CombineUri(basePath, chunk.Key);
 
 					// Add the base path to the value.
 					var value = chunk.Value with
 					{
-						Css = chunk.Value.Css?.Select(css => CombineUri(this._base, css)),
-						File = CombineUri(this._base, chunk.Value.File),
-						Imports = chunk.Value.Imports?.Select(imports => CombineUri(this._base, imports)),
-						Src = string.IsNullOrEmpty(chunk.Value.Src) ? null : CombineUri(this._base, chunk.Value.Src),
-						Assets = chunk.Value.Assets?.Select(assets => CombineUri(this._base, assets)),
-						DynamicImports = chunk.Value.DynamicImports?.Select(dynamicImports => CombineUri(this._base, dynamicImports)),
+						Css = chunk.Value.Css?.Select(css => CombineUri(basePath, css)),
+						File = CombineUri(basePath, chunk.Value.File),
+						Imports = chunk.Value.Imports?.Select(imports => CombineUri(basePath, imports)),
+						Src = string.IsNullOrEmpty(chunk.Value.Src) ? null : CombineUri(basePath, chunk.Value.Src),
+						Assets = chunk.Value.Assets?.Select(assets => CombineUri(basePath, assets)),
+						DynamicImports = chunk.Value.DynamicImports?.Select(dynamicImports => CombineUri(basePath, dynamicImports)),
 						IsDynamicEntry = chunk.Value.IsDynamicEntry,
 						IsEntry = chunk.Value.IsEntry,
 					};
@@ -154,5 +153,17 @@ public sealed class ViteManifest : IViteManifest
 		}
 
 		return uri.EndsWith('/') ? uri + path : uri + "/" + path;
+	}
+
+	/// <inheritdoc/>
+	IEnumerator<IViteChunk> IEnumerable<IViteChunk>.GetEnumerator()
+	{
+		return this._chunks.Values.GetEnumerator();
+	}
+
+	/// <inheritdoc/>
+	IEnumerator IEnumerable.GetEnumerator()
+	{
+		return this._chunks.Values.GetEnumerator();
 	}
 }

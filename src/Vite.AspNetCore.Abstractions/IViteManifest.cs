@@ -6,7 +6,7 @@ namespace Vite.AspNetCore.Abstractions;
 /// <summary>
 /// Represents a Vite manifest file.
 /// </summary>
-public interface IViteManifest
+public interface IViteManifest : IEnumerable<IViteChunk>
 {
 	/// <summary>
 	/// Gets the Vite chunk for the specified entry point if it exists.
