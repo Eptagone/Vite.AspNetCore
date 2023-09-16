@@ -139,6 +139,27 @@ public sealed class ViteManifest : IViteManifest
 		}
 	}
 
+	/// <inheritdoc/>
+	IEnumerator<IViteChunk> IEnumerable<IViteChunk>.GetEnumerator()
+	{
+		return this._chunks.Values.GetEnumerator();
+	}
+
+	/// <inheritdoc/>
+	IEnumerator IEnumerable.GetEnumerator()
+	{
+		return this._chunks.Values.GetEnumerator();
+	}
+
+	/// <inheritdoc/>
+	IEnumerable<string> IViteManifest.Keys => this._chunks.Keys;
+
+	/// <inheritdoc/>
+	bool IViteManifest.ContainsKey(string key)
+	{
+		return this._chunks.ContainsKey(key);
+	}
+
 	/// <summary>
 	/// Combines the specified URI and paths.
 	/// </summary>
@@ -153,17 +174,5 @@ public sealed class ViteManifest : IViteManifest
 		}
 
 		return uri.EndsWith('/') ? uri + path : uri + "/" + path;
-	}
-
-	/// <inheritdoc/>
-	IEnumerator<IViteChunk> IEnumerable<IViteChunk>.GetEnumerator()
-	{
-		return this._chunks.Values.GetEnumerator();
-	}
-
-	/// <inheritdoc/>
-	IEnumerator IEnumerable.GetEnumerator()
-	{
-		return this._chunks.Values.GetEnumerator();
 	}
 }
