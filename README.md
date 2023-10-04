@@ -218,7 +218,7 @@ If you prefer not to hardcode the options, you can use environment variables or 
             // The port where the Vite Development Server will be running. The default value is 5173.
             "Port": 5174,
             // If true, the middleware will use HTTPS to connect to the Vite Development Server. The default value is false.
-            "UseHttps": false,
+            "Https": false,
         }
     }
 }
