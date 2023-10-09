@@ -13,30 +13,30 @@ public record ViteServerOptions
 	/// <summary>
 	/// Enable or disable the automatic start of the Vite Dev Server. Default value is "false".
 	/// </summary>
-	public bool AutoRun { get; init; } = false;
+	public bool AutoRun { get; set; } = false;
 
 	/// <summary>
 	/// The port where the Vite Dev Server will be running. Default value is "5173".
 	/// </summary>
-	public ushort Port { get; init; } = 5173;
+	public ushort Port { get; set; } = 5173;
 
 	/// <summary>
 	/// The host where the Vite Dev Server will be running. Default value is "localhost".
 	/// </summary>
-	public string Host { get; init; } = "localhost";
+	public string Host { get; set; } = "localhost";
 
 	/// <summary>
 	/// Wait for Vite Server to load in seconds. Default value is "5".
 	/// </summary>
-	public int TimeOut { get; init; } = 5;
+	public int TimeOut { get; set; } = 5;
 
 	/// <summary>
 	/// If true, the middleware will use HTTPS to connect to the Vite Dev Server. Default value is "false".
 	/// </summary>
-	public bool Https { get; init; }
+	public bool Https { get; set; }
 
 	/// <summary>
 	/// The script name to run the Vite Dev Server. Default value is "dev".
 	/// </summary>
-	public string ScriptName { get; init; } = "dev";
+	public string ScriptName { get; set; } = "dev";
 }

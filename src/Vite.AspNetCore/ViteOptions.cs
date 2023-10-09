@@ -13,27 +13,27 @@ public record ViteOptions
 	/// <summary>
 	/// The manifest file name. Default is "manifest.json".
 	/// </summary>
-	public string Manifest { get; init; } = "manifest.json";
+	public string Manifest { get; set; } = "manifest.json";
 
 	/// <summary>
 	/// The subfolder where your assets will be located, including the manifest file.
 	/// This value is relative to the web root path.
 	/// </summary>
-	public string? Base { get; init; }
+	public string? Base { get; set; }
 
 	/// <summary>
 	/// The name of the package manager to use. Default value is "npm".
 	/// </summary>
-	public string PackageManager { get; init; } = "npm";
+	public string PackageManager { get; set; } = "npm";
 
 	/// <summary>
 	/// The directory where the package.json file is located.
 	/// Default value is the .NET project working directory.
 	/// </summary>
-	public string? PackageDirectory { get; init; }
+	public string? PackageDirectory { get; set; }
 
 	/// <summary>
 	/// Options for the Vite Dev Server.
 	/// </summary>
-	public ViteServerOptions Server { get; init; } = new ViteServerOptions();
+	public ViteServerOptions Server { get; set; } = new ViteServerOptions();
 }

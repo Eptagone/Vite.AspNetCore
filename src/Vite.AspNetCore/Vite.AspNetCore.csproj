@@ -15,8 +15,9 @@
 		<PackageTags>Vite;ViteJS;AspNet;MPA;Middleware;Server;Assets;Mvc;WebPages</PackageTags>
 		<PackageLicenseFile>LICENSE</PackageLicenseFile>
 		<PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
-		<Version>1.10.0</Version>
-		<PackageReleaseNotes>The launch manager will check if the server is already running before start a new process.</PackageReleaseNotes>
+		<Version>1.10.1</Version>
+		<PackageReleaseNotes>HMR fixed
+Vite Records options are now reassignable.</PackageReleaseNotes>
 	</PropertyGroup>
 
 	<!-- Add ASP.NET Core references -->

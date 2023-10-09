@@ -6,9 +6,11 @@ using Microsoft.AspNetCore.Mvc.Routing;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.AspNetCore.Razor.TagHelpers;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using System.ComponentModel;
 using System.Text.RegularExpressions;
 using Vite.AspNetCore.Abstractions;
+using Vite.AspNetCore.Extensions;
 using Vite.AspNetCore.Services;
 
 namespace Vite.AspNetCore.TagHelpers;
@@ -30,18 +32,20 @@ public class ViteTagHelper : TagHelper
 	private readonly IViteManifest _manifest;
 	private readonly IUrlHelperFactory _urlHelperFactory;
 	private readonly ViteStatusService _status;
+	private readonly ViteOptions _viteOptions;
 
 	/// <summary>
 	/// Initialize a new instance of <see cref="ViteTagHelper"/>
 	/// </summary>
 	/// <param name="logger">The logger.</param>
 	/// <param name="manifest">The manifest service.</param>
-	public ViteTagHelper(ILogger<ViteTagHelper> logger, IViteManifest manifest, IUrlHelperFactory urlHelperFactory, ViteStatusService viteStatusService)
+	public ViteTagHelper(ILogger<ViteTagHelper> logger, IViteManifest manifest, IOptions<ViteOptions> options, IUrlHelperFactory urlHelperFactory, ViteStatusService viteStatusService)
 	{
 		this._logger = logger;
 		this._manifest = manifest;
 		this._urlHelperFactory = urlHelperFactory;
 		this._status = viteStatusService;
+		this._viteOptions = options.Value;
 	}
 
 	/// <summary>
@@ -108,9 +112,10 @@ public class ViteTagHelper : TagHelper
 			// If the Vite script was not inserted, it will be prepended to the current element tag.
 			if (ViteStatusService.IsMiddlewareRegistered && !this._status.IsDevScriptInserted)
 			{
-				var viteClientPath = urlHelper.Content("~/@vite/client");
+				// Build the uri to the vite client script.
+				var viteClientUrl = this._viteOptions.GetViteDevServerUrl() + "/@vite/client";
 				// Add the script tag to the output
-				output.PreElement.AppendHtml($"<script type=\"module\" src=\"{viteClientPath}\"></script>");
+				output.PreElement.AppendHtml($"<script type=\"module\" src=\"{viteClientUrl}\"></script>");
 				// Set the flag to true to avoid adding the script tag multiple times
 				this._status.IsDevScriptInserted = true;
 			}

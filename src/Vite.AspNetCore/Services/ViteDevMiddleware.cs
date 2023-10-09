@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Vite.AspNetCore.Extensions;
 
 namespace Vite.AspNetCore.Services;
 
@@ -44,13 +45,8 @@ internal class ViteDevMiddleware : IMiddleware
 
 		// Read the Vite options from the configuration.
 		this._viteOptions = options.Value;
-		// Get the port and host from the configuration.
-		var host = options.Value.Server.Host;
-		var port = options.Value.Server.Port;
-		// Check if https is enabled.
-		var https = options.Value.Server.Https;
 		// Build the base url.
-		this._viteServerBaseUrl = $"{(https ? "https" : "http")}://{host}:{port}";
+		this._viteServerBaseUrl = options.Value.GetViteDevServerUrl();
 
 		// Prepare and run the Vite Dev Server if AutoRun is true and the middleware is enabled.
 		if (options.Value.Server.AutoRun && ViteStatusService.IsMiddlewareRegistered)
