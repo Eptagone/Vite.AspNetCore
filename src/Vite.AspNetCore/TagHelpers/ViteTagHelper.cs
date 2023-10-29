@@ -119,8 +119,13 @@ public class ViteTagHelper : TagHelper
 				// Set the flag to true to avoid adding the script tag multiple times
 				this._status.IsDevScriptInserted = true;
 			}
-
+			// Build the uri to the file.
 			file = urlHelper.Content(value);
+			// If the option is enabled, prepend the full development server url to the file path.
+			if (this._viteOptions.Server.UseFullDevUrl)
+			{
+				file = this._viteOptions.GetViteDevServerUrl() + file;
+			}
 		}
 		else
 		{

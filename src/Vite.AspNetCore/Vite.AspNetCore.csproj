@@ -15,7 +15,7 @@
 		<PackageTags>Vite;ViteJS;AspNet;MPA;Middleware;Server;Assets;Mvc;WebPages</PackageTags>
 		<PackageLicenseFile>LICENSE</PackageLicenseFile>
 		<PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
-		<Version>1.10.1</Version>
+		<Version>1.10.2</Version>
 		<PackageReleaseNotes>HMR fixed
 Vite Records options are now reassignable.</PackageReleaseNotes>
 	</PropertyGroup>

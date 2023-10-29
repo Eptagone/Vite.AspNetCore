@@ -39,4 +39,9 @@ public record ViteServerOptions
 	/// The script name to run the Vite Dev Server. Default value is "dev".
 	/// </summary>
 	public string ScriptName { get; set; } = "dev";
+
+	/// <summary>
+	/// Set true to use the full development server URL instead of just the entry points path when using Tag helpers.
+	/// </summary>
+	public bool UseFullDevUrl { get; set; } = false;
 }
