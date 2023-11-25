@@ -13,7 +13,7 @@ public record ViteOptions
 	/// <summary>
 	/// The manifest file name. Default is "manifest.json".
 	/// </summary>
-	public string Manifest { get; set; } = "manifest.json";
+	public string Manifest { get; set; } = Path.Combine(".vite", "manifest.json");
 
 	/// <summary>
 	/// The subfolder where your assets will be located, including the manifest file.

@@ -49,13 +49,23 @@ public sealed class ViteManifest : IViteManifest
 		var viteOptions = options.Value;
 
 		// Read tha name of the manifest file from the configuration.
-		var manifest = viteOptions.Manifest;
+		var manifestName = viteOptions.Manifest;
 
 		// If the manifest file is in a subfolder, get the subfolder path.
 		var basePath = viteOptions.Base?.TrimStart('/');
 
 		// Get the manifest.json file path
-		var manifestPath = Path.Combine(environment.WebRootPath, basePath ?? string.Empty, manifest);
+		var manifestPath = Path.Combine(environment.WebRootPath, basePath ?? string.Empty, manifestName);
+
+		// If the manifest file doesn't exist, try to remove the ".vite/" prefix from the manifest file name. The default name for Vite 5 is ".vite/manifest.json" but for Vite 4 is "manifest.json".
+		if (!File.Exists(manifestPath) && manifestName.StartsWith(".vite"))
+		{
+			// Get the manifest.json file name without the ".vite/" prefix.
+			var legacyManifestName = Path.GetFileName(manifestName);
+
+			// Get the manifest.json file path
+			manifestPath = Path.Combine(environment.WebRootPath, basePath ?? string.Empty, legacyManifestName);
+		}
 
 		// If the manifest.json file exists, deserialize it into a dictionary.
 		if (File.Exists(manifestPath))

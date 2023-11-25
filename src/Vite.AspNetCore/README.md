@@ -56,10 +56,10 @@ The [common way](https://vitejs.dev/guide/backend-integration.html) to access **
     <script type="module" src="http://localhost:5173/main.js"></script>
 </environment>
 <!-- Public assets -->
-<environment include="Development">
+<environment exclude="Development">
     <img src="http://localhost:5173/assets/logo.svg" alt="Vite Logo" />
 </environment>
-<environment exclude="Development">
+<environment include="Production">
     <img src="~/assets/logo.svg" alt="Vite Logo" />
 </environment>
 ```
@@ -71,7 +71,8 @@ By using the vite middleware during development, you don't need to pass the deve
 ```HTML
 <!-- Entry point for development -->
 <environment include="Development">
-    <script type="module" src="~/@@vite/client"></script>
+    <!-- It's mandatory to use the full url for the Vite client script. -->
+    <script type="module" src="http://localhost:5173/@@vite/client"></script>
     <script type="module" src="~/main.js"></script>
 </environment>
 
@@ -94,7 +95,7 @@ By using the Vite Manifest service, you can access the manifest in your applicat
 
 <environment include="Development">
     <!-- Vite development server script -->
-    <script type="module" src="~/@@vite/client"></script>
+    <script type="module" src="http://localhost:5173/@@vite/client"></script>
     <script type="module" src="~/main.ts"></script>
 </environment>
 <environment include="Production">
@@ -155,7 +156,7 @@ The rendered HTML when the middleware is enabled will look like this.
 <!-- This line includes your styles entrypoints -->
 
 <!-- This line includes your "main.ts" and "secondary.ts" entrypoints -->
-<script type="module" src="/@vite/client"></script>
+<script type="module" src="http://localhost:5173/@vite/client"></script>
 <script type="module" src="/main.ts"></script>
 <script type="module" src="/secondary.ts"></script>
 ```
@@ -186,10 +187,10 @@ using Vite.AspNetCore;
 
 // ...
 // Add the Vite services.
-builder.Services.AddViteServices(new ViteOptions()
+builder.Services.AddViteServices(options =>
 {
-    // By default, the manifest file name is "manifest.json". If your manifest file has a different name, you can change it here.
-    Manifest = "my-manifest.json",
+    // By default, the manifest file name is ".vite/manifest.json". If your manifest file has a different name, you can change it here.
+    options.Manifest = "my-manifest.json",
     // More options...
 });
 /// ...
@@ -230,7 +231,7 @@ There are more options that you can change. All the available options are listed
 
 | Property               | Description                                                                                                  |
 | ---------------------- | ------------------------------------------------------------------------------------------------------------ |
-| `Manifest`             | The manifest file name. Default is `manifest.json`.                                                          |
+| `Manifest`             | The manifest file name. Default is `.vite/manifest.json` (Vite 5) or `manifest.json` (Vite 4).               |
 | `Base`                 | The subfolder where your assets will be located, including the manifest file, relative to the web root path. |
 | `PackageManager`       | The name of the package manager to use. Default value is `npm`.                                              |
 | `PackageDirectory`     | The directory where the package.json file is located. Default value is the .NET project working directory.   |

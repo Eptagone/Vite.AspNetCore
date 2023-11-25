@@ -8,9 +8,6 @@ import { spawn } from 'child_process';
 import fs from 'fs';
 import path from 'path';
 
-import appsettings from './appsettings.json';
-import appsettingsDev from './appsettings.Development.json';
-
 // Get base folder for certificates.
 const baseFolder =
 	process.env.APPDATA !== undefined && process.env.APPDATA !== ''
@@ -60,7 +57,7 @@ export default defineConfig(async () => {
 		root: 'Assets',
 		publicDir: 'public',
 		build: {
-			manifest: appsettings.Vite.Manifest,
+			manifest: true,
 			emptyOutDir: true,
 			outDir: '../wwwroot',
 			assetsDir: '',
@@ -94,14 +91,10 @@ export default defineConfig(async () => {
 			},
 		},
 		server: {
-			port: appsettingsDev.Vite.Server.Port,
 			strictPort: true,
 			https: {
 				cert: certFilePath,
 				key: keyFilePath
-			},
-			hmr: {
-				clientPort: appsettingsDev.Vite.Server.Port
 			}
 		},
 		optimizeDeps: {
