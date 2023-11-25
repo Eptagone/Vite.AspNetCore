@@ -14,10 +14,8 @@
 		<Content Remove="package-lock.json" />
 		<Content Remove="package.json" />
 		<Content Remove="tsconfig.json" />
-	</ItemGroup>
-	
-	<ItemGroup>
-		<Folder Include="wwwroot\" />
+		<!-- Don't remove this line or your manifest.json won't be copied on publish -->
+		<Content Include="wwwroot\.vite\**" />
 	</ItemGroup>
 
 	<ItemGroup>
