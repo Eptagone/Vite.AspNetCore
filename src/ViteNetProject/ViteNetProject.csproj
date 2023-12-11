@@ -11,21 +11,12 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<Folder Include="wwwroot\" />
 		<Content Remove="package-lock.json" />
 		<Content Remove="package.json" />
 		<Content Remove="tsconfig.json" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <None Remove="Assets\main.ts" />
-	</ItemGroup>
-
-	<ItemGroup>
-		<Folder Include="wwwroot\" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <TypeScriptCompile Include="Assets\src\main.ts" />
+		<!-- Don't remove this line or your manifest.json won't be copied on publish -->
+		<Content Include="wwwroot\.vite\**" />
 	</ItemGroup>
 
 	<!-- Ensure Node environment on Build -->

@@ -5,8 +5,6 @@
 
 import { UserConfig } from 'vite';
 
-import appsettings from '../appsettings.json';
-
 // Pattern for CSS files
 const cssPattern = /\.css$/;
 // Pattern for image files
@@ -17,7 +15,7 @@ const config: UserConfig = {
 	appType: 'custom',
 	publicDir: false,
 	build: {
-		manifest: appsettings.Vite.Manifest,
+		manifest: true,
 		emptyOutDir: true,
 		outDir: '../wwwroot',
 		assetsDir: '',
