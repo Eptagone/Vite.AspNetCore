@@ -1,0 +1,41 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<title>@ViewData["Title"] - ViteNET.Tailwind</title>
+	<link rel="stylesheet" vite-href="~/dist/styles/site.css" />
+	@* <link rel="stylesheet" href="~/ViteNET.Tailwind.styles.css" asp-append-version="true" /> *@
+</head>
+<body>
+	<div class="flex flex-col min-h-full">
+		<header class="py-3 border-b box-shadow mb-3">
+			<nav class="px-3 mx-auto sm:px-4">
+				<a class="inline-block mr-4 text-lg whitespace-no-wrap hover:text-purple-700" asp-page="/Index">ViteNET.Tailwind</a>
+				<div class="flex-grow items-center inline-flex justify-between">
+					<ul class="flex flex-wrap list-reset flex-grow gap-3 text-gray-600">
+						<li>
+							<a class="inline-block py-2 no-underline text-gray-900 hover:text-purple-700" asp-page="/Index">Home</a>
+						</li>
+						<li>
+							<a class="inline-block py-2 no-underline text-gray-900 hover:text-purple-700" asp-page="/Privacy">Privacy</a>
+						</li>
+					</ul>
+				</div>
+			</nav>
+		</header>
+		<main role="main" class="mx-auto mb-auto w-full max-w-sm md:max-w-lg lg:max-w-6xl">
+			@RenderBody()
+		</main>
+
+		<footer class="border-t py-3 text-gray-700">
+			<div class="mx-auto px-3 sm:px-4">
+				&copy; 2024 - ViteNET.Tailwind - <a class="hover:text-purple-700" asp-page="/Privacy">Privacy</a>
+			</div>
+		</footer>
+	</div>
+
+	<script type="module" vite-src="~/dist/app.ts"></script>
+	@await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

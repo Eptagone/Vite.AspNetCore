@@ -1,63 +1,29 @@
-﻿// Copyright (c) 2023 Quetzal Rivera.
+﻿// Copyright (c) 2024 Quetzal Rivera.
 // Licensed under the MIT License, See LICENCE in the project root for license information.
 
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
-using Vite.AspNetCore.Extensions;
 
 namespace Vite.AspNetCore.Services;
 
 /// <summary>
 /// Represents a middleware that proxies requests to the Vite Dev Server.
 /// </summary>
-internal class ViteDevMiddleware : IMiddleware
+/// <remarks>
+/// Initializes a new instance of the <see cref="ViteDevMiddleware"/> class.
+/// </remarks>
+/// <param name="logger">The logger service.</param>
+/// <param name="devServerStatus">The <see cref="IViteDevServerStatus"/> instance.</param>
+/// <param name="clientFactory">The <see cref="IHttpClientFactory"/> instance.</param>
+internal class ViteDevMiddleware(
+	ILogger<ViteDevMiddleware> logger,
+	IViteDevServerStatus devServerStatus,
+	IHttpClientFactory clientFactory) : IMiddleware
 {
-	private readonly ILogger<ViteDevMiddleware> _logger;
-	private readonly IHttpClientFactory _clientFactory;
-	private readonly string _viteServerBaseUrl;
-	private readonly ViteOptions _viteOptions;
-
-	/// <summary>
-	/// Optional. This flag is used to know if the middleware is waiting for the Vite development server to start.
-	/// </summary>
-	private bool _waitForDevServer;
-
-	/// <summary>
-	/// Initializes a new instance of the <see cref="ViteDevMiddleware"/> class.
-	/// </summary>
-	/// <param name="logger">The logger service.</param>
-	/// <param name="options">Options for the middleware.</param>
-	/// <param name="clientFactory">The <see cref="IHttpClientFactory"/> instance.</param>
-	/// <param name="launchManager">The launch manager to launch the Vite development server.</param>
-	public ViteDevMiddleware(
-		ILogger<ViteDevMiddleware> logger,
-		IOptions<ViteOptions> options,
-		IHttpClientFactory clientFactory,
-		ViteServerLaunchManager launchManager)
-	{
-		ViteStatusService.IsDevServerRunning = true;
-		// Set the logger.
-		this._logger = logger;
-		// Set the http client factory
-		this._clientFactory = clientFactory;
-
-		// Read the Vite options from the configuration.
-		this._viteOptions = options.Value;
-		// Build the base url.
-		this._viteServerBaseUrl = options.Value.GetViteDevServerUrl();
-
-		// Prepare and run the Vite Dev Server if AutoRun is true and the middleware is enabled.
-		if (options.Value.Server.AutoRun && ViteStatusService.IsMiddlewareRegistered)
-		{
-			// Set the waitForDevServer flag to true.
-			this._waitForDevServer = true;
-
-			// Launch the Vite Development Server.
-			launchManager.LaunchDevelopmentServer();
-		}
-	}
+	private readonly ILogger<ViteDevMiddleware> logger = logger;
+	private readonly IHttpClientFactory clientFactory = clientFactory;
+	private readonly IViteDevServerStatus devServerStatus = devServerStatus;
 
 	/// <inheritdoc />
 	public async Task InvokeAsync(HttpContext context, RequestDelegate next)
@@ -88,39 +54,12 @@ internal class ViteDevMiddleware : IMiddleware
 	private async Task ProxyAsync(HttpContext context, RequestDelegate next, string path)
 	{
 		// Initialize a "new" instance of the HttpClient class via the HttpClientFactory.
-		using var client = this._clientFactory.CreateClient();
-		client.BaseAddress = new Uri(this._viteServerBaseUrl);
+		using var client = this.clientFactory.CreateClient(ViteDevServerStatus.HttpClientName);
 
 		// Pass "Accept" header from the original request.
 		if (context.Request.Headers.ContainsKey("Accept"))
 		{
 			client.DefaultRequestHeaders.Add("Accept", context.Request.Headers.Accept.ToList());
-		}
-
-		// If the waitForDevServer flag is true, wait for the Vite development server to start.
-		if (this._waitForDevServer)
-		{
-			// Wait for the server to start until the timeout is reached or the server is found.
-			var timeout = TimeSpan.FromSeconds(this._viteOptions.Server.TimeOut);
-			// Smaller increments mean faster discover but potentially more loops
-			var increment = TimeSpan.FromMilliseconds(200);
-			var waiting = new TimeSpan(0);
-
-			// Wait for the server to start until the timeout is reached or the server is found.
-			while (this._waitForDevServer && waiting < timeout)
-			{
-				waiting = waiting.Add(increment);
-				await Task.Delay(increment);
-			}
-
-			// If the waitForDevServer flag is true, log the timeout.
-			if (this._waitForDevServer)
-			{
-				this._logger.LogWarning("The Vite development server did not start within {TotalSeconds} seconds",
-					timeout.TotalSeconds);
-				// Set the waitForDevServer flag to false.
-				this._waitForDevServer = false;
-			}
 		}
 
 		try
@@ -150,7 +89,7 @@ internal class ViteDevMiddleware : IMiddleware
 		catch (HttpRequestException exp)
 		{
 			// Log the exception.
-			this._logger.LogWarning("{Message}. Make sure the Vite development server is running", exp.Message);
+			this.logger.LogWarning("{Message}. Make sure the Vite development server is running", exp.Message);
 			await next(context);
 		}
 	}

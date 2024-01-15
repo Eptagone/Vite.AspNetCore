@@ -1,4 +1,4 @@
-// Copyright (c) 2023 Quetzal Rivera.
+// Copyright (c) 2024 Quetzal Rivera.
 // Licensed under the MIT License, See LICENCE in the project root for license information.
 
 using Vite.AspNetCore.Extensions;
@@ -10,7 +10,7 @@ builder.Services.AddRazorPages();
 // Add the Vite services.
 builder.Services.AddViteServices(options =>
 {
-    options.Server.AutoRun = true;
+	options.Server.AutoRun = true;
 });
 
 var app = builder.Build();

@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2023 Quetzal Rivera.
+﻿// Copyright (c) 2024 Quetzal Rivera.
 // Licensed under the MIT License, See LICENCE in the project root for license information.
 
 namespace Vite.AspNetCore;

@@ -1,0 +1,13 @@
+/* Tailwind */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html {
+  position: relative;
+  height: 100%;
+}
+
+body {
+  height: 100%;
+}

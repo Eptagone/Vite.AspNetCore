@@ -1,0 +1,17 @@
+{
+	"name": "vite-net",
+	"private": true,
+	"version": "1.0.0",
+	"type": "module",
+	"scripts": {
+		"dev": "vite",
+		"build": "tsc && vite build",
+		"preview": "vite preview"
+	},
+	"devDependencies": {
+		"@types/node": "^20.10.7",
+		"sass": "^1.69.7",
+		"typescript": "^5.3.3",
+		"vite": "^5.0.11"
+	}
+}

@@ -15,8 +15,13 @@
 		<PackageTags>Vite;ViteJS;AspNet;MPA;Middleware;Server;Assets;Mvc;WebPages</PackageTags>
 		<PackageLicenseFile>LICENSE</PackageLicenseFile>
 		<PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
-		<Version>1.11</Version>
-		<PackageReleaseNotes>Update for Vite 5</PackageReleaseNotes>
+		<Version>1.12</Version>
+		<LangVersion>latest</LangVersion>
+		<PackageReleaseNotes>Tag helpers:
+- Link tag handling has been improved
+- The full Vite development server URL is now always rendered
+A new service "IViteDevServerStatus" was added to obtain vite development server status information.
+The "UseViteDevMiddleware" method has been replaced by "UseViteDevelopmentServer".</PackageReleaseNotes>
 	</PropertyGroup>
 
 	<!-- Add ASP.NET Core references -->

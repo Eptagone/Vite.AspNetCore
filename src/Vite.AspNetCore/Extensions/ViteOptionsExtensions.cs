@@ -1,12 +1,5 @@
-﻿// Copyright (c) 2023 Quetzal Rivera.
+﻿// Copyright (c) 2024 Quetzal Rivera.
 // Licensed under the MIT License, See LICENCE in the project root for license information.
-
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection.Metadata.Ecma335;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Vite.AspNetCore.Extensions;
 
@@ -27,8 +20,14 @@ internal static class ViteOptionsExtensions
 		var port = options.Server.Port;
 		// Check if https is enabled.
 		var https = options.Server.Https;
-		
+
+		var serverUrl = $"{(https ? "https" : "http")}://{host}";
+		if (port is not null)
+		{
+			serverUrl += $":{port}";
+		}
+
 		// Return the url.
-		return $"{(https ? "https" : "http")}://{host}:{port}";
+		return serverUrl;
 	}
 }

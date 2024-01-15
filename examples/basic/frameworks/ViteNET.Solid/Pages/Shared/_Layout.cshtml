@@ -1,0 +1,25 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8" />
+	<link rel="icon" type="image/svg+xml" href="/vite.svg" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<title>@ViewData["Title"]</title>
+
+	@* This line includes the style from the "main.ts" entrypoint *@
+	<link rel="stylesheet" vite-href="~/main.tsx" asp-append-version="true" />
+</head>
+
+<body>
+	<main role="main" id="app">
+		@RenderBody()
+	</main>
+	
+	<!-- This line includes your "main.ts" entrypoint -->
+	<script type="module" vite-src="~/main.tsx"></script>
+
+	@await RenderSectionAsync("Scripts", required: false)
+</body>
+
+</html>

@@ -1,11 +1,11 @@
-﻿// Copyright (c) 2023 Quetzal Rivera.
+﻿// Copyright (c) 2024 Quetzal Rivera.
 // Licensed under the MIT License, See LICENCE in the project root for license information.
 
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Options;
-using Vite.AspNetCore.Abstractions;
+using System.Net.Http.Headers;
 using Vite.AspNetCore.Services;
 
 namespace Vite.AspNetCore.Extensions;
@@ -116,18 +116,32 @@ public static class ServiceCollectionExtensions
 			services.AddHttpClient();
 		}
 
-		// Add the status service
-		services.TryAddScoped<ViteStatusService>();
+		// Add an HttpClient for the Vite Dev Server
+		services.AddHttpClient(ViteDevServerStatus.HttpClientName)
+			.ConfigurePrimaryHttpMessageHandler(_ => new HttpClientHandler
+			{
+				ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator
+			})
+			.ConfigureHttpClient((services, client) =>
+			{
+				var options = services.GetRequiredService<IOptions<ViteOptions>>();
+				var serverUrl = options.Value.GetViteDevServerUrl();
+				client.BaseAddress = new Uri(serverUrl);
+				client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("*/*", 0.1));
+			});
+
+		// Add the Vite Dev Server Service
+		services.TryAddSingleton<IViteDevServerStatus, ViteDevServerStatus>();
 
 		// Add the manifest service
 		ServiceDescriptor descriptor = new(typeof(IViteManifest), typeof(T), lifetime);
 		services.Add(descriptor);
 
-		// Add the launch manager
-		services.TryAddSingleton<ViteServerLaunchManager>();
-
 		// Add the middleware for the Vite development server
 		services.TryAddSingleton<ViteDevMiddleware>();
+
+		// Add the ViteTagHelperService
+		services.TryAddScoped<ViteDevScriptMonitor>();
 
 		return services;
 	}
