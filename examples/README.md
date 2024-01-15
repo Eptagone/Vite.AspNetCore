@@ -8,6 +8,5 @@ All of these projects implement the same website using different frameworks. The
 
 ## Available Examples
 
-- [ViteNET.RazorPages](ViteNET.RazorPages/README.md) - An example of using `Vite.AspNetCore` with Razor Pages.
-- [ViteNET.MVC](ViteNET.MVC/README.md) - An example of using `Vite.AspNetCore` with MVC.
-- [ViteNET.BlazorServer](ViteNET.BlazorServer/README.md) - An example of using `Vite.AspNetCore` with Blazor Server.
+- [ViteNET.RazorPages](basic/ViteNET.RazorPages/README.md) - An example of using `Vite.AspNetCore` with Razor Pages.
+- [ViteNET.MVC](basic/ViteNET.MVC/README.md) - An example of using `Vite.AspNetCore` with MVC.
