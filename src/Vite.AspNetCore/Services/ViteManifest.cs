@@ -2,6 +2,7 @@
 // Licensed under the MIT License, See LICENCE in the project root for license information.
 
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System.Collections;
@@ -54,26 +55,30 @@ public sealed class ViteManifest : IViteManifest
 		this.basePath = viteOptions.Base?.TrimStart('/');
 
 		// Get the manifest.json file path
-		var manifestPath = Path.Combine(environment.WebRootPath, this.basePath ?? string.Empty, manifestName);
+		string rootDir = Path.Combine(environment.WebRootPath, this.basePath ?? string.Empty);
+		PhysicalFileProvider fileProvider = new(rootDir);
+		IFileInfo manifestFile = fileProvider.GetFileInfo(manifestName);
 
 		// If the manifest file doesn't exist, try to remove the ".vite/" prefix from the manifest file name. The default name for Vite 5 is ".vite/manifest.json" but for Vite 4 is "manifest.json".
-		if (!File.Exists(manifestPath) && manifestName.StartsWith(".vite"))
+		if (!manifestFile.Exists && manifestName.StartsWith(".vite"))
 		{
 			// Get the manifest.json file name without the ".vite/" prefix.
 			var legacyManifestName = Path.GetFileName(manifestName);
 
 			// Get the manifest.json file path
-			manifestPath = Path.Combine(environment.WebRootPath, this.basePath ?? string.Empty, legacyManifestName);
+			manifestFile = fileProvider.GetFileInfo(legacyManifestName);
 		}
 
 		// If the manifest.json file exists, deserialize it into a dictionary.
-		if (File.Exists(manifestPath))
+		if (manifestFile.Exists)
 		{
 			// Read the manifest.json file and deserialize it into a dictionary
-			this.chunks = JsonSerializer.Deserialize<IReadOnlyDictionary<string, ViteChunk>>(File.ReadAllBytes(manifestPath), new JsonSerializerOptions()
+			using Stream readStream = manifestFile.CreateReadStream();
+			this.chunks = JsonSerializer.Deserialize<IReadOnlyDictionary<string, ViteChunk>>(readStream, new JsonSerializerOptions()
 			{
 				PropertyNameCaseInsensitive = true
 			})!;
+			// TODO: refresh token/watch
 		}
 		else
 		{
