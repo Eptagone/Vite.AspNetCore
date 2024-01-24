@@ -21,8 +21,10 @@ public sealed class ViteManifest : IViteManifest, IDisposable
 	private IReadOnlyDictionary<string, ViteChunk> chunks;
 	private readonly IViteDevServerStatus devServerStatus;
 	private readonly string? basePath;
-	private readonly PhysicalFileProvider fileProvider;
 	private readonly ViteOptions viteOptions;
+
+	private readonly PhysicalFileProvider fileProvider;
+	private IChangeToken changeToken;
 	private IDisposable changeTokenDispose;
 
 	/// <summary>
@@ -78,6 +80,12 @@ public sealed class ViteManifest : IViteManifest, IDisposable
 				return null;
 			}
 
+			// If proactive callbacks are disabled, then we need to check the token
+			if (this.changeToken?.HasChanged ?? false)
+			{
+				this.InitializeManifest();
+			}
+
 			if (!string.IsNullOrEmpty(this.basePath))
 			{
 				var basePath = this.basePath.Trim('/');
@@ -126,12 +134,15 @@ public sealed class ViteManifest : IViteManifest, IDisposable
 				PropertyNameCaseInsensitive = true
 			})!;
 
-			IChangeToken changeToken = this.fileProvider.Watch(manifestName);
-			this.changeTokenDispose = changeToken.RegisterChangeCallback(state =>
+			this.changeToken = this.fileProvider.Watch(manifestName);
+			if (this.changeToken.ActiveChangeCallbacks)
 			{
-				this.logger.LogInformation("Detected change in Vite manifest - refreshing");
-				this.InitializeManifest();
-			}, null);
+				this.changeTokenDispose = this.changeToken.RegisterChangeCallback(state =>
+				{
+					this.logger.LogInformation("Detected change in Vite manifest - refreshing");
+					this.InitializeManifest();
+				}, null);
+			}
 		}
 		else
 		{
