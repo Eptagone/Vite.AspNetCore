@@ -33,7 +33,7 @@ public class ManifestTest : IClassFixture<WebApplicationFactory<Program>>
 	public async Task ManifestIsRefreshedWhenUpdated()
 	{
 		IWebHostEnvironment hostEnv = this._factory.Services.GetRequiredService<IWebHostEnvironment>();
-		string manifestPath = Path.Combine(hostEnv.WebRootPath, ".vite\\manifest.json");
+		string manifestPath = Path.Combine(hostEnv.WebRootPath, ".vite", "manifest.json");
 		string backup = File.ReadAllText(manifestPath);
 
 		// Setup manifest to consistant starting state

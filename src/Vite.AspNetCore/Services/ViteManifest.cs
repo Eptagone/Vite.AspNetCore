@@ -18,14 +18,14 @@ public sealed class ViteManifest : IViteManifest, IDisposable
 {
 	private static bool warnAboutManifestOnce = true;
 	private readonly ILogger<ViteManifest> logger;
-	private IReadOnlyDictionary<string, ViteChunk> chunks;
+	private IReadOnlyDictionary<string, ViteChunk> chunks = null!;	// chunks is always initialized, just indirectly from the constructor
 	private readonly IViteDevServerStatus devServerStatus;
 	private readonly string? basePath;
 	private readonly ViteOptions viteOptions;
 
-	private readonly PhysicalFileProvider fileProvider;
-	private IChangeToken changeToken;
-	private IDisposable changeTokenDispose;
+	private readonly PhysicalFileProvider? fileProvider;
+	private IChangeToken? changeToken;
+	private IDisposable? changeTokenDispose;
 
 	/// <summary>
 	/// Initializes a new instance of the <see cref="ViteManifest"/> class.
@@ -37,6 +37,7 @@ public sealed class ViteManifest : IViteManifest, IDisposable
 	{
 		this.logger = logger;
 		this.devServerStatus = viteDevServer;
+		this.viteOptions = options.Value;
 
 		// If the middleware is enabled, don't read the manifest.json file.
 		if (viteDevServer.IsEnabled)
@@ -50,10 +51,6 @@ public sealed class ViteManifest : IViteManifest, IDisposable
 			this.chunks = new Dictionary<string, ViteChunk>();
 			return;
 		}
-
-		// Get vite options.
-		this.viteOptions = options.Value;
-
 
 		// If the manifest file is in a subfolder, get the subfolder path.
 		this.basePath = this.viteOptions.Base?.TrimStart('/');
@@ -111,7 +108,7 @@ public sealed class ViteManifest : IViteManifest, IDisposable
 	{
 		// Read tha name of the manifest file from the configuration.
 		var manifestName = this.viteOptions.Manifest;
-		IFileInfo manifestFile = this.fileProvider.GetFileInfo(manifestName);
+		IFileInfo manifestFile = this.fileProvider!.GetFileInfo(manifestName);	// Not null if we get to this point
 
 		// If the manifest file doesn't exist, try to remove the ".vite/" prefix from the manifest file name. The default name for Vite 5 is ".vite/manifest.json" but for Vite 4 is "manifest.json".
 		if (!manifestFile.Exists && manifestName.StartsWith(".vite"))
