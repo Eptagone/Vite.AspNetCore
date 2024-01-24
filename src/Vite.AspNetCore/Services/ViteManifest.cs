@@ -80,7 +80,7 @@ public sealed class ViteManifest : IViteManifest, IDisposable
 			// If proactive callbacks are disabled, then we need to check the token
 			if (this.changeToken?.HasChanged ?? false)
 			{
-				this.InitializeManifest();
+				this.OnManifestChanged();
 			}
 
 			if (!string.IsNullOrEmpty(this.basePath))
@@ -136,8 +136,7 @@ public sealed class ViteManifest : IViteManifest, IDisposable
 			{
 				this.changeTokenDispose = this.changeToken.RegisterChangeCallback(state =>
 				{
-					this.logger.LogInformation("Detected change in Vite manifest - refreshing");
-					this.InitializeManifest();
+					this.OnManifestChanged();
 				}, null);
 			}
 		}
@@ -153,6 +152,12 @@ public sealed class ViteManifest : IViteManifest, IDisposable
 			// Create an empty dictionary.
 			this.chunks = new Dictionary<string, ViteChunk>();
 		}
+	}
+
+	private void OnManifestChanged()
+	{
+		this.logger.LogInformation("Detected change in Vite manifest - refreshing");
+		this.InitializeManifest();
 	}
 
 	/// <inheritdoc/>
