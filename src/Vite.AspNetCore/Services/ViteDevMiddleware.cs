@@ -48,17 +48,34 @@ internal class ViteDevMiddleware(
         }
     }
 
-    /// <summary>
-    /// Proxies the request to the Vite Dev Server.
-    /// </summary>
-    /// <param name="context">The <see cref="HttpContext"/> instance.</param>
-    /// <param name="next">The next handler in the request pipeline</param>
-    /// <param name="path">The request path.</param>
-    /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
-    private async Task ProxyAsync(HttpContext context, RequestDelegate next, string path)
-    {
-        // Initialize a "new" instance of the HttpClient class via the HttpClientFactory.
-        using var client = this.clientFactory.CreateClient(ViteDevServerStatus.HttpClientName);
+	/// <summary>
+	/// Proxies the request to the Vite Dev Server.
+	/// </summary>
+	/// <param name="context">The <see cref="HttpContext"/> instance.</param>
+	/// <param name="next">The next handler in the request pipeline</param>
+	/// <param name="path">The request path.</param>
+	/// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
+	private async Task ProxyAsync(HttpContext context, RequestDelegate next, string path)
+	{
+		// If it's an HMR (hot module reload) request, delegate processing to a WebSocket proxy
+		var ws = context.WebSockets;
+		if (ws.IsWebSocketRequest &&
+			ws.WebSocketRequestedProtocols.Contains(ViteDevHmrProxy.SubProtocol))
+		{
+			var wsUriBuilder = new UriBuilder(this.devServerStatus.ServerUrlWithBasePath);
+			wsUriBuilder.Scheme = wsUriBuilder.Scheme.ToLower() switch
+			{
+				"http" => "ws",
+				"https" => "wss",
+				_ => throw new ArgumentOutOfRangeException(nameof(wsUriBuilder.Scheme))
+			};
+
+			await new ViteDevHmrProxy(this.logger).ProxyAsync(context, wsUriBuilder.Uri, CancellationToken.None);
+			return;
+		}
+
+		// Initialize a "new" instance of the HttpClient class via the HttpClientFactory.
+		using var client = this.clientFactory.CreateClient(ViteDevServerStatus.HttpClientName);
 
         // Pass "Accept" header from the original request.
         if (context.Request.Headers.ContainsKey("Accept"))
