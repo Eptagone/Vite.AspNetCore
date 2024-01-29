@@ -144,113 +144,49 @@ class ViteDevServerStatus : IViteDevServerStatus, IDisposable
 			workingDirectory = Path.GetFullPath(workingDirectory, this.environment.ContentRootPath);
 		}
 
-		this.process = new Process();
-
-		this.process.EnableRaisingEvents = true;
-		this.process.OutputDataReceived += new DataReceivedEventHandler(StartProcess_OutputDataReceived);
-		this.process.ErrorDataReceived += new DataReceivedEventHandler(StartProcess_ErrorDataReceived);
-		this.process.Exited += new EventHandler(StartProcess_Exited);
-
-		this.process.StartInfo.FileName = FindAppInPathDirectories(command);
-		this.process.StartInfo.Arguments = args;
-		this.process.StartInfo.UseShellExecute = false;
-		this.process.StartInfo.CreateNoWindow = true;
-		this.process.StartInfo.WorkingDirectory = Path.GetFullPath(workingDirectory);
-		this.process.StartInfo.RedirectStandardError = true;
-		this.process.StartInfo.RedirectStandardOutput = true;
-
-		this.logger.LogInformation($"vite process env:path: ${this.process.StartInfo.EnvironmentVariables}");
+		// Create the process start info.
+		var startInfo = new ProcessStartInfo(command, args)
+		{
+			CreateNoWindow = false,
+			UseShellExecute = true,
+			WindowStyle = ProcessWindowStyle.Normal,
+			WorkingDirectory = Path.GetFullPath(workingDirectory)
+		};
 
 		try
 		{
 			this.logger.LogInformation("Starting the vite development server...");
 
 			// Start the process.
-			this.process.Start();
-			this.process.BeginErrorReadLine();
-			this.process.BeginOutputReadLine();
+			this.process = Process.Start(startInfo);
 
 			if (this.process is { HasExited: false })
 			{
 				this.logger.LogInformation("Vite development server started with process ID {ProcessId}.", this.process.Id);
 
-				//bool? stopScriptLaunched = null;
-				//// Ensure the process is killed if the app shuts down.
-				//if (OperatingSystem.IsWindows())
-				//{
-				//	stopScriptLaunched = this.LaunchStopScriptForWindows(this.process.Id);
-				//}
-				//else if (OperatingSystem.IsMacOS())
-				//{
-				//	stopScriptLaunched = this.LaunchStopScriptForMacOs(this.process.Id);
-				//}
+				bool? stopScriptLaunched = null;
+				// Ensure the process is killed if the app shuts down.
+				if (OperatingSystem.IsWindows())
+				{
+					ChildProcessTracker.AddProcess(this.process);
+					return;
+				}
+				else if (OperatingSystem.IsMacOS())
+				{
+					stopScriptLaunched = this.LaunchStopScriptForMacOs(this.process.Id);
+				}
 
-				//// If the stop script was not launched, log a warning.
-				//if (stopScriptLaunched == false)
-				//{
-				//	this.logger.LogError("Failed to launch stop script for Vite development server with process ID {ProcessId}.", this.process.Id);
-				//}
+				// If the stop script was not launched, log a warning.
+				if (stopScriptLaunched == false)
+				{
+					this.logger.LogError("Failed to launch stop script for Vite development server with process ID {ProcessId}.", this.process.Id);
+				}
 			}
 		}
 		catch (Exception exp)
 		{
 			this.logger.LogError(exp, "Failed to launch Vite development server.");
 		}
-	}
-
-	/// <summary>
-	/// Attempts to resolve executable paths on systems that have
-	/// more than one named launch script with varied extensions (e.g., npm on Windows)
-	/// Adapted from https://stackoverflow.com/questions/12392913/process-start-and-path-environment-variable
-	/// </summary>
-	/// <param name="app"></param>
-	/// <returns>full executable application path</returns>
-	private string FindAppInPathDirectories(string app) {
-		var enviromentPath = Environment.GetEnvironmentVariable("PATH");
-		var paths = enviromentPath?.Split(';');
-
-		foreach(string thisPath in paths) {
-			string thisFile = Path.Combine(thisPath, app);
-			string[] executableExtensions = new string[] { ".exe", ".com", ".bat", ".sh", ".vbs", ".vbscript", ".vbe", ".js", ".rb", ".cmd", ".cpl", ".ws", ".wsf", ".msc", ".gadget" };
-
-			foreach(string extension in executableExtensions) {
-				string fullFile = thisFile + extension;
-
-				try {
-					if(File.Exists(fullFile))
-						return fullFile;
-				}
-				catch(Exception ex) {
-					this.logger.LogError(ex, $"Error trying to check existence of file {thisFile}");
-				}
-			}
-		}
-
-		foreach(string thisPath in paths) {
-			string thisFile = Path.Combine(thisPath, app);
-
-			try {
-				if(File.Exists(thisFile))
-					return thisFile;
-			}
-			catch(Exception ex) {
-				this.logger.LogError(ex, $"Error trying to check existence of file {thisFile}");
-			}
-		}
-
-		return app;
-	}
-
-	private void StartProcess_Exited(object? sender, EventArgs e) {
-		this.logger.LogInformation($"Vite development server process exited with code {process?.ExitCode.ToString()}\n");
-	}
-
-	private void StartProcess_ErrorDataReceived(object sender, DataReceivedEventArgs e) {
-		this.logger.LogInformation($"{e.Data}\n");
-	}
-
-	private void StartProcess_OutputDataReceived(object sender, DataReceivedEventArgs e) {
-		this.logger.LogInformation($"{e.Data}\n");
 	}
 
 	/// <summary>
@@ -286,45 +222,6 @@ class ViteDevServerStatus : IViteDevServerStatus, IDisposable
 			this.logger.LogDebug(exception, "The Vite development server is not running yet.");
 			return false;
 		}
-	}
-
-	/// <summary>
-	/// On Windows, kill the process tree using a PowerShell script.
-	/// </summary>
-	/// <param name="processId">The process ID.</param>
-	/// <returns>True if the script was launched successfully, otherwise false.</returns>
-	private bool LaunchStopScriptForWindows(int processId)
-	{
-		// Create the PowerShell script.
-		var stopScript =
-			$@"do{{
-  try
-  {{
-    $processId = Get-Process -PID {Environment.ProcessId} -ErrorAction Stop;
-  }}catch
-  {{
-    $processId = $null;
-  }}
-  Start-Sleep -Seconds 1;
-}}while($processId -ne $null);
-try
-{{
-  taskkill /T /F /PID {processId};
-}}
-catch
-{{
-}}";
-		// Define the process start info.
-		var stopScriptInfo = new ProcessStartInfo("powershell.exe", string.Join(" ", "-NoProfile", "-C", stopScript))
-		{
-			CreateNoWindow = true,
-			WorkingDirectory = this.environment.ContentRootPath
-		};
-		// Start the process.
-		var stopProcess = Process.Start(stopScriptInfo);
-
-		// Return true if the process was started successfully.
-		return !(stopProcess == null || stopProcess.HasExited);
 	}
 
 	/// <summary>
@@ -386,25 +283,16 @@ rm {scriptPath};
 
 	private void Dispose(bool disposing)
 	{
-		this.logger.LogDebug("Running Dispose().");
-
 		if (!this.disposedValue)
 		{
-
-			this.logger.LogDebug("Dispose() body.");
-
 			try
 			{
 				if (this.process?.HasExited is false && this.process?.CloseMainWindow() == false)
 				{
-
-					this.logger.LogDebug("Before killing process Dispose().");
 					this.process.Kill(true);
 					this.process = null;
 					this.launchTask?.Dispose();
 					this.launchTask = null;
-
-					this.logger.LogDebug("After killing process Dispose().");
 				}
 			}
 			catch (Exception)
