@@ -39,7 +39,7 @@ public sealed class ViteManifest : IViteManifest, IDisposable
 		this.devServerStatus = viteDevServer;
 		this.viteOptions = options.Value;
 
-		// If the middleware is enabled, don't read the manifest.json file.
+		// If the Vite development server is enabled, don't read the manifest.json file.
 		if (viteDevServer.IsEnabled)
 		{
 			if (warnAboutManifestOnce)
@@ -56,6 +56,7 @@ public sealed class ViteManifest : IViteManifest, IDisposable
 		this.basePath = this.viteOptions.Base?.TrimStart('/');
 
 		// Get the manifest.json file path
+        // This requires that the WebRootPath path exists, otherwise an ArgumentNullException is thrown.
 		string rootDir = Path.Combine(environment.WebRootPath, this.basePath ?? string.Empty);
 		this.fileProvider = new(rootDir);
 		this.InitializeManifest();

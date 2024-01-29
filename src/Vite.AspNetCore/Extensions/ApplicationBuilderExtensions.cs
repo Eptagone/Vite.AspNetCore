@@ -23,11 +23,11 @@ public static class ApplicationBuilderExtensions
 	[Obsolete("Use UseViteDevelopmentServer instead.")]
 	public static IApplicationBuilder UseViteDevMiddleware(this IApplicationBuilder app)
 	{
-		return app.UseViteDevelopmentServer(true);
+		return app.UseViteDevelopmentServerProxy(true);
 	}
 
 	/// <summary>
-	/// Enables the Vite Development Server.
+	/// Enables the Vite Development proxy middleware.
 	/// By calling this method, tag helpers will render urls to the Vite Development Server.
 	/// If the middleware is enabled, all requests will be proxied to the Vite Development Server.
 	/// </summary>
@@ -35,14 +35,12 @@ public static class ApplicationBuilderExtensions
 	/// <param name="useMiddleware">If true, a middleware will be registered to proxy all requests to the Vite Development Server.</param>
 	/// <returns>The <see cref="IApplicationBuilder"/> instance this method extends.</returns>
 	/// <exception cref="ArgumentNullException"></exception>
-	public static IApplicationBuilder UseViteDevelopmentServer(this IApplicationBuilder app, bool useMiddleware = false)
+	public static IApplicationBuilder UseViteDevelopmentServerProxy(this IApplicationBuilder app, bool useMiddleware = false)
 	{
 		if (app is null)
 		{
 			throw new ArgumentNullException(nameof(app));
 		}
-		// Enable the Vite Development Server.
-		ViteDevServerStatus.IsEnabled = true;
 
 		if (useMiddleware)
 		{

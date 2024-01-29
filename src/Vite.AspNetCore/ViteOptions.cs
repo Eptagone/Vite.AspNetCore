@@ -22,11 +22,6 @@ public record ViteOptions
 	public string? Base { get; set; }
 
 	/// <summary>
-	/// The name of the package manager to use. Default value is "npm".
-	/// </summary>
-	public string PackageManager { get; set; } = "npm";
-
-	/// <summary>
 	/// The directory where the package.json file is located.
 	/// Default value is the .NET project working directory.
 	/// </summary>

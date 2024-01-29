@@ -30,19 +30,9 @@ public record ViteServerOptions
 	public string Host { get; set; } = "localhost";
 
 	/// <summary>
-	/// Wait for Vite Server to load in seconds. Default value is "5".
-	/// </summary>
-	public int TimeOut { get; set; } = 5;
-
-	/// <summary>
 	/// If true, the middleware will use HTTPS to connect to the Vite Dev Server. Default value is "false".
 	/// </summary>
 	public bool Https { get; set; }
-
-	/// <summary>
-	/// The script name to run the Vite Dev Server. Default value is "dev".
-	/// </summary>
-	public string ScriptName { get; set; } = "dev";
 
 	/// <summary>
 	/// Set true to use the full development server URL instead of just the entry points path when using Tag helpers.

@@ -88,6 +88,17 @@ public static class ServiceCollectionExtensions
 		return services.SetOptions().ConfigureServices<T>(optionsLifetime);
 	}
 
+    /// <summary>
+    /// Adds the Vite development server background service.
+    /// </summary>
+    /// <param name="services">The service collection.</param>
+    public static IServiceCollection AddViteDevelopmentServer(this IServiceCollection services)
+    {
+        ViteDevServerStatus.IsEnabled = true;
+        
+        return services.AddHostedService<ViteDevServerBackgroundService>();
+    }
+
 	private static IServiceCollection SetOptions(this IServiceCollection services, ViteOptions? options = null)
 	{
 		// Configure the Vite options

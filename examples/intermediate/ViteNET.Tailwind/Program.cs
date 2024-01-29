@@ -4,12 +4,18 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorPages();
+
 // Add Vite services to the container.
 builder.Services.AddViteServices(config =>
 {
 	config.Base = "/dist/";
 	config.Server.AutoRun = true;
 });
+
+if (builder.Environment.IsDevelopment())
+{
+    builder.Services.AddViteDevelopmentServer();
+}
 
 var app = builder.Build();
 
@@ -32,7 +38,7 @@ app.MapRazorPages();
 
 if (app.Environment.IsDevelopment())
 {
-	app.UseViteDevelopmentServer();
+	app.UseViteDevelopmentServerProxy();
 }
 
 app.Run();

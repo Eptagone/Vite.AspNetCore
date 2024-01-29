@@ -7,12 +7,18 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+
 // Add the Vite services.
 builder.Services.AddViteServices(options =>
 {
 	options.Server.AutoRun = true;
 	options.Server.Https = true;
 });
+
+if (builder.Environment.IsDevelopment())
+{
+    builder.Services.AddViteDevelopmentServer();
+}
 
 var app = builder.Build();
 
@@ -38,7 +44,7 @@ app.MapControllerRoute(
 if (app.Environment.IsDevelopment())
 {
 	// Use Vite Dev Server as middleware.
-	app.UseViteDevelopmentServer(true);
+	app.UseViteDevelopmentServerProxy(true);
 }
 
 app.Run();
