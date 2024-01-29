@@ -55,7 +55,7 @@ internal sealed class ViteDevServerBackgroundService : BackgroundService
 
         this.logger.LogInformation("Starting the Vite development server...");
 
-        var viteExecutablePath = "node_modules/.bin/vite";
+        var viteExecutablePath = Path.Combine(workingDirectory, "node_modules/.bin/vite");
         if (OperatingSystem.IsWindows())
         {
             viteExecutablePath += ".CMD";
