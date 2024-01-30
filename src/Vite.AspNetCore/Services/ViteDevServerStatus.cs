@@ -196,11 +196,11 @@ class ViteDevServerStatus : IViteDevServerStatus, IDisposable
 	private async Task<bool> IsViteDevelopmentServerRunning()
 	{
 		using var timeout = new CancellationTokenSource(
-		    TimeSpan.FromMinutes(this.options.Server.TimeOut)
+			TimeSpan.FromMinutes(this.options.Server.TimeOut)
 		);
 		using var cancellationTokenSource = CancellationTokenSource.CreateLinkedTokenSource(
-		    timeout.Token,
-		    this.appLifetime.ApplicationStopping
+			timeout.Token,
+			this.appLifetime.ApplicationStopping
 		);
 
 		try
@@ -215,8 +215,8 @@ class ViteDevServerStatus : IViteDevServerStatus, IDisposable
 			return running;
 		}
 		catch (Exception exception) when (exception is HttpRequestException ||
-		      exception is TaskCanceledException ||
-		      exception is OperationCanceledException)
+			exception is TaskCanceledException ||
+			exception is OperationCanceledException)
 		{
 			this.logger.LogDebug(exception, "The Vite development server is not running yet.");
 			return false;
