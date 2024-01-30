@@ -65,7 +65,7 @@ public static class ChildProcessTracker
             Marshal.StructureToPtr(extendedInfo, extendedInfoPtr, false);
 
             if (!SetInformationJobObject(s_jobHandle, JobObjectInfoType.ExtendedLimitInformation,
-                extendedInfoPtr, (uint)length))
+            extendedInfoPtr, (uint)length))
             {
                 throw new Win32Exception();
             }
@@ -81,7 +81,7 @@ public static class ChildProcessTracker
 
     [DllImport("kernel32.dll")]
     static extern bool SetInformationJobObject(IntPtr job, JobObjectInfoType infoType,
-        IntPtr lpJobObjectInfo, uint cbJobObjectInfoLength);
+    IntPtr lpJobObjectInfo, uint cbJobObjectInfoLength);
 
     [DllImport("kernel32.dll", SetLastError = true)]
     static extern bool AssignProcessToJobObject(IntPtr job, IntPtr process);
