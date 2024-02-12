@@ -42,6 +42,8 @@ public class ViteTagHelper(ILogger<ViteTagHelper> logger, IViteManifest manifest
 	private readonly IUrlHelperFactory urlHelperFactory = urlHelperFactory;
 	private readonly string? basePath = viteOptions.Value.Base?.Trim('/');
 
+	private readonly bool useReactRefresh = viteOptions.Value.UseReactRefresh ?? false;
+
 	/// <summary>
 	/// The entry name in the manifest file.
 	/// The manifest can only be accessed after building the assets with 'npm run build'.
@@ -125,10 +127,26 @@ public class ViteTagHelper(ILogger<ViteTagHelper> logger, IViteManifest manifest
 			// If the Vite script was not inserted, it will be prepended to the current element tag.
 			if (!this.helperService.IsDevScriptInjected)
 			{
-				// Build the uri to the vite client script.
 				var viteClientUrl = this.devServerStatus.ServerUrlWithBasePath + "/@vite/client";
+
 				// Add the script tag to the output
+
+				if (this.useReactRefresh)
+				{
+					var viteReactRefreshUrl = this.devServerStatus.ServerUrlWithBasePath + "/@react-refresh";
+
+					output.PreElement.AppendHtml(
+							"<script type=\"module\">\n" +
+							"	import RefreshRuntime from \"" + viteReactRefreshUrl + "\";\n" +
+							"	RefreshRuntime.injectIntoGlobalHook(window);\n" +
+							"	window.$RefreshReg$ = () => { };\n" +
+							"	window.$RefreshSig$ = () => (type) => type;\n" +
+							"	window.__vite_plugin_react_preamble_installed__ = true;\n" +
+							"</script>\n");
+				}
+
 				output.PreElement.AppendHtml($"<script type=\"module\" src=\"{viteClientUrl}\"></script>");
+
 				// Set the flag to true to avoid adding the script tag multiple times
 				this.helperService.IsDevScriptInjected = true;
 			}
