@@ -15,7 +15,7 @@ namespace Vite.AspNetCore.Services;
 /// References:
 ///  https://stackoverflow.com/a/4657392/386091
 ///  https://stackoverflow.com/a/9164742/386091 </remarks>
-public static class ChildProcessTracker
+static class ChildProcessTracker
 {
 	/// <summary>
 	/// Add the process to be tracked. If our current process is killed, the child processes
@@ -92,7 +92,7 @@ public static class ChildProcessTracker
 	private static readonly IntPtr s_jobHandle;
 }
 
-public enum JobObjectInfoType
+enum JobObjectInfoType
 {
 	AssociateCompletionPortInformation = 7,
 	BasicLimitInformation = 2,
@@ -104,7 +104,7 @@ public enum JobObjectInfoType
 }
 
 [StructLayout(LayoutKind.Sequential)]
-public struct JOBOBJECT_BASIC_LIMIT_INFORMATION
+struct JOBOBJECT_BASIC_LIMIT_INFORMATION
 {
 	public Int64 PerProcessUserTimeLimit;
 	public Int64 PerJobUserTimeLimit;
@@ -118,13 +118,13 @@ public struct JOBOBJECT_BASIC_LIMIT_INFORMATION
 }
 
 [Flags]
-public enum JOBOBJECTLIMIT : uint
+enum JOBOBJECTLIMIT : uint
 {
 	JOB_OBJECT_LIMIT_KILL_ON_JOB_CLOSE = 0x2000
 }
 
 [StructLayout(LayoutKind.Sequential)]
-public struct IO_COUNTERS
+struct IO_COUNTERS
 {
 	public UInt64 ReadOperationCount;
 	public UInt64 WriteOperationCount;
@@ -135,7 +135,7 @@ public struct IO_COUNTERS
 }
 
 [StructLayout(LayoutKind.Sequential)]
-public struct JOBOBJECT_EXTENDED_LIMIT_INFORMATION
+struct JOBOBJECT_EXTENDED_LIMIT_INFORMATION
 {
 	public JOBOBJECT_BASIC_LIMIT_INFORMATION BasicLimitInformation;
 	public IO_COUNTERS IoInfo;
