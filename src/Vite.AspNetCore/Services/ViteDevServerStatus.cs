@@ -167,7 +167,8 @@ class ViteDevServerStatus : IViteDevServerStatus, IDisposable
 				// Ensure the process is killed if the app shuts down.
 				if (OperatingSystem.IsWindows())
 				{
-					stopScriptLaunched = this.LaunchStopScriptForWindows(this.process.Id);
+					ChildProcessTracker.AddProcess(this.process);
+					return;
 				}
 				else if (OperatingSystem.IsMacOS())
 				{
@@ -214,51 +215,12 @@ class ViteDevServerStatus : IViteDevServerStatus, IDisposable
 			return running;
 		}
 		catch (Exception exception) when (exception is HttpRequestException ||
-			  exception is TaskCanceledException ||
-			  exception is OperationCanceledException)
+			exception is TaskCanceledException ||
+			exception is OperationCanceledException)
 		{
 			this.logger.LogDebug(exception, "The Vite development server is not running yet.");
 			return false;
 		}
-	}
-
-	/// <summary>
-	/// On Windows, kill the process tree using a PowerShell script.
-	/// </summary>
-	/// <param name="processId">The process ID.</param>
-	/// <returns>True if the script was launched successfully, otherwise false.</returns>
-	private bool LaunchStopScriptForWindows(int processId)
-	{
-		// Create the PowerShell script.
-		var stopScript =
-			$@"do{{
-  try
-  {{
-    $processId = Get-Process -PID {Environment.ProcessId} -ErrorAction Stop;
-  }}catch
-  {{
-    $processId = $null;
-  }}
-  Start-Sleep -Seconds 1;
-}}while($processId -ne $null);
-try
-{{
-  taskkill /T /F /PID {processId};
-}}
-catch
-{{
-}}";
-		// Define the process start info.
-		var stopScriptInfo = new ProcessStartInfo("powershell.exe", string.Join(" ", "-NoProfile", "-C", stopScript))
-		{
-			CreateNoWindow = true,
-			WorkingDirectory = this.environment.ContentRootPath
-		};
-		// Start the process.
-		var stopProcess = Process.Start(stopScriptInfo);
-
-		// Return true if the process was started successfully.
-		return !(stopProcess == null || stopProcess.HasExited);
 	}
 
 	/// <summary>
@@ -274,7 +236,7 @@ catch
 		var scriptPath = Path.Combine(this.environment.ContentRootPath, fileName);
 		// Create the Bash script.
 		var stopScript =
-			@$"function list_child_processes () {{
+		    @$"function list_child_processes () {{
     local ppid=$1;
     local current_children=$(pgrep -P $ppid);
     local local_child;
