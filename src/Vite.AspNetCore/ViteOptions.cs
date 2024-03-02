@@ -8,38 +8,38 @@ namespace Vite.AspNetCore;
 /// </summary>
 public record ViteOptions
 {
-	public const string Vite = "Vite";
+    public const string Vite = "Vite";
 
-	/// <summary>
-	/// The manifest file name. Default is "manifest.json".
-	/// </summary>
-	public string Manifest { get; set; } = Path.Combine(".vite", "manifest.json");
+    /// <summary>
+    /// The manifest file name. Default is "manifest.json".
+    /// </summary>
+    public string Manifest { get; set; } = Path.Combine(".vite", "manifest.json");
 
-	/// <summary>
-	/// The subfolder where your assets will be located, including the manifest file.
-	/// This value is relative to the web root path.
-	/// </summary>
-	public string? Base { get; set; }
+    /// <summary>
+    /// The subfolder where your assets will be located, including the manifest file.
+    /// This value is relative to the web root path.
+    /// </summary>
+    public string? Base { get; set; }
 
-	/// <summary>
-	/// The name of the package manager to use. Default value is "npm".
-	/// </summary>
-	public string PackageManager { get; set; } = "npm";
+    /// <summary>
+    /// The name of the package manager to use. Default value is "npm".
+    /// </summary>
+    public string PackageManager { get; set; } = "npm";
 
-	/// <summary>
-	/// The directory where the package.json file is located.
-	/// Default value is the .NET project working directory.
-	/// </summary>
-	public string? PackageDirectory { get; set; }
+    /// <summary>
+    /// The directory where the package.json file is located.
+    /// Default value is the .NET project working directory.
+    /// </summary>
+    public string? PackageDirectory { get; set; }
 
-	/// <summary>
-	/// Inject the react-refresh preamble and enable HMR for React components, see: https://vitejs.dev/guide/backend-integration.html.
-	/// Default value is false.
-	/// </summary>
-	public bool? UseReactRefresh { get; set; }
+    /// <summary>
+    /// Inject the react-refresh preamble and enable HMR for React components, see: https://vitejs.dev/guide/backend-integration.html.
+    /// Default value is false.
+    /// </summary>
+    public bool? UseReactRefresh { get; set; }
 
-	/// <summary>
-	/// Options for the Vite Dev Server.
-	/// </summary>
-	public ViteServerOptions Server { get; set; } = new ViteServerOptions();
+    /// <summary>
+    /// Options for the Vite Dev Server.
+    /// </summary>
+    public ViteServerOptions Server { get; set; } = new ViteServerOptions();
 }

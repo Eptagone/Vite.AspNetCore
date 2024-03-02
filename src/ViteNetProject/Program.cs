@@ -7,10 +7,11 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorPages();
+
 // Add the Vite services.
 builder.Services.AddViteServices(options =>
 {
-	options.Server.AutoRun = true;
+    options.Server.AutoRun = true;
 });
 
 var app = builder.Build();

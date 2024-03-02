@@ -238,16 +238,17 @@ There are more options that you can change. All the available options are listed
 
 | Property               | Description                                                                                                  |
 | ---------------------- | ------------------------------------------------------------------------------------------------------------ |
-| `Manifest`             | The manifest file name. Default is `.vite/manifest.json` (Vite 5) or `manifest.json` (Vite 4).               |
-| `Base`                 | The subfolder where your assets will be located, including the manifest file, relative to the web root path. |
-| `PackageManager`       | The name of the package manager to use. Default value is `npm`.                                              |
-| `PackageDirectory`     | The directory where the package.json file is located. Default value is the .NET project working directory.   |
-| `Server:AutoRun`       | Enable or disable the automatic start of the Vite Dev Server. Default value is `false`.                      |
-| `Server:Port`          | The port where the Vite Development Server will be running. Default value is `5173`.                         |
-| `Server:Host`          | The host where the Vite Dev Server will be running. Default value is `localhost`.                            |
-| `Server:TimeOut`       | The timeout in seconds spent waiting for the vite dev server. Default is `5`                                 |
-| `Server:Https`         | If true, the middleware will use HTTPS to connect to the Vite Development Server. Default value is `false`.  |
-| `Server:ScriptName`    | The script name to run the Vite Development Server. Default value is `dev`.                                  |
+| `Manifest`             | The manifest file name. Default is `.vite/manifest.json` (Vite 5) or `manifest.json` (Vite 4).                  |
+| `Base`                 | The subfolder where your assets will be located, including the manifest file, relative to the web root path.    |
+| `PackageManager`       | The name of the package manager to use. Default value is `npm`.                                                 |
+| `PackageDirectory`     | The directory where the package.json file is located. Default value is the .NET project working directory.      |
+| `UseReactRefresh`      | `true` for loading the react-refresh when loading the vite client while developing to enable HMR. |
+| `Server:AutoRun`       | Enable or disable the automatic start of the Vite Dev Server. Default value is `false`.                         |
+| `Server:Port`          | The port where the Vite Development Server will be running. Default value is `5173`.                            |
+| `Server:Host`          | The host where the Vite Dev Server will be running. Default value is `localhost`.                               |
+| `Server:TimeOut`       | The timeout in seconds spent waiting for the vite dev server. Default is `5`                                    |
+| `Server:Https`         | If true, the middleware will use HTTPS to connect to the Vite Development Server. Default value is `false`.     |
+| `Server:ScriptName`    | The script name to run the Vite Development Server. Default value is `dev`.                                     |
 
 > If you are using the `appsettings.json` and/or `appsettings.Development.json` files, all the options must be under the `Vite` property.
 

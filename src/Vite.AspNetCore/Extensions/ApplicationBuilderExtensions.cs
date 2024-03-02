@@ -11,48 +11,51 @@ namespace Vite.AspNetCore.Extensions;
 /// </summary>
 public static class ApplicationBuilderExtensions
 {
-	/// <summary>
-	/// Registers the <b>Vite Dev Server</b> as the Static File Middleware.
-	/// <para>
-	/// Note that <b>this method will not work</b> if the Vite Dev Server is not running.
-	/// </para>
-	/// </summary>
-	/// <param name="app">The <see cref="IApplicationBuilder"/> instance this method extends.</param>
-	/// <returns>The <see cref="IApplicationBuilder"/> instance this method extends.</returns>
-	/// <exception cref="ArgumentNullException"></exception>
-	[Obsolete("Use UseViteDevelopmentServer instead.")]
-	public static IApplicationBuilder UseViteDevMiddleware(this IApplicationBuilder app)
-	{
-		return app.UseViteDevelopmentServer(true);
-	}
+    /// <summary>
+    /// Registers the <b>Vite Dev Server</b> as the Static File Middleware.
+    /// <para>
+    /// Note that <b>this method will not work</b> if the Vite Dev Server is not running.
+    /// </para>
+    /// </summary>
+    /// <param name="app">The <see cref="IApplicationBuilder"/> instance this method extends.</param>
+    /// <returns>The <see cref="IApplicationBuilder"/> instance this method extends.</returns>
+    /// <exception cref="ArgumentNullException"></exception>
+    [Obsolete("Use UseViteDevelopmentServer instead.")]
+    public static IApplicationBuilder UseViteDevMiddleware(this IApplicationBuilder app)
+    {
+        return app.UseViteDevelopmentServer(true);
+    }
 
-	/// <summary>
-	/// Enables the Vite Development Server.
-	/// By calling this method, tag helpers will render urls to the Vite Development Server.
-	/// If the middleware is enabled, all requests will be proxied to the Vite Development Server.
-	/// </summary>
-	/// <param name="app">The <see cref="IApplicationBuilder"/> instance this method extends.</param>
-	/// <param name="useMiddleware">If true, a middleware will be registered to proxy all requests to the Vite Development Server.</param>
-	/// <returns>The <see cref="IApplicationBuilder"/> instance this method extends.</returns>
-	/// <exception cref="ArgumentNullException"></exception>
-	public static IApplicationBuilder UseViteDevelopmentServer(this IApplicationBuilder app, bool useMiddleware = false)
-	{
-		if (app is null)
-		{
-			throw new ArgumentNullException(nameof(app));
-		}
-		// Enable the Vite Development Server.
-		ViteDevServerStatus.IsEnabled = true;
+    /// <summary>
+    /// Enables the Vite Development Server.
+    /// By calling this method, tag helpers will render urls to the Vite Development Server.
+    /// If the middleware is enabled, all requests will be proxied to the Vite Development Server.
+    /// </summary>
+    /// <param name="app">The <see cref="IApplicationBuilder"/> instance this method extends.</param>
+    /// <param name="useMiddleware">If true, a middleware will be registered to proxy all requests to the Vite Development Server.</param>
+    /// <returns>The <see cref="IApplicationBuilder"/> instance this method extends.</returns>
+    /// <exception cref="ArgumentNullException"></exception>
+    public static IApplicationBuilder UseViteDevelopmentServer(
+        this IApplicationBuilder app,
+        bool useMiddleware = false
+    )
+    {
+        if (app is null)
+        {
+            throw new ArgumentNullException(nameof(app));
+        }
+        // Enable the Vite Development Server.
+        ViteDevServerStatus.IsEnabled = true;
 
-		if (useMiddleware)
-		{
-			// Enable the Vite Development Server middleware.
-			ViteDevServerStatus.IsMiddlewareEnable = useMiddleware;
-			// Register the middleware.
-			app.UseMiddleware<ViteDevMiddleware>();
-		}
+        if (useMiddleware)
+        {
+            // Enable the Vite Development Server middleware.
+            ViteDevServerStatus.IsMiddlewareEnable = useMiddleware;
+            // Register the middleware.
+            app.UseMiddleware<ViteDevMiddleware>();
+        }
 
-		// Return the IApplicationBuilder instance.
-		return app;
-	}
+        // Return the IApplicationBuilder instance.
+        return app;
+    }
 }

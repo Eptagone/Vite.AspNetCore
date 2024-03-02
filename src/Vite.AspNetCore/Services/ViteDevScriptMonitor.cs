@@ -13,8 +13,8 @@ namespace Vite.AspNetCore.Services;
 /// </summary>
 public class ViteDevScriptMonitor
 {
-	/// <summary>
-	/// True if the vite script has been injected.
-	/// </summary>
-	public bool IsDevScriptInjected { get; set; }
+    /// <summary>
+    /// True if the vite script has been injected.
+    /// </summary>
+    public bool IsDevScriptInjected { get; set; }
 }

@@ -8,36 +8,43 @@ namespace Vite.AspNetCore;
 /// </summary>
 public interface IViteChunk
 {
-	/// <summary>
-	/// Gets the file name of the chunk.
-	/// </summary>
-	string File { get; }
-	/// <summary>
-	/// The relative src path from project root.
-	/// </summary>
-	string? Src { get; }
-	/// <summary>
-	/// True, if the current chunk file is an entrypoint.
-	/// </summary>
-	bool? IsEntry { get; }
-	/// <summary>
-	/// List of chunk paths that are imported by the current chunk.
-	/// </summary>
-	IEnumerable<string>? DynamicImports { get; }
-	/// <summary>
-	/// List of all CSS files imported by the current chunk.
-	/// </summary>
-	IEnumerable<string>? Css { get; }
-	/// <summary>
-	/// List of all assets imported by the current chunk.
-	/// </summary>
-	IEnumerable<string>? Assets { get; }
-	/// <summary>
-	/// True, if the current chunk if a dynamic import entrypoint.
-	/// </summary>
-	bool? IsDynamicEntry { get; }
-	/// <summary>
-	/// List of all imports.
-	/// </summary>
-	IEnumerable<string>? Imports { get; }
+    /// <summary>
+    /// Gets the file name of the chunk.
+    /// </summary>
+    string File { get; }
+
+    /// <summary>
+    /// The relative src path from project root.
+    /// </summary>
+    string? Src { get; }
+
+    /// <summary>
+    /// True, if the current chunk file is an entrypoint.
+    /// </summary>
+    bool? IsEntry { get; }
+
+    /// <summary>
+    /// List of chunk paths that are imported by the current chunk.
+    /// </summary>
+    IEnumerable<string>? DynamicImports { get; }
+
+    /// <summary>
+    /// List of all CSS files imported by the current chunk.
+    /// </summary>
+    IEnumerable<string>? Css { get; }
+
+    /// <summary>
+    /// List of all assets imported by the current chunk.
+    /// </summary>
+    IEnumerable<string>? Assets { get; }
+
+    /// <summary>
+    /// True, if the current chunk if a dynamic import entrypoint.
+    /// </summary>
+    bool? IsDynamicEntry { get; }
+
+    /// <summary>
+    /// List of all imports.
+    /// </summary>
+    IEnumerable<string>? Imports { get; }
 }

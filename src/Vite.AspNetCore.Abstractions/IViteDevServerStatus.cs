@@ -8,23 +8,23 @@ namespace Vite.AspNetCore;
 /// </summary>
 public interface IViteDevServerStatus
 {
-	/// <summary>
-	/// True if the development server is enabled, otherwise false.
-	/// </summary>
-	public bool IsEnabled { get; }
+    /// <summary>
+    /// True if the development server is enabled, otherwise false.
+    /// </summary>
+    public bool IsEnabled { get; }
 
-	/// <summary>
-	/// True if the middleware is enabled, otherwise false.
-	/// </summary>
-	public bool IsMiddlewareEnable { get; }
+    /// <summary>
+    /// True if the middleware is enabled, otherwise false.
+    /// </summary>
+    public bool IsMiddlewareEnable { get; }
 
-	/// <summary>
-	/// The URL of the Vite development server.
-	/// </summary>
-	public string ServerUrl { get; }
+    /// <summary>
+    /// The URL of the Vite development server.
+    /// </summary>
+    public string ServerUrl { get; }
 
-	/// <summary>
-	/// The URL of the Vite development server with base path.
-	/// </summary>
-	public string ServerUrlWithBasePath { get; }
+    /// <summary>
+    /// The URL of the Vite development server with base path.
+    /// </summary>
+    public string ServerUrlWithBasePath { get; }
 }

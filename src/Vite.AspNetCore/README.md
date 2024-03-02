@@ -242,7 +242,6 @@ There are more options that you can change. All the available options are listed
 | `Server:TimeOut`       | The timeout in seconds spent waiting for the vite dev server. Default is `5`                                    |
 | `Server:Https`         | If true, the middleware will use HTTPS to connect to the Vite Development Server. Default value is `false`.     |
 | `Server:ScriptName`    | The script name to run the Vite Development Server. Default value is `dev`.                                     |
-| `Server:UseFullDevUrl` | If true, tag helpers will use the full dev server URL instead of just paths. Default value is `false`.          |
 
 > If you are using the `appsettings.json` and/or `appsettings.Development.json` files, all the options must be under the `Vite` property.
 

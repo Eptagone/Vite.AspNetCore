@@ -8,43 +8,43 @@ namespace Vite.AspNetCore;
 /// </summary>
 public record ViteChunk : IViteChunk
 {
-	/// <summary>
-	/// Gets the file name of the chunk.
-	/// </summary>
-	public string File { get; init; } = null!;
+    /// <summary>
+    /// Gets the file name of the chunk.
+    /// </summary>
+    public string File { get; init; } = null!;
 
-	/// <summary>
-	/// The relative src path from project root.
-	/// </summary>
-	public string? Src { get; init; }
+    /// <summary>
+    /// The relative src path from project root.
+    /// </summary>
+    public string? Src { get; init; }
 
-	/// <summary>
-	/// True, if the current chunk file is an entrypoint.
-	/// </summary>
-	public bool? IsEntry { get; init; }
+    /// <summary>
+    /// True, if the current chunk file is an entrypoint.
+    /// </summary>
+    public bool? IsEntry { get; init; }
 
-	/// <summary>
-	/// List of chunk paths that are imported by the current chunk.
-	/// </summary>
-	public IEnumerable<string>? DynamicImports { get; init; }
+    /// <summary>
+    /// List of chunk paths that are imported by the current chunk.
+    /// </summary>
+    public IEnumerable<string>? DynamicImports { get; init; }
 
-	/// <summary>
-	/// List of all CSS files imported by the current chunk.
-	/// </summary>
-	public IEnumerable<string>? Css { get; init; }
+    /// <summary>
+    /// List of all CSS files imported by the current chunk.
+    /// </summary>
+    public IEnumerable<string>? Css { get; init; }
 
-	/// <summary>
-	/// List of all assets imported by the current chunk.
-	/// </summary>
-	public IEnumerable<string>? Assets { get; init; }
+    /// <summary>
+    /// List of all assets imported by the current chunk.
+    /// </summary>
+    public IEnumerable<string>? Assets { get; init; }
 
-	/// <summary>
-	/// True, if the current chunk if a dynamic import entrypoint.
-	/// </summary>
-	public bool? IsDynamicEntry { get; init; }
+    /// <summary>
+    /// True, if the current chunk if a dynamic import entrypoint.
+    /// </summary>
+    public bool? IsDynamicEntry { get; init; }
 
-	/// <summary>
-	/// List of all imports.
-	/// </summary>
-	public IEnumerable<string>? Imports { get; init; }
+    /// <summary>
+    /// List of all imports.
+    /// </summary>
+    public IEnumerable<string>? Imports { get; init; }
 }

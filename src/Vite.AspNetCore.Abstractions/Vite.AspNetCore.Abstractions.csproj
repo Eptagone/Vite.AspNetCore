@@ -1,38 +1,38 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-	<PropertyGroup>
-		<TargetFramework>net6.0</TargetFramework>
-		<ImplicitUsings>enable</ImplicitUsings>
-		<Nullable>enable</Nullable>
-		<Title>Vite abstractions for Vite.AspNetCore</Title>
-		<Authors>Quetzal Rivera</Authors>
-		<Copyright>Quetzal Rivera 2023 ©</Copyright>
-		<Description>Abstractions for Vite.AspNetCore</Description>
-		<PackageIcon>vite.png</PackageIcon>
-		<RepositoryUrl>https://github.com/Eptagone/Vite.AspNetCore</RepositoryUrl>
-		<PackageTags>Vite;ASP.NET;ViteJS;Assets;Abstractions</PackageTags>
-		<PackageLicenseFile>LICENSE</PackageLicenseFile>
-		<PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
-		<IsPackable>true</IsPackable>
-		<Version>1.2.0</Version>
-	</PropertyGroup>
+    <PropertyGroup>
+        <TargetFramework>net6.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <Title>Vite abstractions for Vite.AspNetCore</Title>
+        <Authors>Quetzal Rivera</Authors>
+        <Copyright>Quetzal Rivera 2023 ©</Copyright>
+        <Description>Abstractions for Vite.AspNetCore</Description>
+        <PackageIcon>vite.png</PackageIcon>
+        <RepositoryUrl>https://github.com/Eptagone/Vite.AspNetCore</RepositoryUrl>
+        <PackageTags>Vite;ASP.NET;ViteJS;Assets;Abstractions</PackageTags>
+        <PackageLicenseFile>LICENSE</PackageLicenseFile>
+        <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
+        <IsPackable>true</IsPackable>
+        <Version>1.2.0</Version>
+    </PropertyGroup>
 
-	<ItemGroup>
-		<PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1">
-			<PrivateAssets>all</PrivateAssets>
-			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-		</PackageReference>
-	</ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+    </ItemGroup>
 
-	<ItemGroup>
-	  <None Include="..\..\docs\vite.png">
-	    <Pack>True</Pack>
-	    <PackagePath>\</PackagePath>
-	  </None>
-	  <None Include="..\..\LICENSE">
-	    <Pack>True</Pack>
-	    <PackagePath>\</PackagePath>
-	  </None>
-	</ItemGroup>
+    <ItemGroup>
+      <None Include="..\..\docs\vite.png">
+        <Pack>True</Pack>
+        <PackagePath>\</PackagePath>
+      </None>
+      <None Include="..\..\LICENSE">
+        <Pack>True</Pack>
+        <PackagePath>\</PackagePath>
+      </None>
+    </ItemGroup>
 
 </Project>
