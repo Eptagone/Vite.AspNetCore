@@ -33,6 +33,12 @@ public record ViteOptions
 	public string? PackageDirectory { get; set; }
 
 	/// <summary>
+	/// Inject the react-refresh preamble and enable HMR for React components, see: https://vitejs.dev/guide/backend-integration.html.
+	/// Default value is false.
+	/// </summary>
+	public bool? UseReactRefresh { get; set; }
+
+	/// <summary>
 	/// Options for the Vite Dev Server.
 	/// </summary>
 	public ViteServerOptions Server { get; set; } = new ViteServerOptions();
