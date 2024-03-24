@@ -38,8 +38,11 @@ builder.Services.AddViteServices();
 // Use Middleware in development environment.
 if (app.Environment.IsDevelopment())
 {
+    // WebSockets support is required for HMR (hot module reload).
+    // This call is redundant if your pipeline already contains it.
+    app.UseWebSockets();
     // Enable the Middleware to use the Vite Development Server.
-    app.UseViteDevMiddleware();
+    app.UseViteDevMiddleware(true);
 }
 ```
 
