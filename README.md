@@ -40,6 +40,10 @@ builder.Services.AddViteServices();
 // Use the Vite Development Server in development environment.
 if (app.Environment.IsDevelopment())
 {
+    // If you use the integrated middleware (see next line) and your app
+    // has not added WebSockets earlier in the pipeline, you need to add it
+    // to support HMR (hot module reload).
+    /* app.UseWebSockets(); */
     // Enable all required features to use the Vite Development Server.
     // Pass true if you want to use the integrated middleware.
     app.UseViteDevelopmentServer(/* false */);
