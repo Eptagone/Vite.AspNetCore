@@ -27,4 +27,9 @@ public interface IViteDevServerStatus
     /// The URL of the Vite development server with base path.
     /// </summary>
     public string ServerUrlWithBasePath { get; }
+
+    /// <summary>
+    /// The base path of the Vite development server.
+    /// </summary>
+    public string BasePath { get; }
 }

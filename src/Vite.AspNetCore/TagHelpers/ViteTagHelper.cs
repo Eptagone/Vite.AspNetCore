@@ -9,7 +9,6 @@ using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.AspNetCore.Razor.TagHelpers;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using Vite.AspNetCore.Services;
 
 namespace Vite.AspNetCore.TagHelpers;
 
@@ -28,7 +27,7 @@ public class ViteTagHelper(
     ILogger<ViteTagHelper> logger,
     IViteManifest manifest,
     IViteDevServerStatus devServerStatus,
-    ViteDevScriptMonitor helperService,
+    ViteTagHelperMonitor helperService,
     IOptions<ViteOptions> viteOptions,
     IUrlHelperFactory urlHelperFactory
 ) : TagHelper
@@ -44,13 +43,13 @@ public class ViteTagHelper(
     private const string LINK_REL_STYLESHEET = "stylesheet";
 
     private readonly ILogger<ViteTagHelper> logger = logger;
-    private readonly ViteDevScriptMonitor helperService = helperService;
+    private readonly ViteTagHelperMonitor helperService = helperService;
     private readonly IViteManifest manifest = manifest;
     private readonly IViteDevServerStatus devServerStatus = devServerStatus;
     private readonly IUrlHelperFactory urlHelperFactory = urlHelperFactory;
     private readonly string? basePath = viteOptions.Value.Base?.Trim('/');
 
-    private readonly bool useReactRefresh = viteOptions.Value.UseReactRefresh ?? false;
+    private readonly bool useReactRefresh = viteOptions.Value.Server.UseReactRefresh ?? false;
 
     /// <summary>
     /// The entry name in the manifest file.
@@ -105,18 +104,17 @@ public class ViteTagHelper(
         // If the value is empty or null, we don't need to do anything
         if (string.IsNullOrWhiteSpace(value))
         {
-            this.logger.LogWarning(
-                "vite-{Attribute} value missing (check {View})",
-                attribute,
-                this.ViewContext.View.Path
-            );
+            this.logger.LogViteAttributeMissing(attribute, this.ViewContext.View.Path);
             return;
         }
 
         // Removes the leading '~/' from the value. This is needed because the manifest file doesn't contain the leading '~/' or '/'.
         value = value.TrimStart('~', '/');
         // If the base path is not null, remove it from the value.
-        if (!string.IsNullOrEmpty(this.basePath) && value.StartsWith(this.basePath))
+        if (
+            !string.IsNullOrEmpty(this.basePath)
+            && value.StartsWith(this.basePath, StringComparison.InvariantCulture)
+        )
         {
             value = value[this.basePath.Length..].TrimStart('/');
         }
@@ -134,17 +132,19 @@ public class ViteTagHelper(
                 return;
             }
 
+            var devBasePath = this.devServerStatus.ServerUrlWithBasePath;
+
             // If the Vite script was not inserted, it will be prepended to the current element tag.
             if (!this.helperService.IsDevScriptInjected)
             {
-                var viteClientUrl = this.devServerStatus.ServerUrlWithBasePath + "/@vite/client";
+                var viteClientUrl = devBasePath + "/@vite/client";
 
                 // Add the script tag to the output
 
                 if (this.useReactRefresh)
                 {
                     var viteReactRefreshUrl =
-                        this.devServerStatus.ServerUrlWithBasePath + "/@react-refresh";
+                        devBasePath + "/@react-refresh";
 
                     output.PreElement.AppendHtml(
                         "<script type=\"module\">\n"
@@ -167,7 +167,7 @@ public class ViteTagHelper(
                 this.helperService.IsDevScriptInjected = true;
             }
             // Build the url to the file path.
-            file = $"{this.devServerStatus.ServerUrlWithBasePath}/{value}";
+            file = $"{devBasePath}/{value}";
         }
         else
         {
@@ -177,11 +177,7 @@ public class ViteTagHelper(
             // If the entry is not found, log an error and return
             if (entry == null)
             {
-                this.logger.LogError(
-                    "\"{Key}\" was not found in Vite manifest file (check {View})",
-                    value,
-                    this.ViewContext.View.Path
-                );
+                this.logger.LogViteManifestKeyNotFound(value, this.ViewContext.View.Path);
                 output.SuppressOutput();
                 return;
             }
@@ -200,7 +196,7 @@ public class ViteTagHelper(
                 // If the entrypoint doesn't have css files, destroy it.
                 if (count == 0)
                 {
-                    this.logger.LogWarning("The entry '{Entry}' doesn't have CSS chunks", value);
+                    this.logger.LogEntryDoesntHaveCssChunks(value);
                     output.SuppressOutput();
                     return;
                 }

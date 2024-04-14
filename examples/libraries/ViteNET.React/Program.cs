@@ -1,4 +1,4 @@
-using Vite.AspNetCore.Extensions;
+using Vite.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,6 +10,7 @@ builder.Services.AddViteServices(options =>
 {
     options.Server.AutoRun = true;
     options.Server.Https = true;
+    options.Server.UseReactRefresh = true;
 });
 
 var app = builder.Build();

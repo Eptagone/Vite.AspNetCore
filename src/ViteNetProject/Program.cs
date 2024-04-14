@@ -1,7 +1,7 @@
 // Copyright (c) 2024 Quetzal Rivera.
 // Licensed under the MIT License, See LICENCE in the project root for license information.
 
-using Vite.AspNetCore.Extensions;
+using Vite.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 

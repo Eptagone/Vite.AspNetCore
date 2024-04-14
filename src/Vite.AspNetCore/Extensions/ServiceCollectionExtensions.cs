@@ -6,9 +6,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Options;
-using Vite.AspNetCore.Services;
 
-namespace Vite.AspNetCore.Extensions;
+namespace Vite.AspNetCore;
 
 public static class ServiceCollectionExtensions
 {
@@ -146,7 +145,7 @@ public static class ServiceCollectionExtensions
 
         // Add an HttpClient for the Vite Dev Server
         services
-            .AddHttpClient(ViteDevServerStatus.HttpClientName)
+            .AddHttpClient(ViteDevServerMiddleware.HttpClientName)
             .ConfigurePrimaryHttpMessageHandler(_ => new HttpClientHandler
             {
                 ServerCertificateCustomValidationCallback =
@@ -154,15 +153,13 @@ public static class ServiceCollectionExtensions
             })
             .ConfigureHttpClient(
                 (services, client) =>
-                {
-                    var options = services.GetRequiredService<IOptions<ViteOptions>>();
-                    var serverUrl = options.Value.GetViteDevServerUrl();
-                    client.BaseAddress = new Uri(serverUrl);
                     client.DefaultRequestHeaders.Accept.Add(
                         new MediaTypeWithQualityHeaderValue("*/*", 0.1)
-                    );
-                }
+                    )
             );
+
+        // Add the Vite Dev Server Launcher
+        services.TryAddSingleton<ViteDevServerLauncher>();
 
         // Add the Vite Dev Server Service
         services.TryAddSingleton<IViteDevServerStatus, ViteDevServerStatus>();
@@ -172,10 +169,10 @@ public static class ServiceCollectionExtensions
         services.Add(descriptor);
 
         // Add the middleware for the Vite development server
-        services.TryAddSingleton<ViteDevMiddleware>();
+        services.TryAddSingleton<ViteDevServerMiddleware>();
 
-        // Add the ViteTagHelperService
-        services.TryAddScoped<ViteDevScriptMonitor>();
+        // Add the ViteTagHelperMonitor
+        services.TryAddScoped<ViteTagHelperMonitor>();
 
         return services;
     }

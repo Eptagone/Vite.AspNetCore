@@ -10,7 +10,7 @@ The project is already configured to install the npm dependencies and run vite. 
 
 Avoid running scripts directly from script tags. Blazor performs a pre-rendering process and if your scripts are executed before this process finishes, all events and references will be removed once rendering is complete.
 
-If you need to run a script after the page loads. It's recommended to import the script into Blazor. See [index.razor](Pages/Index.razor).
+If you need to run a script after the page loads. It's recommended to import the script into from. See [index.razor](Pages/Index.razor).
 
 The Tag Helpers will be in the [_Host.cshtml](Pages/_Host.cshtml) file.
 

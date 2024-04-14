@@ -2,9 +2,8 @@
 // Licensed under the MIT License, See LICENCE in the project root for license information.
 
 using Microsoft.AspNetCore.Builder;
-using Vite.AspNetCore.Services;
 
-namespace Vite.AspNetCore.Extensions;
+namespace Vite.AspNetCore;
 
 /// <summary>
 /// Vite extension methods for <see cref="IApplicationBuilder"/>.
@@ -12,24 +11,7 @@ namespace Vite.AspNetCore.Extensions;
 public static class ApplicationBuilderExtensions
 {
     /// <summary>
-    /// Registers the <b>Vite Dev Server</b> as the Static File Middleware.
-    /// <para>
-    /// Note that <b>this method will not work</b> if the Vite Dev Server is not running.
-    /// </para>
-    /// </summary>
-    /// <param name="app">The <see cref="IApplicationBuilder"/> instance this method extends.</param>
-    /// <returns>The <see cref="IApplicationBuilder"/> instance this method extends.</returns>
-    /// <exception cref="ArgumentNullException"></exception>
-    [Obsolete("Use UseViteDevelopmentServer instead.")]
-    public static IApplicationBuilder UseViteDevMiddleware(this IApplicationBuilder app)
-    {
-        return app.UseViteDevelopmentServer(true);
-    }
-
-    /// <summary>
-    /// Enables the Vite Development Server.
-    /// By calling this method, tag helpers will render urls to the Vite Development Server.
-    /// If the middleware is enabled, all requests will be proxied to the Vite Development Server.
+    /// Instructs the Tag Helpers to render urls to the Vite Development Server and adds the <see cref="ViteDevServerMiddleware"/> to the pipeline if it is enabled.
     /// </summary>
     /// <param name="app">The <see cref="IApplicationBuilder"/> instance this method extends.</param>
     /// <param name="useMiddleware">If true, a middleware will be registered to proxy all requests to the Vite Development Server.</param>
@@ -40,22 +22,10 @@ public static class ApplicationBuilderExtensions
         bool useMiddleware = false
     )
     {
-        if (app is null)
-        {
-            throw new ArgumentNullException(nameof(app));
-        }
-        // Enable the Vite Development Server.
+        ArgumentNullException.ThrowIfNull(app);
         ViteDevServerStatus.IsEnabled = true;
+        ViteDevServerStatus.IsMiddlewareEnable = useMiddleware;
 
-        if (useMiddleware)
-        {
-            // Enable the Vite Development Server middleware.
-            ViteDevServerStatus.IsMiddlewareEnable = useMiddleware;
-            // Register the middleware.
-            app.UseMiddleware<ViteDevMiddleware>();
-        }
-
-        // Return the IApplicationBuilder instance.
-        return app;
+        return useMiddleware ? app.UseMiddleware<ViteDevServerMiddleware>() : app;
     }
 }

@@ -1,5 +1,5 @@
 using ViteNET.BlazorServer.Data;
-using Vite.AspNetCore.Extensions;
+using Vite.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -36,6 +36,7 @@ app.MapFallbackToPage("/_Host");
 
 if (app.Environment.IsDevelopment())
 {
+    // app.UseWebSockets();
 	// Use Vite Dev Server as middleware.
 	app.UseViteDevelopmentServer(true);
 }

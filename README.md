@@ -30,7 +30,7 @@ dotnet add package Vite.AspNetCore
 Add the following lines to your `Program.cs` or `Startup` class.
 
 ```CSharp
-using Vite.AspNetCore.Extensions;
+using Vite.AspNetCore;
 
 // ---- Service Configuration ----
 // Add Vite services.
@@ -193,7 +193,6 @@ Passing the options to the `AddViteServices()` function is as simple as you can 
 
 ```CSharp
 // Program.cs
-using Vite.AspNetCore.Extensions;
 using Vite.AspNetCore;
 
 // ...
