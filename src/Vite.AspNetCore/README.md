@@ -10,12 +10,12 @@ The library is compatible with:
 
 ## Features
 
-This library has three simple but very useful features:
+This library has the following simple but very useful features:
 
 - A Middleware to forward the requests to the Vite Development Server
-  - The middleware can start the Vite Development Server for you ❤️.
 - A service to access the Vite manifest.
 - Tag Helpers for script and link tags.
+- Start the Vite Development Server for you ❤️.
 
 ## Setup
 
@@ -35,14 +35,15 @@ using Vite.AspNetCore;
 builder.Services.AddViteServices();
 
 // ---- App Configuration ----
-// Use Middleware in development environment.
+// Use the Vite Development Server when the environment is Development.
 if (app.Environment.IsDevelopment())
 {
     // WebSockets support is required for HMR (hot module reload).
-    // This call is redundant if your pipeline already contains it.
-    app.UseWebSockets();
-    // Enable the Middleware to use the Vite Development Server.
-    app.UseViteDevMiddleware(true);
+    // Uncomment the following line if your pipeline doesn't contain it.
+    // app.UseWebSockets();
+    // Enable all required features to use the Vite Development Server.
+    // Pass true if you want to use the integrated middleware.
+    app.UseViteDevelopmentServer(/* false */);
 }
 ```
 
@@ -85,7 +86,9 @@ By using the vite middleware during development, you don't need to pass the deve
 
 The middleware will proxy all requests to the Vite Development Server. You won't need alternative paths for images or other resources from your public assets. 🙀🙀🙀
 
-> **Note:** The order of the middlewares is important! Put the `UseViteDevMiddleware()` call in a position according to your needs. Otherwise, your assets will not be served as expected.
+To enable the middleware, pass `true` to the `UseViteDevelopmentServer()` method.
+
+> **Note:** The order of the middlewares is important! Put the `UseViteDevelopmentServer(true)` call in a position according to your needs. Otherwise, your assets will not be served as expected.
 
 ### The Vite Manifest
 
@@ -145,26 +148,26 @@ Now you can use the `vite-src` and `vite-href` attributes in your scripts and li
 <script type="module" vite-src="~/secondary.ts"></script>
 ```
 
-This tag helpers will do the following magic:
+This tag helpers will do the following magic according the state of the Vite Development Server (VDS).
 
-- Middleware is enabled:
+- VDS is enabled:
   - If the link tag is a script (you want to include css from a script entrypoint), the link tag will just disappear. This is because Vite loads the styles automatically by including the script.
   - If the script of the Vite client is not included, it will be added automatically.
-- Middleware is disabled:
+- VDS is disabled:
   - The link and script tags will be rendered using the original paths taken from the manifest. The value of the `vite-href` and `vite-src` attributes will be used as the entrypoint to access the manifest.
 
-The rendered HTML when the middleware is enabled will look like this.
+The rendered HTML when the VDS is enabled will look like this.
 
 ```HTML
 <!-- This line includes your styles entrypoints -->
 
 <!-- This line includes your "main.ts" and "secondary.ts" entrypoints -->
 <script type="module" src="http://localhost:5173/@vite/client"></script>
-<script type="module" src="/main.ts"></script>
-<script type="module" src="/secondary.ts"></script>
+<script type="module" src="http://localhost:5173/main.ts"></script>
+<script type="module" src="http://localhost:5173/secondary.ts"></script>
 ```
 
-And the rendered HTML when the middleware is disabled will look like this.
+And the rendered HTML when the VDS is disabled will look like this.
 
 ```HTML
 <!-- This line includes your styles entrypoints -->
@@ -179,7 +182,7 @@ And the rendered HTML when the middleware is disabled will look like this.
 
 ## Configuration
 
-The middleware and the manifest service can be configured by passing options to the `AddViteServices()` function, using environment variables, user secrets, or your `appsettings.json` file.
+The services can be configured by passing options to the `AddViteServices()` function, using environment variables, user secrets, or your `appsettings.json` file.
 
 Passing the options to the `AddViteServices()` function is as simple as you can see in the following example:
 
@@ -218,7 +221,7 @@ If you prefer not to hardcode the options, you can use environment variables or 
             "AutoRun": true,
             // The port where the Vite Development Server will be running. The default value is 5173.
             "Port": 5174,
-            // If true, the middleware will use HTTPS to connect to the Vite Development Server. The default value is false.
+            // Pass true, if you are using HTTPS to connect to the Vite Development Server. The default value is false.
             "Https": false,
         }
     }
@@ -231,19 +234,19 @@ If you prefer not to hardcode the options, you can use environment variables or 
 
 There are more options that you can change. All the available options are listed below. ⚙️
 
-| Property               | Description                                                                                                     |
-| ---------------------- | --------------------------------------------------------------------------------------------------------------  |
-| `Manifest`             | The manifest file name. Default is `.vite/manifest.json` (Vite 5) or `manifest.json` (Vite 4).                  |
-| `Base`                 | The subfolder where your assets will be located, including the manifest file, relative to the web root path.    |
-| `PackageManager`       | The name of the package manager to use. Default value is `npm`.                                                 |
-| `PackageDirectory`     | The directory where the package.json file is located. Default value is the .NET project working directory.      |
-| `UseReactRefresh`      | `true` for loading the react-refresh when loading the vite client while developing to enable HMR. |
-| `Server:AutoRun`       | Enable or disable the automatic start of the Vite Dev Server. Default value is `false`.                         |
-| `Server:Port`          | The port where the Vite Development Server will be running. Default value is `5173`.                            |
-| `Server:Host`          | The host where the Vite Dev Server will be running. Default value is `localhost`.                               |
-| `Server:TimeOut`       | The timeout in seconds spent waiting for the vite dev server. Default is `5`                                    |
-| `Server:Https`         | If true, the middleware will use HTTPS to connect to the Vite Development Server. Default value is `false`.     |
-| `Server:ScriptName`    | The script name to run the Vite Development Server. Default value is `dev`.                                     |
+| Property                  | Description                                                                                                  |
+| ------------------------- | ------------------------------------------------------------------------------------------------------------ |
+| `Manifest`                | The manifest file name. Default is `.vite/manifest.json` (Vite 5) or `manifest.json` (Vite 4).               |
+| `Base`                    | The subfolder where your assets will be located, including the manifest file, relative to the web root path. |
+| `Server:Port`             | The port where the Vite Development Server will be running. Default value is `5173`.                         |
+| `Server:Host`             | The host where the Vite Dev Server will be running. Default value is `localhost`.                            |
+| `Server:TimeOut`          | The timeout in seconds spent waiting for the vite dev server. Default is `5`                                 |
+| `Server:Https`            | Set true, if you are using HTTPS to connect to the Vite Development Server. Default value is `false`.        |
+| `Server:UseReactRefresh`  | If true, the react-refresh script will be injected before the vite client.                                   |
+| `Server:AutoRun`          | Enable or disable the automatic start of the Vite Dev Server. Default value is `false`.                      |
+| `Server:PackageManager`   | The name of the package manager to use. Default value is `npm`.                                              |
+| `Server:PackageDirectory` | The directory where the package.json file is located. Default value is the .NET project working directory.   |
+| `Server:ScriptName`       | The script name to run the Vite Development Server. Default value is `dev`.                                  |
 
 > If you are using the `appsettings.json` and/or `appsettings.Development.json` files, all the options must be under the `Vite` property.
 

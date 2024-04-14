@@ -34,6 +34,7 @@ app.MapRazorPages();
 
 if (app.Environment.IsDevelopment())
 {
+    app.UseWebSockets();
     // Use Vite Dev Server as middleware.
     app.UseViteDevelopmentServer(true);
 }

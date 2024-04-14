@@ -33,6 +33,7 @@ app.MapRazorPages();
 
 if (app.Environment.IsDevelopment())
 {
+    app.UseWebSockets();
     app.UseViteDevelopmentServer();
 }
 

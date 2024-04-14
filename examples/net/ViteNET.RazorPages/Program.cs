@@ -27,17 +27,15 @@ if (!app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
 app.UseStaticFiles();
-
 app.UseRouting();
-
 app.UseAuthorization();
 
 app.MapRazorPages();
 
 if (app.Environment.IsDevelopment())
 {
+    app.UseWebSockets();
     // Use Vite Dev Server as middleware.
     app.UseViteDevelopmentServer(true);
 }

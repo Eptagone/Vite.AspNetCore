@@ -36,7 +36,7 @@ app.MapFallbackToPage("/_Host");
 
 if (app.Environment.IsDevelopment())
 {
-    // app.UseWebSockets();
+    app.UseWebSockets();
 	// Use Vite Dev Server as middleware.
 	app.UseViteDevelopmentServer(true);
 }

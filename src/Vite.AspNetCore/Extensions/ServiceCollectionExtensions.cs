@@ -41,8 +41,11 @@ public static class ServiceCollectionExtensions
     )
         where T : class, IViteManifest
     {
-        services.SetOptions();
-        if (configure != null)
+        if (configure is null)
+        {
+            services.SetOptions();
+        }
+        else
         {
             services.Configure(configure);
         }
