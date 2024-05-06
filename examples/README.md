@@ -16,6 +16,6 @@ All of these projects implement the same website using different .NET frameworks
 
 ### Examples with JS libraries
 
-- [ViteNET.React](libraries/ViteNET.React/README.md) - An example of using `Vite.AspNetCore` with Ract.
+- [ViteNET.React](libraries/ViteNET.React/README.md) - An example of using `Vite.AspNetCore` with React.
 - [ViteNET.Solid](libraries/ViteNET.Solid/README.md) - An example of using `Vite.AspNetCore` with SolidJS.
 - [ViteNET.TailwindCSS](libraries/ViteNET.Tailwind/README.md) - An example of using `Vite.AspNetCore` with Tailwind CSS.
