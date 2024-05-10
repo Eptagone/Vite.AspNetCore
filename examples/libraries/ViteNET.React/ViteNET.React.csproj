@@ -11,6 +11,7 @@
     <Content Remove="package.json" />
     <Content Remove="tsconfig.json" />
     <!-- Don't remove this line or your manifest.json won't be copied on publish -->
+	  <Content Include="wwwroot\.vite\**" />
   </ItemGroup>
 
   <ItemGroup>
