@@ -173,7 +173,7 @@ internal sealed class ViteDevServerLauncher(
                 }
                 else if (OperatingSystem.IsMacOS())
                 {
-                    stopScriptLaunched = this.LaunchStopScriptForMacOs(this.process.Id);
+                    stopScriptLaunched = LaunchStopScriptForMacOs(this.process.Id);
                 }
 
                 // If the stop script was not launched, log a warning.
@@ -194,12 +194,12 @@ internal sealed class ViteDevServerLauncher(
     /// </summary>
     /// <param name="processId">The process ID.</param>
     /// <returns>True if the script was launched successfully, otherwise false.</returns>
-    private bool LaunchStopScriptForMacOs(int processId)
+    private static bool LaunchStopScriptForMacOs(int processId)
     {
         // Define the script file name.
-        var fileName = Guid.NewGuid().ToString("N") + ".sh";
+        var fileName = "start-vite-dev-server.sh";
         // Define the script path.
-        var scriptPath = Path.Combine(this.contentRootPath, fileName);
+        var scriptPath = Path.Combine(AppContext.BaseDirectory, fileName);
         // Create the Bash script.
         var stopScript =
             @$"function list_child_processes () {{
@@ -237,7 +237,7 @@ rm {scriptPath};
         var stopScriptInfo = new ProcessStartInfo("/bin/bash", scriptPath)
         {
             CreateNoWindow = true,
-            WorkingDirectory = this.contentRootPath
+            WorkingDirectory = AppContext.BaseDirectory
         };
         // Start the process.
         var stopProcess = Process.Start(stopScriptInfo);
