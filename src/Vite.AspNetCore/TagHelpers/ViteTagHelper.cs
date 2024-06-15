@@ -65,18 +65,6 @@ public class ViteTagHelper(
     [HtmlAttributeName(VITE_HREF_ATTRIBUTE)]
     public string? ViteHref { get; set; }
 
-    /// <summary>
-    /// The rel attribute for the link tag.
-    /// </summary>
-    [HtmlAttributeName(LINK_REL_ATTRIBUTE)]
-    public string? Rel { get; set; }
-
-    /// <summary>
-    /// The as attribute for the link tag.
-    /// </summary>
-    [HtmlAttributeName(LINK_AS_ATTRIBUTE)]
-    public string? As { get; set; }
-
     /// <inheritdoc />
     [ViewContext]
     [HtmlAttributeNotBound]
@@ -143,8 +131,7 @@ public class ViteTagHelper(
 
                 if (this.useReactRefresh)
                 {
-                    var viteReactRefreshUrl =
-                        devBasePath + "/@react-refresh";
+                    var viteReactRefreshUrl = devBasePath + "/@react-refresh";
 
                     output.PreElement.AppendHtml(
                         "<script type=\"module\">\n"
@@ -171,11 +158,8 @@ public class ViteTagHelper(
         }
         else
         {
-            // Get the entry chunk from the 'manifest.json' file.
-            var entry = this.manifest[value];
-
             // If the entry is not found, log an error and return
-            if (entry == null)
+            if (!this.manifest.ContainsKey(value))
             {
                 this.logger.LogViteManifestKeyNotFound(value, this.ViewContext.View.Path);
                 output.SuppressOutput();
@@ -183,14 +167,15 @@ public class ViteTagHelper(
             }
 
             // If the entry name looks like a script and the tagName is a 'link' of kind 'stylesheet', render the css file.
+            var relAttr = output.Attributes[LINK_REL_ATTRIBUTE]?.Value.ToString();
+            var asAttr = output.Attributes[LINK_AS_ATTRIBUTE]?.Value.ToString();
             if (
-                tagName == "link"
-                && (this.Rel == LINK_REL_STYLESHEET || this.As == LINK_AS_STYLE)
-                && ScriptRegex.IsMatch(value)
+                tagName == "link" && relAttr == LINK_REL_STYLESHEET
+                || asAttr == LINK_AS_STYLE && ScriptRegex.IsMatch(value)
             )
             {
                 // Get the styles from the entry
-                var cssFiles = entry.Css;
+                var cssFiles = this.manifest.GetRecursiveCssFiles(value).Reverse();
                 // Get the number of styles
                 var count = cssFiles?.Count() ?? 0;
                 // If the entrypoint doesn't have css files, destroy it.
@@ -206,26 +191,46 @@ public class ViteTagHelper(
                     $"~/{(string.IsNullOrEmpty(this.basePath) ? string.Empty : $"{this.basePath}/")}{cssFiles!.First()}"
                 );
 
-                // TODO: Handle multiple css files
+                // If there are more of one css file, create clones of the element keeping all attributes
+                if (count > 1)
+                {
+                    cssFiles = cssFiles!.Skip(1).Reverse();
+                    var sharedAttributes = new TagHelperAttributeList(output.Attributes);
+                    // If the attribute 'id' exists, remove it, otherwise it will be duplicated.
+                    var idAttr = sharedAttributes["id"];
+                    if (idAttr != null)
+                    {
+                        sharedAttributes.Remove(idAttr);
+                    }
+                    foreach (var cssFile in cssFiles)
+                    {
+                        // Get the file path from the 'manifest.json' file
+                        var filePath = urlHelper.Content(
+                            $"~/{(string.IsNullOrEmpty(this.basePath) ? string.Empty : $"{this.basePath}/")}{cssFile}"
+                        );
+
+                        var linkOutput = new TagHelperOutput(
+                            "link",
+                            new TagHelperAttributeList(sharedAttributes),
+                            (useCachedResult, encoder) =>
+                                Task.Factory.StartNew<TagHelperContent>(
+                                    () => new DefaultTagHelperContent()
+                                )
+                        );
+                        linkOutput.Attributes.SetAttribute("href", filePath);
+
+                        output.PreElement.AppendHtml(linkOutput);
+                    }
+                }
             }
             else
             {
+                var entry = this.manifest[value]!;
                 // Get the real file path from the 'manifest.json' file
                 file = urlHelper.Content(
                     $"~/{(string.IsNullOrEmpty(this.basePath) ? string.Empty : $"{this.basePath}/")}{entry.File}"
                 );
             }
-        }
-
-        // Forwards the rel attribute to the output.
-        if (!string.IsNullOrEmpty(this.Rel))
-        {
-            output.Attributes.SetAttribute(new TagHelperAttribute(LINK_REL_ATTRIBUTE, this.Rel));
-        }
-        // Forwards the as attribute to the output.
-        if (!string.IsNullOrEmpty(this.As))
-        {
-            output.Attributes.SetAttribute(new TagHelperAttribute(LINK_AS_ATTRIBUTE, this.As));
         }
 
         // Update the attributes.

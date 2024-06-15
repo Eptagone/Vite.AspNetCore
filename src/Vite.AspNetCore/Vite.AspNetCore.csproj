@@ -6,7 +6,7 @@
         <Nullable>enable</Nullable>
         <Title>Vite for ASPNET</Title>
         <Authors>Quetzal Rivera</Authors>
-        <Copyright>Quetzal Rivera 2023 ©</Copyright>
+        <Copyright>Quetzal Rivera 2024 ©</Copyright>
         <Description>A lightweight library for integrating ViteJs into ASP.NET MPA projects.</Description>
         <EnforceCodeStyleInBuild>False</EnforceCodeStyleInBuild>
         <PackageReadmeFile>README.md</PackageReadmeFile>
@@ -15,9 +15,9 @@
         <PackageTags>Vite;ViteJS;AspNet;MPA;Middleware;Server;Assets;Mvc;WebPages</PackageTags>
         <PackageLicenseFile>LICENSE</PackageLicenseFile>
         <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
-        <Version>2.0.1</Version>
+        <Version>2.1.0</Version>
         <LangVersion>latest</LangVersion>
-        <PackageReleaseNotes></PackageReleaseNotes>
+        <PackageReleaseNotes>TagHelpers: Inject recursive css files</PackageReleaseNotes>
         <AnalysisLevel>6.0-recommended</AnalysisLevel>
     </PropertyGroup>
 
