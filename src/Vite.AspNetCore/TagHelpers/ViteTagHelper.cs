@@ -170,8 +170,9 @@ public class ViteTagHelper(
             var relAttr = output.Attributes[LINK_REL_ATTRIBUTE]?.Value.ToString();
             var asAttr = output.Attributes[LINK_AS_ATTRIBUTE]?.Value.ToString();
             if (
-                tagName == "link" && relAttr == LINK_REL_STYLESHEET
-                || asAttr == LINK_AS_STYLE && ScriptRegex.IsMatch(value)
+                tagName == "link"
+                && (relAttr == LINK_REL_STYLESHEET || asAttr == LINK_AS_STYLE)
+                && ScriptRegex.IsMatch(value)
             )
             {
                 // Get the styles from the entry
