@@ -232,6 +232,8 @@ If you prefer not to hardcode the options, you can use environment variables or 
 
 > In the previous example, i used the `appsettings.json` and `appsettings.Development.json` files to keep the configurations for each environment separated. But you can use only one file if you prefer.
 
+> Config mechanisms are exclusive to each other and can't be mixed. Service configuration has priority load over Environment Variable configuration.
+
 ### Available Options
 
 There are more options that you can change. All the available options are listed below. ⚙️
