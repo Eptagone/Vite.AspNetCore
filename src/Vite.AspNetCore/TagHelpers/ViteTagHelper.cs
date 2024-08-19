@@ -37,7 +37,7 @@ public class ViteTagHelper(
 
     private const string VITE_HREF_ATTRIBUTE = "vite-href";
     private const string VITE_SRC_ATTRIBUTE = "vite-src";
-    private const string LINK_AS_ATTRIBUTE = "stylesheet";
+    private const string LINK_AS_ATTRIBUTE = "as";
     private const string LINK_AS_STYLE = "style";
     private const string LINK_REL_ATTRIBUTE = "rel";
     private const string LINK_REL_STYLESHEET = "stylesheet";
