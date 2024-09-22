@@ -19,7 +19,7 @@ jobs:
         uses: actions/setup-dotnet@v3
         with:
           dotnet-version: 6.0.x
-      
+
       - name: Restore dependencies
         run: dotnet restore
       - name: Build
@@ -27,7 +27,7 @@ jobs:
       - name: Test
         run: dotnet test -c Release --no-build --verbosity normal
       - name: Pack
-        run: dotnet pack -c Release -o ./nupkgs --no-build
+        run: dotnet pack Vite.AspNetCore -c Release -o ./nupkgs --no-build
       - name: Publish
         env:
           NUGET_AUTH_TOKEN: ${{ secrets.NUGET_AUTH_TOKEN }}
