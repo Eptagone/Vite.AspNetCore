@@ -67,5 +67,11 @@ public record ViteDevServerOptions
     /// </summary>
     public string ScriptName { get; set; } = "dev";
 
+    /// <summary>
+    /// If specified, the script will be run with the specified arguments.
+    /// </summary>
+    /// <example>Example: "npm run dev -- <ARGS>"</example>
+    public string? ScriptArgs { get; set; }
+
     #endregion
 }

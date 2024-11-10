@@ -13,10 +13,10 @@ internal static class ViteManifestExtensions
     private static IEnumerable<string> GetRecursiveCssFiles(
         IViteManifest manifest,
         string chunkName,
-        ICollection<string> proccessedChunks
+        ICollection<string> processedChunks
     )
     {
-        if (proccessedChunks.Contains(chunkName))
+        if (processedChunks.Contains(chunkName))
         {
             return [];
         }
@@ -25,10 +25,10 @@ internal static class ViteManifestExtensions
         var cssFiles = new HashSet<string>(chunk?.Css ?? []);
         if (chunk?.Imports?.Any() == true)
         {
-            proccessedChunks.Add(chunkName);
+            processedChunks.Add(chunkName);
             foreach (var import in chunk.Imports)
             {
-                var otherCssFiles = GetRecursiveCssFiles(manifest, import, proccessedChunks);
+                var otherCssFiles = GetRecursiveCssFiles(manifest, import, processedChunks);
                 cssFiles.UnionWith(otherCssFiles);
             }
         }

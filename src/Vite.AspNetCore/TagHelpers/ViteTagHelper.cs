@@ -42,11 +42,6 @@ public class ViteTagHelper(
     private const string LINK_REL_ATTRIBUTE = "rel";
     private const string LINK_REL_STYLESHEET = "stylesheet";
 
-    private readonly ILogger<ViteTagHelper> logger = logger;
-    private readonly ViteTagHelperMonitor helperService = helperService;
-    private readonly IViteManifest manifest = manifest;
-    private readonly IViteDevServerStatus devServerStatus = devServerStatus;
-    private readonly IUrlHelperFactory urlHelperFactory = urlHelperFactory;
     private readonly string? basePath = viteOptions.Value.Base?.Trim('/');
 
     private readonly bool useReactRefresh = viteOptions.Value.Server.UseReactRefresh ?? false;
@@ -65,7 +60,6 @@ public class ViteTagHelper(
     [HtmlAttributeName(VITE_HREF_ATTRIBUTE)]
     public string? ViteHref { get; set; }
 
-    /// <inheritdoc />
     [ViewContext]
     [HtmlAttributeNotBound]
     public ViewContext ViewContext { get; set; } = default!;
@@ -83,7 +77,7 @@ public class ViteTagHelper(
         {
             "script" => (attribute: "src", value: this.ViteSrc),
             "link" => (attribute: "href", value: this.ViteHref),
-            _ => throw new NotImplementedException("This case should never happen")
+            _ => throw new NotImplementedException("This case should never happen"),
         };
 
         // Remove the vite attribute from the output
@@ -92,7 +86,7 @@ public class ViteTagHelper(
         // If the value is empty or null, we don't need to do anything
         if (string.IsNullOrWhiteSpace(value))
         {
-            this.logger.LogViteAttributeMissing(attribute, this.ViewContext.View.Path);
+            logger.LogViteAttributeMissing(attribute, this.ViewContext.View.Path);
             return;
         }
 
@@ -107,11 +101,11 @@ public class ViteTagHelper(
             value = value[this.basePath.Length..].TrimStart('/');
         }
 
-        var urlHelper = this.urlHelperFactory.GetUrlHelper(this.ViewContext);
+        var urlHelper = urlHelperFactory.GetUrlHelper(this.ViewContext);
         string file;
 
         // If the Vite development server is enabled, don't load the files from the manifest.
-        if (this.devServerStatus.IsEnabled)
+        if (devServerStatus.IsEnabled)
         {
             // If the tagName is a link and the file is a script, destroy the element.
             if (tagName == "link" && ScriptRegex.IsMatch(value))
@@ -120,10 +114,10 @@ public class ViteTagHelper(
                 return;
             }
 
-            var devBasePath = this.devServerStatus.ServerUrlWithBasePath;
+            var devBasePath = devServerStatus.ServerUrlWithBasePath;
 
             // If the Vite script was not inserted, it will be prepended to the current element tag.
-            if (!this.helperService.IsDevScriptInjected)
+            if (!helperService.IsDevScriptInjected)
             {
                 var viteClientUrl = devBasePath + "/@vite/client";
 
@@ -151,17 +145,18 @@ public class ViteTagHelper(
                 );
 
                 // Set the flag to true to avoid adding the script tag multiple times
-                this.helperService.IsDevScriptInjected = true;
+                helperService.IsDevScriptInjected = true;
             }
+
             // Build the url to the file path.
             file = $"{devBasePath}/{value}";
         }
         else
         {
             // If the entry is not found, log an error and return
-            if (!this.manifest.ContainsKey(value))
+            if (!manifest.ContainsKey(value))
             {
-                this.logger.LogViteManifestKeyNotFound(value, this.ViewContext.View.Path);
+                logger.LogViteManifestKeyNotFound(value, this.ViewContext.View.Path);
                 output.SuppressOutput();
                 return;
             }
@@ -176,13 +171,16 @@ public class ViteTagHelper(
             )
             {
                 // Get the styles from the entry
-                var cssFiles = this.manifest.GetRecursiveCssFiles(value).Reverse();
+                IEnumerable<string> cssFiles = manifest
+                    .GetRecursiveCssFiles(value)
+                    .Reverse()
+                    .ToList();
                 // Get the number of styles
-                var count = cssFiles?.Count() ?? 0;
+                var count = cssFiles.Count();
                 // If the entrypoint doesn't have css files, destroy it.
                 if (count == 0)
                 {
-                    this.logger.LogEntryDoesntHaveCssChunks(value);
+                    logger.LogEntryDoesntHaveCssChunks(value);
                     output.SuppressOutput();
                     return;
                 }
@@ -203,6 +201,7 @@ public class ViteTagHelper(
                     {
                         sharedAttributes.Remove(idAttr);
                     }
+
                     foreach (var cssFile in cssFiles)
                     {
                         // Get the file path from the 'manifest.json' file
@@ -213,7 +212,7 @@ public class ViteTagHelper(
                         var linkOutput = new TagHelperOutput(
                             "link",
                             new TagHelperAttributeList(sharedAttributes),
-                            (useCachedResult, encoder) =>
+                            (_, _) =>
                                 Task.Factory.StartNew<TagHelperContent>(
                                     () => new DefaultTagHelperContent()
                                 )
@@ -226,7 +225,7 @@ public class ViteTagHelper(
             }
             else
             {
-                var entry = this.manifest[value]!;
+                var entry = manifest[value]!;
                 // Get the real file path from the 'manifest.json' file
                 file = urlHelper.Content(
                     $"~/{(string.IsNullOrEmpty(this.basePath) ? string.Empty : $"{this.basePath}/")}{entry.File}"

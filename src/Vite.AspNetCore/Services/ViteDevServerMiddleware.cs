@@ -5,7 +5,6 @@ using System.Net.Http.Headers;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 
 namespace Vite.AspNetCore;
 
@@ -20,7 +19,7 @@ internal sealed class ViteDevServerMiddleware(
     IViteDevServerStatus viteDevServerStatus
 ) : IMiddleware
 {
-    internal const string HttpClientName = "Vite.AspNetCore.DevHttpClient";
+    internal const string HTTP_CLIENT_NAME = "Vite.AspNetCore.DevHttpClient";
 
     private readonly ILoggerFactory loggerFactory = loggerFactory;
     private readonly ILogger<ViteDevServerMiddleware> logger =
@@ -41,7 +40,7 @@ internal sealed class ViteDevServerMiddleware(
             var ws = context.WebSockets;
             var isHmrRequest =
                 ws.IsWebSocketRequest
-                && ws.WebSocketRequestedProtocols.Contains(ViteDevHmrProxy.SubProtocol);
+                && ws.WebSocketRequestedProtocols.Contains(ViteDevHmrProxy.SUB_PROTOCOL);
             // If it's an HMR (hot module reload) request, delegate processing to a WebSocket proxy, otherwise, process the request via HTTP.
             var proxyRequest = isHmrRequest
                 ? this.ProxyViaHrmAsync(context)
@@ -64,11 +63,11 @@ internal sealed class ViteDevServerMiddleware(
         {
             "http" => "ws",
             "https" => "wss",
-            _ => throw new ArgumentException(nameof(wsUriBuilder.Scheme))
+            _ => throw new ArgumentException(nameof(wsUriBuilder.Scheme)),
         };
 
-        var logger = this.loggerFactory.CreateLogger<ViteDevHmrProxy>();
-        await new ViteDevHmrProxy(logger).ProxyAsync(
+        var proxyLogger = this.loggerFactory.CreateLogger<ViteDevHmrProxy>();
+        await new ViteDevHmrProxy(proxyLogger).ProxyAsync(
             context,
             wsUriBuilder.Uri,
             CancellationToken.None
@@ -117,7 +116,7 @@ internal sealed class ViteDevServerMiddleware(
     // Creates a new instance of the HttpClient to connect to the Vite Dev Server.
     private HttpClient CreateClient(IHeaderDictionary requestHeaders)
     {
-        var client = this.clientFactory.CreateClient(HttpClientName);
+        var client = this.clientFactory.CreateClient(HTTP_CLIENT_NAME);
         var serverUrl = this.viteDevServerStatus.ServerUrl;
         client.BaseAddress = new Uri(serverUrl);
         client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("*/*", 0.1));

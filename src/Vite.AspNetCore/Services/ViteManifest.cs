@@ -18,7 +18,9 @@ public sealed class ViteManifest : IViteManifest, IDisposable
 {
     private static bool warnAboutManifestOnce = true;
     private readonly ILogger<ViteManifest> logger;
+
     private IReadOnlyDictionary<string, ViteChunk> chunks = null!; // chunks is always initialized, just indirectly from the constructor
+
     private readonly IViteDevServerStatus devServerStatus;
     private readonly string? basePath;
     private readonly ViteOptions viteOptions;
@@ -32,6 +34,7 @@ public sealed class ViteManifest : IViteManifest, IDisposable
     /// </summary>
     /// <param name="logger">The service used to log messages.</param>
     /// <param name="options">The vite configuration options.</param>
+    /// <param name="viteDevServer">The status of the vite dev server.</param>
     /// <param name="environment">Information about the web hosting environment.</param>
     public ViteManifest(
         ILogger<ViteManifest> logger,
@@ -90,12 +93,12 @@ public sealed class ViteManifest : IViteManifest, IDisposable
 
             if (!string.IsNullOrEmpty(this.basePath))
             {
-                var basePath = this.basePath.Trim('/');
+                var path = this.basePath.Trim('/');
                 // If the key starts with the base path, remove it and warn the user.
-                if (key.StartsWith(basePath, StringComparison.InvariantCultureIgnoreCase))
+                if (key.StartsWith(path, StringComparison.InvariantCultureIgnoreCase))
                 {
                     this.logger.LogRequestingChunkWithBasePath(key);
-                    key = key[basePath.Length..].TrimStart('/');
+                    key = key[path.Length..].TrimStart('/');
                 }
             }
 
@@ -116,7 +119,10 @@ public sealed class ViteManifest : IViteManifest, IDisposable
         IFileInfo manifestFile = this.fileProvider!.GetFileInfo(manifestName); // Not null if we get to this point
 
         // If the manifest file doesn't exist, try to remove the ".vite/" prefix from the manifest file name. The default name for Vite 5 is ".vite/manifest.json" but for Vite 4 is "manifest.json".
-        if (!manifestFile.Exists && manifestName.StartsWith(".vite", StringComparison.InvariantCultureIgnoreCase))
+        if (
+            !manifestFile.Exists
+            && manifestName.StartsWith(".vite", StringComparison.InvariantCultureIgnoreCase)
+        )
         {
             // Get the manifest.json file name without the ".vite/" prefix.
             var legacyManifestName = Path.GetFileName(manifestName);
@@ -140,7 +146,7 @@ public sealed class ViteManifest : IViteManifest, IDisposable
             if (this.changeToken.ActiveChangeCallbacks)
             {
                 this.changeTokenDispose = this.changeToken.RegisterChangeCallback(
-                    state =>
+                    _ =>
                     {
                         this.OnManifestChanged();
                     },

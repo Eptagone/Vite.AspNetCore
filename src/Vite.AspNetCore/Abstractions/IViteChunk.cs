@@ -1,6 +1,8 @@
 ﻿// Copyright (c) 2024 Quetzal Rivera.
 // Licensed under the MIT License, See LICENCE in the project root for license information.
 
+using System.Diagnostics.CodeAnalysis;
+
 namespace Vite.AspNetCore;
 
 /// <summary>
@@ -46,5 +48,6 @@ public interface IViteChunk
     /// <summary>
     /// List of all imports.
     /// </summary>
+    [SuppressMessage("Naming", "CA1716:Identifiers should not match keywords")]
     IEnumerable<string>? Imports { get; }
 }

@@ -51,9 +51,13 @@ const config: UserConfig = {
     server: {
         strictPort: true,
     },
-    optimizeDeps: {
-        include: []
-    }
+    css: {
+        preprocessorOptions: {
+            scss: {
+                api: "modern-compiler",
+            },
+        },
+    },
 }
 
 export default config;

@@ -40,7 +40,6 @@ internal sealed class ViteDevServerLauncher(
     /// <summary>
     /// Launch the Vite development server.
     /// </summary>
-    /// <param name="httpClient">The <see cref="HttpClient"/> instance used to test the connection to the Vite development server.</param>
     public void LaunchIfNotRunning()
     {
         this.launchTask ??= this.StartViteDevServerIfNotRunningAsync();
@@ -84,7 +83,7 @@ internal sealed class ViteDevServerLauncher(
             return true;
         }
 
-        var httpClient = this.httpClientFactory.CreateClient();
+        var httpClient = this.httpClientFactory.CreateClient(ViteDevServerMiddleware.HTTP_CLIENT_NAME);
         using var timeout = new CancellationTokenSource(
             TimeSpan.FromMinutes(this.options.Server.TimeOut)
         );
@@ -120,7 +119,6 @@ internal sealed class ViteDevServerLauncher(
     /// <summary>
     /// Start the Vite development server if it is not already running.
     /// </summary>
-    /// <param name="cancellationToken">Cancellation token.</param>
     /// <returns></returns>
     private async Task StartViteDevServerIfNotRunningAsync()
     {
@@ -135,6 +133,10 @@ internal sealed class ViteDevServerLauncher(
         var command = this.options.Server.PackageManager;
         // Set the arguments to run.
         var args = $"run {this.options.Server.ScriptName}";
+        if (!string.IsNullOrWhiteSpace(this.options.Server.ScriptArgs))
+        {
+            args += $" -- {this.options.Server.ScriptArgs}";
+        }
         // Set the working directory.
         var workingDirectory = this.options.Server.PackageDirectory ?? this.contentRootPath;
 
@@ -150,7 +152,7 @@ internal sealed class ViteDevServerLauncher(
             CreateNoWindow = false,
             UseShellExecute = true,
             WindowStyle = ProcessWindowStyle.Normal,
-            WorkingDirectory = Path.GetFullPath(workingDirectory)
+            WorkingDirectory = Path.GetFullPath(workingDirectory),
         };
 
         try
@@ -237,7 +239,7 @@ rm {scriptPath};
         var stopScriptInfo = new ProcessStartInfo("/bin/bash", scriptPath)
         {
             CreateNoWindow = true,
-            WorkingDirectory = AppContext.BaseDirectory
+            WorkingDirectory = AppContext.BaseDirectory,
         };
         // Start the process.
         var stopProcess = Process.Start(stopScriptInfo);

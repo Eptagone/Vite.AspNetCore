@@ -1,4 +1,4 @@
-﻿
+
 [*.{cs,vb}]
 #### Naming styles ####
 
@@ -135,3 +135,11 @@ csharp_style_pattern_matching_over_is_with_cast_check = true:suggestion
 csharp_style_pattern_matching_over_as_with_null_check = true:suggestion
 csharp_style_prefer_not_pattern = true:suggestion
 csharp_style_prefer_extended_property_pattern = true:suggestion
+indent_style = space
+indent_size = 4
+tab_width = 4
+
+# ReSharper properties
+resharper_csharp_indent_size = 4
+resharper_csharp_indent_style = space
+resharper_csharp_tab_width = 4

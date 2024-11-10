@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework>net6.0</TargetFramework>
+        <TargetFrameworks>net6.0;net8.0</TargetFrameworks>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
         <Title>Vite for ASPNET</Title>
@@ -15,7 +15,7 @@
         <PackageTags>Vite;ViteJS;AspNet;MPA;Middleware;Server;Assets;Mvc;WebPages</PackageTags>
         <PackageLicenseFile>LICENSE</PackageLicenseFile>
         <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
-        <Version>2.1.2</Version>
+        <Version>2.3.0</Version>
         <LangVersion>latest</LangVersion>
         <PackageReleaseNotes>TagHelpers: Inject recursive css files</PackageReleaseNotes>
         <AnalysisLevel>6.0-recommended</AnalysisLevel>
@@ -42,10 +42,6 @@
             <Pack>True</Pack>
             <PackagePath>\</PackagePath>
         </None>
-    </ItemGroup>
-
-    <ItemGroup>
-        <ProjectReference Include="..\Vite.AspNetCore.Abstractions\Vite.AspNetCore.Abstractions.csproj" />
     </ItemGroup>
     <ItemGroup>
         <None Update="README.md">
