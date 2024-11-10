@@ -147,19 +147,22 @@ public static class ServiceCollectionExtensions
         }
 
         // Add an HttpClient for the Vite Dev Server
-        services
-            .AddHttpClient(ViteDevServerMiddleware.HttpClientName)
+        var httpBuilder = services
+            .AddHttpClient(ViteDevServerMiddleware.HTTP_CLIENT_NAME)
             .ConfigurePrimaryHttpMessageHandler(_ => new HttpClientHandler
             {
                 ServerCertificateCustomValidationCallback =
-                    HttpClientHandler.DangerousAcceptAnyServerCertificateValidator
+                    HttpClientHandler.DangerousAcceptAnyServerCertificateValidator,
             })
             .ConfigureHttpClient(
-                (services, client) =>
+                (_, client) =>
                     client.DefaultRequestHeaders.Accept.Add(
                         new MediaTypeWithQualityHeaderValue("*/*", 0.1)
                     )
             );
+#if NET8_0_OR_GREATER
+        httpBuilder.RemoveAllLoggers();
+#endif
 
         // Add the Vite Dev Server Launcher
         services.TryAddSingleton<ViteDevServerLauncher>();

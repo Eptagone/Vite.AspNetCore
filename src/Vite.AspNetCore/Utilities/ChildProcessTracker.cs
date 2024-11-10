@@ -49,20 +49,20 @@ static class ChildProcessTracker
         string jobName = "ChildProcessTracker" + Environment.ProcessId;
         s_jobHandle = CreateJobObject(IntPtr.Zero, jobName);
 
-		var info = new JOBOBJECT_BASIC_LIMIT_INFORMATION
-		{
-			// This is the key flag. When our process is killed, Windows will automatically
-			//  close the job handle, and when that happens, we want the child processes to
-			//  be killed, too.
-			LimitFlags = JOBOBJECTLIMIT.JOB_OBJECT_LIMIT_KILL_ON_JOB_CLOSE
-		};
+        var info = new JOBOBJECT_BASIC_LIMIT_INFORMATION
+        {
+            // This is the key flag. When our process is killed, Windows will automatically
+            //  close the job handle, and when that happens, we want the child processes to
+            //  be killed, too.
+            LimitFlags = JOBOBJECTLIMIT.JOB_OBJECT_LIMIT_KILL_ON_JOB_CLOSE,
+        };
 
-		var extendedInfo = new JOBOBJECT_EXTENDED_LIMIT_INFORMATION
-		{
-			BasicLimitInformation = info
-		};
+        var extendedInfo = new JOBOBJECT_EXTENDED_LIMIT_INFORMATION
+        {
+            BasicLimitInformation = info,
+        };
 
-		int length = Marshal.SizeOf(typeof(JOBOBJECT_EXTENDED_LIMIT_INFORMATION));
+        int length = Marshal.SizeOf(typeof(JOBOBJECT_EXTENDED_LIMIT_INFORMATION));
         IntPtr extendedInfoPtr = Marshal.AllocHGlobal(length);
         try
         {
@@ -114,7 +114,7 @@ enum JobObjectInfoType
     EndOfJobTimeInformation = 6,
     ExtendedLimitInformation = 9,
     SecurityLimitInformation = 5,
-    GroupInformation = 11
+    GroupInformation = 11,
 }
 
 [StructLayout(LayoutKind.Sequential)]
@@ -134,7 +134,7 @@ struct JOBOBJECT_BASIC_LIMIT_INFORMATION
 [Flags]
 enum JOBOBJECTLIMIT : uint
 {
-    JOB_OBJECT_LIMIT_KILL_ON_JOB_CLOSE = 0x2000
+    JOB_OBJECT_LIMIT_KILL_ON_JOB_CLOSE = 0x2000,
 }
 
 [StructLayout(LayoutKind.Sequential)]

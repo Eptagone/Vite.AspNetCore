@@ -14,7 +14,7 @@ namespace Vite.AspNetCore;
 /// <param name="logger">The logger service.</param>
 internal class ViteDevHmrProxy(ILogger<ViteDevHmrProxy> logger)
 {
-    internal const string SubProtocol = "vite-hmr";
+    internal const string SUB_PROTOCOL = "vite-hmr";
     private readonly ILogger logger = logger;
 
     /// <summary>
@@ -39,7 +39,7 @@ internal class ViteDevHmrProxy(ILogger<ViteDevHmrProxy> logger)
         try
         {
             targetWebSocket = new ClientWebSocket();
-            targetWebSocket.Options.AddSubProtocol(SubProtocol);
+            targetWebSocket.Options.AddSubProtocol(SUB_PROTOCOL);
             await targetWebSocket.ConnectAsync(targetUri, cancellationToken);
             if (targetWebSocket.State != WebSocketState.Open)
             {
@@ -49,7 +49,7 @@ internal class ViteDevHmrProxy(ILogger<ViteDevHmrProxy> logger)
                 );
             }
 
-            clientWebSocket = await context.WebSockets.AcceptWebSocketAsync(SubProtocol);
+            clientWebSocket = await context.WebSockets.AcceptWebSocketAsync(SUB_PROTOCOL);
             if (clientWebSocket.State != WebSocketState.Open)
             {
                 throw new WebSocketException(
