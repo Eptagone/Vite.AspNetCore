@@ -1,11 +1,6 @@
 // Copyright (c) 2024 Quetzal Rivera.
 // Licensed under the MIT License, See LICENCE in the project root for license information.
 
-using System.Reflection.Metadata;
-using Vite.AspNetCore;
-
-[assembly: MetadataUpdateHandler(typeof(ViteTagHelperMonitor))]
-
 namespace Vite.AspNetCore;
 
 /// <summary>

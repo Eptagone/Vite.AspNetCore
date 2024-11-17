@@ -9,13 +9,13 @@
   },
   "profiles": {
     "ViteNET": {
-        "commandName": "Project",
-        "dotnetRunMessages": true,
-        "launchBrowser": true,
-        "applicationUrl": "https://localhost:7157;http://localhost:5157",
-        "environmentVariables": {
-            "ASPNETCORE_ENVIRONMENT": "Development"
-        }
+      "commandName": "Project",
+      "dotnetRunMessages": true,
+      "launchBrowser": true,
+      "applicationUrl": "https://localhost:7157;http://localhost:5157",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      }
     },
     "IIS Express": {
       "commandName": "IISExpress",

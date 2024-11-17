@@ -65,7 +65,7 @@ public sealed class ViteManifest : IViteManifest, IDisposable
 
         // Get the manifest.json file path
         string rootDir = Path.Combine(environment.WebRootPath, this.basePath ?? string.Empty);
-        this.fileProvider = new(rootDir);
+        this.fileProvider = new PhysicalFileProvider(rootDir);
         this.InitializeManifest();
     }
 
