@@ -8,7 +8,7 @@ namespace Vite.AspNetCore;
 /// <summary>
 /// Provides information about the Vite development server.
 /// </summary>
-class ViteDevServerStatus : IViteDevServerStatus
+sealed class ViteDevServerStatus : IViteDevServerStatus
 {
     internal static bool IsEnabled { get; set; }
     internal static bool IsMiddlewareEnable { get; set; }

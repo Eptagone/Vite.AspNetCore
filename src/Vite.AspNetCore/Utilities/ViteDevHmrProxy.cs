@@ -12,7 +12,7 @@ namespace Vite.AspNetCore;
 /// WebSocket bi-directional proxy for Vite HMR.
 /// </summary>
 /// <param name="logger">The logger service.</param>
-internal class ViteDevHmrProxy(ILogger<ViteDevHmrProxy> logger)
+internal sealed class ViteDevHmrProxy(ILogger<ViteDevHmrProxy> logger)
 {
     internal const string SUB_PROTOCOL = "vite-hmr";
     private readonly ILogger logger = logger;
