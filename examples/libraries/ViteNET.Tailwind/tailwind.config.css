@@ -1,0 +1,13 @@
+/* TailwindCSS configuration file. */
+@import "tailwindcss";
+@source "Assets/**/*.{ts,tsx}";
+@source "Pages/**/*.{cshtml,razor}";
+
+html {
+    position: relative;
+    height: 100%;
+}
+
+body {
+    height: 100%;
+}

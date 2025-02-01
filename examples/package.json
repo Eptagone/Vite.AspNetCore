@@ -1,0 +1,7 @@
+{
+  "name": "@vitenet/workspace",
+  "workspaces": [
+    "libraries/*",
+    "net/*"
+  ]
+}

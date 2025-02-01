@@ -1,17 +1,17 @@
 {
-    "name": "vitenet-razor-pages",
-    "private": true,
-    "version": "1.0.0",
-    "type": "module",
-    "scripts": {
-        "dev": "vite",
-        "build": "tsc && vite build"
-    },
-    "devDependencies": {
-        "autoprefixer": "^10.4.20",
-        "postcss": "^8.4.49",
-        "tailwindcss": "^3.4.15",
-        "typescript": "^5.7.2",
-        "vite": "^6.0.2"
-    }
+  "name": "@vitenet/lib-tailwind",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build"
+  },
+  "devDependencies": {
+    "@tailwindcss/vite": "^4.0.3",
+    "@types/node": "^22.13.0",
+    "tailwindcss": "^4.0.3",
+    "typescript": "^5.7.3",
+    "vite": "^6.0.11"
+  }
 }

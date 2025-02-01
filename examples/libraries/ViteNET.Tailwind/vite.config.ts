@@ -7,31 +7,22 @@
  */
 
 import { defineConfig } from "vite";
-import tailwindcss from "tailwindcss";
-import autoprefixer from "autoprefixer";
+import tailwindcss from "@tailwindcss/vite";
 
 export default defineConfig({
     appType: 'custom',
     base: '/dist/',
     publicDir: false,
-    root: 'Assets',
     build: {
         manifest: true,
         emptyOutDir: true,
-        outDir: '../wwwroot/dist',
+        outDir: 'wwwroot/dist',
         rollupOptions: {
             input: [
-                'Assets/styles/site.css',
-                'Assets/app.ts'
+                "Assets/app.ts",
+                "tailwind.config.css",
             ],
         }
     },
-    css: {
-        postcss: {
-            plugins: [
-                tailwindcss(),
-                autoprefixer(),
-            ],
-        },
-    },
+    plugins: [tailwindcss()]
 });

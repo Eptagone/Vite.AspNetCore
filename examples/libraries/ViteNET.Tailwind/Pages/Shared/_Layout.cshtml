@@ -4,7 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - ViteNET.Tailwind</title>
-    <link rel="stylesheet" vite-href="~/dist/styles/site.css" />
+    <link rel="stylesheet" vite-href="~/dist/tailwind.config.css" />
     @* <link rel="stylesheet" href="~/ViteNET.Tailwind.styles.css" asp-append-version="true" /> *@
 </head>
 <body>
@@ -12,8 +12,8 @@
         <header class="py-3 border-b box-shadow mb-3">
             <nav class="px-3 mx-auto sm:px-4">
                 <a class="inline-block mr-4 text-lg whitespace-no-wrap hover:text-purple-700" asp-page="/Index">ViteNET.Tailwind</a>
-                <div class="flex-grow items-center inline-flex justify-between">
-                    <ul class="flex flex-wrap list-reset flex-grow gap-3 text-gray-600">
+                <div class="grow items-center inline-flex justify-between">
+                    <ul class="flex flex-wrap list-reset grow gap-3 text-gray-600">
                         <li>
                             <a class="inline-block py-2 no-underline text-gray-900 hover:text-purple-700" asp-page="/Index">Home</a>
                         </li>
@@ -35,7 +35,7 @@
         </footer>
     </div>
 
-    <script type="module" vite-src="~/dist/app.ts"></script>
+    <script type="module" vite-src="~/dist/Assets/app.ts"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
