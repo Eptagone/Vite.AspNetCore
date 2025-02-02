@@ -3,7 +3,7 @@
  * Description: Vite configuration file
  */
 
-import { UserConfig } from 'vite';
+import { defineConfig } from 'vite';
 
 // Pattern for CSS files
 const cssPattern = /\.css$/;
@@ -11,7 +11,7 @@ const cssPattern = /\.css$/;
 const imagePattern = /\.(png|jpe?g|gif|svg|webp|avif)$/;
 
 // Define Vite configuration
-const config: UserConfig = {
+export default defineConfig({
     appType: 'custom',
     publicDir: false,
     build: {
@@ -58,6 +58,4 @@ const config: UserConfig = {
             },
         },
     },
-}
-
-export default config;
+});

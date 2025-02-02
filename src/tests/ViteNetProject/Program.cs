@@ -11,7 +11,7 @@ builder.Services.AddRazorPages();
 // Add the Vite services.
 builder.Services.AddViteServices(options =>
 {
-    options.Server.AutoRun = true;
+    options.Server.PackageManager = "pnpm";
 });
 
 var app = builder.Build();

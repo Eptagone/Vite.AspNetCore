@@ -16,6 +16,8 @@ namespace Vite.AspNetCore;
 /// </summary>
 public sealed class ViteManifest : IViteManifest, IDisposable
 {
+    private static readonly JsonSerializerOptions SERIALIZER_OPTIONS =
+        new() { PropertyNameCaseInsensitive = true };
     private static bool warnAboutManifestOnce = true;
     private readonly ILogger<ViteManifest> logger;
 
@@ -139,7 +141,7 @@ public sealed class ViteManifest : IViteManifest, IDisposable
             using Stream readStream = manifestFile.CreateReadStream();
             this.chunks = JsonSerializer.Deserialize<IReadOnlyDictionary<string, ViteChunk>>(
                 readStream,
-                new JsonSerializerOptions() { PropertyNameCaseInsensitive = true }
+                SERIALIZER_OPTIONS
             )!;
 
             this.changeToken = this.fileProvider.Watch(manifestName);

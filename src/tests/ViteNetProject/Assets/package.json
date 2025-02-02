@@ -1,12 +1,11 @@
 {
-  "name": "vite-net",
+  "name": "@vitenet/net-test-project",
   "private": true,
-  "version": "1.0.0",
   "type": "module",
+  "packageManager": "pnpm@9.15.4",
   "scripts": {
     "dev": "vite",
-    "build": "tsc && vite build",
-    "preview": "vite preview"
+    "build": "tsc && vite build"
   },
   "devDependencies": {
     "@types/node": "^22.13.0",
