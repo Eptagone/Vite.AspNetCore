@@ -7,7 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\src\Vite.AspNetCore\Vite.AspNetCore.csproj" />
+    <ProjectReference Include="..\..\..\src\library\Vite.AspNetCore\Vite.AspNetCore.csproj" />
   </ItemGroup>
 
   <ItemGroup>

@@ -5,7 +5,7 @@ VisualStudioVersion = 17.4.33205.214
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Library", "Library", "{7CF82174-53AE-45C3-B550-E1C7738CA5AB}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Vite.AspNetCore", "..\src\Vite.AspNetCore\Vite.AspNetCore.csproj", "{1EC9A678-7933-4A8C-BA88-BE1321D4DEEC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Vite.AspNetCore", "..\src\library\Vite.AspNetCore\Vite.AspNetCore.csproj", "{1EC9A678-7933-4A8C-BA88-BE1321D4DEEC}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ViteNET.React", "libraries\ViteNET.React\ViteNET.React.csproj", "{8140CF6C-05D6-445C-A459-5BBDB3FD32C5}"
 EndProject
