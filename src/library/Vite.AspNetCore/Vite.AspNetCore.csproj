@@ -1,51 +1,49 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-    <PropertyGroup>
-        <Title>Vite for ASPNET</Title>
-        <Authors>Quetzal Rivera</Authors>
-        <Copyright>Quetzal Rivera 2024 ©</Copyright>
-        <Description>A lightweight library for integrating ViteJs into ASP.NET MPA projects.</Description>
-        <EnforceCodeStyleInBuild>False</EnforceCodeStyleInBuild>
-        <PackageReadmeFile>README.md</PackageReadmeFile>
-        <PackageIcon>vite.png</PackageIcon>
-        <RepositoryUrl>https://github.com/Eptagone/Vite.AspNetCore</RepositoryUrl>
-        <PackageTags>Vite;ViteJS;AspNet;MPA;Middleware;Server;Assets;Mvc;WebPages</PackageTags>
-        <PackageLicenseFile>LICENSE</PackageLicenseFile>
-        <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
-        <Version>2.4.0</Version>
-        <LangVersion>latest</LangVersion>
-        <PackageReleaseNotes>TagHelpers: Inject recursive css files</PackageReleaseNotes>
-        <AnalysisLevel>8.0-recommended</AnalysisLevel>
-    </PropertyGroup>
+  <PropertyGroup>
+    <Title>Vite for ASPNET</Title>
+    <Authors>Quetzal Rivera</Authors>
+    <Copyright>Quetzal Rivera 2024 ©</Copyright>
+    <Description>A lightweight library for integrating ViteJs into ASP.NET MPA projects.</Description>
+    <EnforceCodeStyleInBuild>False</EnforceCodeStyleInBuild>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageIcon>vite.png</PackageIcon>
+    <RepositoryUrl>https://github.com/Eptagone/Vite.AspNetCore</RepositoryUrl>
+    <PackageTags>Vite;ViteJS;AspNet;MPA;Middleware;Server;Assets;Mvc;WebPages</PackageTags>
+    <PackageLicenseFile>LICENSE</PackageLicenseFile>
+    <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
+    <Version>2.4.1</Version>
+    <PackageReleaseNotes></PackageReleaseNotes>
+  </PropertyGroup>
 
-    <!-- Add ASP.NET Core references -->
-    <ItemGroup>
-        <FrameworkReference Include="Microsoft.AspNetCore.App" />
-    </ItemGroup>
+  <!-- Add ASP.NET Core references -->
+  <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
 
-    <ItemGroup>
-        <PackageReference Include="Microsoft.SourceLink.GitHub">
-            <PrivateAssets>all</PrivateAssets>
-            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-        </PackageReference>
-    </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.SourceLink.GitHub">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
 
-    <ItemGroup>
-        <None Include="..\..\..\docs\vite.png">
-            <Pack>True</Pack>
-            <PackagePath>\</PackagePath>
-        </None>
-        <None Include="..\..\..\LICENSE">
-            <Pack>True</Pack>
-            <PackagePath>\</PackagePath>
-        </None>
-    </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\..\docs\vite.png">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+    <None Include="..\..\..\LICENSE">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+  </ItemGroup>
 
-    <ItemGroup>
-        <None Include="README.md">
-            <Pack>True</Pack>
-            <PackagePath>\</PackagePath>
-        </None>
-    </ItemGroup>
+  <ItemGroup>
+    <None Include="README.md">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+  </ItemGroup>
 
 </Project>
