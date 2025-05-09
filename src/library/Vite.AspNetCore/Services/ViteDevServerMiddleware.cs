@@ -20,44 +20,52 @@ internal sealed class ViteDevServerMiddleware(
 ) : IMiddleware
 {
     internal const string HTTP_CLIENT_NAME = "Vite.AspNetCore.DevHttpClient";
-
-    private readonly ILoggerFactory loggerFactory = loggerFactory;
     private readonly ILogger<ViteDevServerMiddleware> logger =
         loggerFactory.CreateLogger<ViteDevServerMiddleware>();
-    private readonly IHttpClientFactory clientFactory = clientFactory;
-    private readonly IViteDevServerStatus viteDevServerStatus = viteDevServerStatus;
 
     /// <inheritdoc />
     public async Task InvokeAsync(HttpContext context, RequestDelegate next)
     {
-        // If the request doesn't have an endpoint, the request path is not null and the request method is GET, proxy the request to the Vite Development Server.
-        if (
-            context.GetEndpoint() == null
-            && context.Request.Path.HasValue
-            && context.Request.Method == HttpMethod.Get.Method
-        )
+        // Check if the request should be proxied to the Vite Dev Server
+        if (this.ShouldProxyRequest(context))
         {
-            var ws = context.WebSockets;
-            var isHmrRequest =
-                ws.IsWebSocketRequest
-                && ws.WebSocketRequestedProtocols.Contains(ViteDevHmrProxy.SUB_PROTOCOL);
-            // If it's an HMR (hot module reload) request, delegate processing to a WebSocket proxy, otherwise, process the request via HTTP.
-            var proxyRequest = isHmrRequest
-                ? this.ProxyViaHrmAsync(context)
-                : this.ProxyViaHttpAsync(context, next);
-            await proxyRequest;
+            if (IsHmrRequest(context))
+            {
+                await this.ProxyViaHmrAsync(context);
+            }
+            else
+            {
+                await this.ProxyViaHttpAsync(context, next);
+            }
         }
-        // If the request path is null, call the next middleware.
         else
         {
             await next(context);
         }
     }
 
-    // Proxies the HMR request to the Vite Dev Server via WebSocket.
-    private async Task ProxyViaHrmAsync(HttpContext context)
+    // Determines if the request should be proxied to the Vite Dev Server
+    private bool ShouldProxyRequest(HttpContext context)
     {
-        var serverUrlWithBasePath = this.viteDevServerStatus.ServerUrlWithBasePath;
+        return context.GetEndpoint() == null
+            && context.Request.Path.HasValue
+            && context.Request.Method == HttpMethod.Get.Method
+            && (string.IsNullOrWhiteSpace(viteDevServerStatus.BasePath)
+                || context.Request.Path.Value.StartsWith(viteDevServerStatus.BasePath, StringComparison.Ordinal));
+    }
+
+    // Determines if the request is an HMR (Hot Module Reload) WebSocket request
+    private static bool IsHmrRequest(HttpContext context)
+    {
+        var ws = context.WebSockets;
+        return ws.IsWebSocketRequest
+            && ws.WebSocketRequestedProtocols.Contains(ViteDevHmrProxy.SUB_PROTOCOL);
+    }
+
+    // Proxies the HMR request to the Vite Dev Server via WebSocket.
+    private async Task ProxyViaHmrAsync(HttpContext context)
+    {
+        var serverUrlWithBasePath = viteDevServerStatus.ServerUrlWithBasePath;
         var wsUriBuilder = new UriBuilder(serverUrlWithBasePath);
         wsUriBuilder.Scheme = wsUriBuilder.Scheme.ToLowerInvariant() switch
         {
@@ -66,7 +74,7 @@ internal sealed class ViteDevServerMiddleware(
             _ => throw new ArgumentException(nameof(wsUriBuilder.Scheme)),
         };
 
-        var proxyLogger = this.loggerFactory.CreateLogger<ViteDevHmrProxy>();
+        var proxyLogger = loggerFactory.CreateLogger<ViteDevHmrProxy>();
         await new ViteDevHmrProxy(proxyLogger).ProxyAsync(
             context,
             wsUriBuilder.Uri,
@@ -116,8 +124,8 @@ internal sealed class ViteDevServerMiddleware(
     // Creates a new instance of the HttpClient to connect to the Vite Dev Server.
     private HttpClient CreateClient(IHeaderDictionary requestHeaders)
     {
-        var client = this.clientFactory.CreateClient(HTTP_CLIENT_NAME);
-        var serverUrl = this.viteDevServerStatus.ServerUrl;
+        var client = clientFactory.CreateClient(HTTP_CLIENT_NAME);
+        var serverUrl = viteDevServerStatus.ServerUrl;
         client.BaseAddress = new Uri(serverUrl);
         client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("*/*", 0.1));
 
