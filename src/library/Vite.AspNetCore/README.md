@@ -148,6 +148,36 @@ Now you can use the `vite-src` and `vite-href` attributes in your scripts and li
 <script type="module" vite-src="~/secondary.ts"></script>
 ```
 
+#### vite-prefix (optional)
+
+You can pass an optional `vite-prefix` attribute to `vite-src` / `vite-href` tag helper usages. This allows you to control how the final href/src string is emitted while keeping manifest-driven filename resolution and CSS chunk expansion.
+
+**Behavior:**
+- When `vite-prefix` is not provided, the TagHelper behaves exactly as before: resolves the manifest entry and uses `UrlHelper.Content("~/...")` to emit an app-root-relative path (which includes `Request.PathBase` if present).
+- When `vite-prefix` is provided and non-empty, the TagHelper will:
+  - Resolve the asset path from the manifest (including any configured `ViteOptions.Base`), then prepend the provided prefix to that resolved path.
+  - If the resulting prefix+path begins with `~` it will be expanded with `UrlHelper.Content` (so `PathBase` applies).
+  - Otherwise the prefix+path is emitted as-is (allowing relative prefixes such as `..` or `../`).
+
+**Examples:**
+```html
+<!-- Default: manifest resolved and Url.Content applied -->
+<script type="module" vite-src="~/main.ts"></script>
+<!-- emitted (example): /web/react/js/main.abcdef.js -->
+
+<!-- Relative prefix: emitted as a relative path -->
+<script type="module" vite-src="~/main.ts" vite-prefix=".."></script>
+<!-- emitted: ../react/js/main.abcdef.js -->
+
+<!-- Absolute prefix: emitted with the provided absolute prefix -->
+<link rel="stylesheet" vite-href="~/main.ts" vite-prefix="/static/"/>
+<!-- emitted: /static/react/css/main.abcdef.css -->
+
+<!-- Url.Content expansion: provide "~/" in the prefix -->
+<script type="module" vite-src="~/main.ts" vite-prefix="~/prefix/"></script>
+<!-- emitted: /web/prefix/react/js/main.abcdef.js (PathBase preserved) -->
+```
+
 This tag helpers will do the following magic according the state of the Vite Development Server (VDS).
 
 - VDS is enabled:
