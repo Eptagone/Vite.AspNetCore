@@ -8,6 +8,7 @@ namespace ViteNetProject.Tests;
 /// <summary>
 /// Integration tests for TagHelpers.
 /// </summary>
+[Collection("Sequential")]
 public class ManifestTest : IClassFixture<WebApplicationFactory<Program>>
 {
     private readonly WebApplicationFactory<Program> factory;
