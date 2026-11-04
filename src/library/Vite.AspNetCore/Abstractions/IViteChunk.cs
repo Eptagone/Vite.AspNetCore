@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2024 Quetzal Rivera.
+﻿// Copyright (c) 2026 Quetzal Rivera.
 // Licensed under the MIT License, See LICENCE in the project root for license information.
 
 using System.Diagnostics.CodeAnalysis;
@@ -11,12 +11,17 @@ namespace Vite.AspNetCore;
 public interface IViteChunk
 {
     /// <summary>
-    /// Gets the file name of the chunk.
+    /// Relative path to the chunk file.
     /// </summary>
     string File { get; }
 
     /// <summary>
-    /// The relative src path from project root.
+    /// File name without extension.
+    /// </summary>
+    string? Name { get; }
+
+    /// <summary>
+    /// Original source file path.
     /// </summary>
     string? Src { get; }
 

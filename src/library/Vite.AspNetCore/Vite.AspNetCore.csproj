@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Title>Vite for ASPNET</Title>
     <Authors>Quetzal Rivera</Authors>
-    <Copyright>Quetzal Rivera 2024 ©</Copyright>
+    <Copyright>Quetzal Rivera 2026 ©</Copyright>
     <Description>A lightweight library for integrating ViteJs into ASP.NET MPA projects.</Description>
     <EnforceCodeStyleInBuild>False</EnforceCodeStyleInBuild>
     <PackageReadmeFile>README.md</PackageReadmeFile>

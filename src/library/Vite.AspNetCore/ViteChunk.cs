@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2024 Quetzal Rivera.
+﻿// Copyright (c) 2026 Quetzal Rivera.
 // Licensed under the MIT License, See LICENCE in the project root for license information.
 
 namespace Vite.AspNetCore;
@@ -8,43 +8,30 @@ namespace Vite.AspNetCore;
 /// </summary>
 public record ViteChunk : IViteChunk
 {
-    /// <summary>
-    /// Gets the file name of the chunk.
-    /// </summary>
+    /// <inheritdoc />
     public string File { get; init; } = null!;
 
-    /// <summary>
-    /// The relative src path from project root.
-    /// </summary>
+    /// <inheritdoc />
+    public string? Name { get; init; }
+
+    /// <inheritdoc />
     public string? Src { get; init; }
 
-    /// <summary>
-    /// True, if the current chunk file is an entrypoint.
-    /// </summary>
+    /// <inheritdoc />
     public bool? IsEntry { get; init; }
 
-    /// <summary>
-    /// List of chunk paths that are imported by the current chunk.
-    /// </summary>
+    /// <inheritdoc />
     public IEnumerable<string>? DynamicImports { get; init; }
 
-    /// <summary>
-    /// List of all CSS files imported by the current chunk.
-    /// </summary>
+    /// <inheritdoc />
     public IEnumerable<string>? Css { get; init; }
 
-    /// <summary>
-    /// List of all assets imported by the current chunk.
-    /// </summary>
+    /// <inheritdoc />
     public IEnumerable<string>? Assets { get; init; }
 
-    /// <summary>
-    /// True, if the current chunk if a dynamic import entrypoint.
-    /// </summary>
+    /// <inheritdoc />
     public bool? IsDynamicEntry { get; init; }
 
-    /// <summary>
-    /// List of all imports.
-    /// </summary>
+    /// <inheritdoc />
     public IEnumerable<string>? Imports { get; init; }
 }

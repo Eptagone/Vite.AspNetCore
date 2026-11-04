@@ -1,4 +1,4 @@
-// Copyright (c) 2024 Quetzal Rivera.
+// Copyright (c) 2026 Quetzal Rivera.
 // Licensed under the MIT License, See LICENCE in the project root for license information.
 
 using System.Diagnostics;
@@ -232,7 +232,7 @@ internal sealed class ViteDevServerLauncher(
               kill -s KILL $child;
             done;
             rm {{scriptPath}};
-            
+
             """;
         // Write the script to the file.
         File.WriteAllText(scriptPath, stopScript.ReplaceLineEndings());
