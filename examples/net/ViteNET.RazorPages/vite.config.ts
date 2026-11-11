@@ -99,14 +99,7 @@ export default defineConfig(async () => {
         },
         optimizeDeps: {
             include: []
-        },
-        css: {
-            preprocessorOptions: {
-                scss: {
-                    api: "modern-compiler",
-                },
-            },
-        },
+        }
     }
 
     return config;

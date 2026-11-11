@@ -51,11 +51,4 @@ export default defineConfig({
     server: {
         strictPort: true,
     },
-    css: {
-        preprocessorOptions: {
-            scss: {
-                api: "modern-compiler",
-            },
-        },
-    },
 });
